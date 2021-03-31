@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:kuda_lager/business_logic/models/order_model.dart';
+import 'package:kuda_lager/business_logic/models/packet_model.dart';
+import 'package:kuda_lager/business_logic/models/product_model.dart';
+import 'package:kuda_lager/business_logic/models/production_model.dart';
 
 import 'package:mdi/mdi.dart';
-
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
-import 'business_logic/models/packet_model.dart';
+import 'package:kuda_lager/business_logic/controllers/order_controller.dart';
+import 'package:kuda_lager/business_logic/controllers/packet_controller.dart';
+import 'package:kuda_lager/business_logic/controllers/product_controller.dart';
+import 'package:kuda_lager/business_logic/controllers/production_controller.dart';
 
 Future<void> initHive() async {
   await Hive.initFlutter();
-  Hive.registerAdapter<Packet>(PacketAdapter());
-  await Hive.openBox<Packet>('packets');
+
+  await PacketController.init();
+  await ProductController.init();
+  await OrderController.init();
+  await ProductionController.init();
 }
 
 void main() async {
@@ -20,7 +30,20 @@ void main() async {
   };
   await initHive();
 
-  runApp(MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(
+        create: (context) =>
+            PacketController(Hive.box<Packet>(PacketController.boxName))),
+    ChangeNotifierProvider(
+        create: (context) =>
+            ProductController(Hive.box<Product>(ProductController.boxName))),
+    ChangeNotifierProvider(
+        create: (context) =>
+            OrderController(Hive.box<Order>(OrderController.boxName))),
+    ChangeNotifierProvider(
+        create: (context) => ProductionController(
+            Hive.box<Production>(ProductionController.boxName))),
+  ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -40,6 +63,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        accentColor: Colors.amberAccent,
         // This makes the visual density adapt to the platform that you run
         // the app on. For desktop platforms, the controls will be smaller and
         // closer together (more dense) than on mobile platforms.

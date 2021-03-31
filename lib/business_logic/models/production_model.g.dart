@@ -1,28 +1,28 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'productionorder_model.dart';
+part of 'production_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ProductionOrderAdapter extends TypeAdapter<ProductionOrder> {
+class ProductionOrderAdapter extends TypeAdapter<Production> {
   @override
   final int typeId = 2;
 
   @override
-  ProductionOrder read(BinaryReader reader) {
+  Production read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ProductionOrder(
+    return Production(
       productionOrderNr: fields[0] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, ProductionOrder obj) {
+  void write(BinaryWriter writer, Production obj) {
     writer
       ..writeByte(1)
       ..writeByte(0)
