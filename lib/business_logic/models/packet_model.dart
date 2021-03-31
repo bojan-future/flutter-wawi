@@ -16,7 +16,12 @@ class Packet extends HiveObject {
   @HiveField(3)
   double quantity;
 
+  @HiveField(4)
+  final int wrappingKey;
+
+  HiveList<Packet> subPackets;
+
   //todo: photos field (multiple photos)
 
-  Packet({this.barcode, this.charge, this.productKey});
+  Packet({this.barcode, this.charge, this.productKey, this.wrappingKey});
 }

@@ -1,43 +1,32 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'packet_model.dart';
+part of 'order_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class PacketAdapter extends TypeAdapter<Packet> {
+class OrderAdapter extends TypeAdapter<Order> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
-  Packet read(BinaryReader reader) {
+  Order read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Packet(
-      barcode: fields[0] as String,
-      charge: fields[1] as String,
-      productKey: fields[2] as int,
-      wrappingKey: fields[4] as int,
-    )..quantity = fields[3] as double;
+    return Order(
+      orderNr: fields[0] as String,
+    );
   }
 
   @override
-  void write(BinaryWriter writer, Packet obj) {
+  void write(BinaryWriter writer, Order obj) {
     writer
-      ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.barcode)
       ..writeByte(1)
-      ..write(obj.charge)
-      ..writeByte(2)
-      ..write(obj.productKey)
-      ..writeByte(3)
-      ..write(obj.quantity)
-      ..writeByte(4)
-      ..write(obj.wrappingKey);
+      ..writeByte(0)
+      ..write(obj.orderNr);
   }
 
   @override
@@ -46,7 +35,7 @@ class PacketAdapter extends TypeAdapter<Packet> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PacketAdapter &&
+      other is OrderAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
