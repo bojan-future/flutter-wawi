@@ -1,51 +1,21 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:kuda_lager/business_logic/models/order_model.dart';
-import 'package:kuda_lager/business_logic/models/packet_model.dart';
-import 'package:kuda_lager/business_logic/models/product_model.dart';
-import 'package:kuda_lager/business_logic/models/production_model.dart';
-
+import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-import 'package:kuda_lager/business_logic/controllers/order_controller.dart';
-import 'package:kuda_lager/business_logic/controllers/packet_controller.dart';
-import 'package:kuda_lager/business_logic/controllers/product_controller.dart';
-import 'package:kuda_lager/business_logic/controllers/production_controller.dart';
+import 'database/database.dart';
 
-Future<void> initHive() async {
-  await Hive.initFlutter();
+void main() {
+  FlutterError.onError = FlutterError.dumpErrorToConsole;
 
-  await PacketController.init();
-  await ProductController.init();
-  await OrderController.init();
-  await ProductionController.init();
+  runApp(Provider<Database>(
+    create: (context) => Database(),
+    dispose: (context, db) => db.close(),
+    child: MyApp(),
+  ));
 }
 
-void main() async {
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.dumpErrorToConsole(details);
-  };
-  await initHive();
-
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(
-        create: (context) =>
-            PacketController(Hive.box<Packet>(PacketController.boxName))),
-    ChangeNotifierProvider(
-        create: (context) =>
-            ProductController(Hive.box<Product>(ProductController.boxName))),
-    ChangeNotifierProvider(
-        create: (context) =>
-            OrderController(Hive.box<Order>(OrderController.boxName))),
-    ChangeNotifierProvider(
-        create: (context) => ProductionController(
-            Hive.box<Production>(ProductionController.boxName))),
-  ], child: MyApp()));
-}
-
+/// Top App Widget
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -74,7 +44,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Home screen
 class MyHomePage extends StatefulWidget {
+  ///
   MyHomePage({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -86,6 +58,7 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
+  /// title is displayed on the top of the screen
   final String title;
 
   @override
@@ -143,25 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            // Column is also a layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug painting" (press "p" in the console, choose the
-            // "Toggle Debug Paint" action from the Flutter Inspector in Android
-            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-            // to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
