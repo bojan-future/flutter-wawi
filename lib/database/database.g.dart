@@ -1571,11 +1571,15 @@ abstract class _$Database extends GeneratedDatabase {
   $ProductionResultsTable _productionResults;
   $ProductionResultsTable get productionResults =>
       _productionResults ??= $ProductionResultsTable(this);
+  PacketsDao _packetsDao;
+  PacketsDao get packetsDao => _packetsDao ??= PacketsDao(this as Database);
+  ProductsDao _productsDao;
+  ProductsDao get productsDao => _productsDao ??= ProductsDao(this as Database);
+  OrdersDao _ordersDao;
+  OrdersDao get ordersDao => _ordersDao ??= OrdersDao(this as Database);
   ProductionDao _productionDao;
   ProductionDao get productionDao =>
       _productionDao ??= ProductionDao(this as Database);
-  PacketsDao _packetsDao;
-  PacketsDao get packetsDao => _packetsDao ??= PacketsDao(this as Database);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

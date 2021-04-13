@@ -9,7 +9,7 @@ void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
 
   runApp(Provider<Database>(
-    create: (context) => Database(),
+    create: (context) => Database(Database.createDefaultQueryExecutor()),
     dispose: (context, db) => db.close(),
     child: MyApp(),
   ));

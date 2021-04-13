@@ -25,4 +25,9 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
   Future deletePacket(Packet packet) {
     return delete(packets).delete(packet);
   }
+
+  /// watcher for packet with given id
+  Stream<Packet> watchPacketWithId(int id) {
+    return (select(packets)..where((p) => p.id.equals(id))).watchSingle();
+  }
 }

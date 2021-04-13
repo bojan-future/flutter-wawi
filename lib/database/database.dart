@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart';
+import 'package:kuda_lager/database/orders_dao.dart';
+import 'package:kuda_lager/database/products_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 import 'packets_dao.dart';
@@ -121,18 +124,18 @@ class ProductionModel {
   OrderPositions,
   ProductionOrders,
   ProductionMaterials,
-  ProductionResults
+  ProductionResults,
 ], daos: [
+  PacketsDao,
+  ProductsDao,
+  OrdersDao,
   ProductionDao,
-  PacketsDao
 ])
 
 /// Main database
 class Database extends _$Database {
   ///
-  Database()
-      : super(FlutterQueryExecutor.inDatabaseFolder(
-            path: 'db.sqlite', logStatements: true));
+  Database(QueryExecutor e) : super(e);
 
   @override
   int get schemaVersion => 1;
@@ -150,5 +153,11 @@ class Database extends _$Database {
         }
       },
     );
+  }
+
+  /// default executor for running real database in app
+  static QueryExecutor createDefaultQueryExecutor() {
+    return FlutterQueryExecutor.inDatabaseFolder(
+        path: 'db.sqlite', logStatements: kDebugMode); //only log if in debug
   }
 }
