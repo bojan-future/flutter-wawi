@@ -25,29 +25,29 @@ class Packet extends DataClass implements Insertable<Packet> {
 
   /// foreign key -> 'parent' packet in case this is part of larger packet,
   /// might be null
-  final int wrapping;
+  final int? wrapping;
   Packet(
-      {@required this.id,
-      @required this.barcode,
-      @required this.lot,
-      @required this.quantity,
-      @required this.product,
+      {required this.id,
+      required this.barcode,
+      required this.lot,
+      required this.quantity,
+      required this.product,
       this.wrapping});
   factory Packet.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
     final doubleType = db.typeSystem.forDartType<double>();
     return Packet(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      barcode:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}barcode']),
-      lot: stringType.mapFromDatabaseResponse(data['${effectivePrefix}lot']),
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      barcode: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}barcode'])!,
+      lot: stringType.mapFromDatabaseResponse(data['${effectivePrefix}lot'])!,
       quantity: doubleType
-          .mapFromDatabaseResponse(data['${effectivePrefix}quantity']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}quantity'])!,
       product:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}product']),
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}product'])!,
       wrapping:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}wrapping']),
     );
@@ -55,40 +55,24 @@ class Packet extends DataClass implements Insertable<Packet> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
-    }
-    if (!nullToAbsent || barcode != null) {
-      map['barcode'] = Variable<String>(barcode);
-    }
-    if (!nullToAbsent || lot != null) {
-      map['lot'] = Variable<String>(lot);
-    }
-    if (!nullToAbsent || quantity != null) {
-      map['quantity'] = Variable<double>(quantity);
-    }
-    if (!nullToAbsent || product != null) {
-      map['product'] = Variable<int>(product);
-    }
+    map['id'] = Variable<int>(id);
+    map['barcode'] = Variable<String>(barcode);
+    map['lot'] = Variable<String>(lot);
+    map['quantity'] = Variable<double>(quantity);
+    map['product'] = Variable<int>(product);
     if (!nullToAbsent || wrapping != null) {
-      map['wrapping'] = Variable<int>(wrapping);
+      map['wrapping'] = Variable<int?>(wrapping);
     }
     return map;
   }
 
   PacketsCompanion toCompanion(bool nullToAbsent) {
     return PacketsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      barcode: barcode == null && nullToAbsent
-          ? const Value.absent()
-          : Value(barcode),
-      lot: lot == null && nullToAbsent ? const Value.absent() : Value(lot),
-      quantity: quantity == null && nullToAbsent
-          ? const Value.absent()
-          : Value(quantity),
-      product: product == null && nullToAbsent
-          ? const Value.absent()
-          : Value(product),
+      id: Value(id),
+      barcode: Value(barcode),
+      lot: Value(lot),
+      quantity: Value(quantity),
+      product: Value(product),
       wrapping: wrapping == null && nullToAbsent
           ? const Value.absent()
           : Value(wrapping),
@@ -96,7 +80,7 @@ class Packet extends DataClass implements Insertable<Packet> {
   }
 
   factory Packet.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Packet(
       id: serializer.fromJson<int>(json['id']),
@@ -104,11 +88,11 @@ class Packet extends DataClass implements Insertable<Packet> {
       lot: serializer.fromJson<String>(json['lot']),
       quantity: serializer.fromJson<double>(json['quantity']),
       product: serializer.fromJson<int>(json['product']),
-      wrapping: serializer.fromJson<int>(json['wrapping']),
+      wrapping: serializer.fromJson<int?>(json['wrapping']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -116,17 +100,17 @@ class Packet extends DataClass implements Insertable<Packet> {
       'lot': serializer.toJson<String>(lot),
       'quantity': serializer.toJson<double>(quantity),
       'product': serializer.toJson<int>(product),
-      'wrapping': serializer.toJson<int>(wrapping),
+      'wrapping': serializer.toJson<int?>(wrapping),
     };
   }
 
   Packet copyWith(
-          {int id,
-          String barcode,
-          String lot,
-          double quantity,
-          int product,
-          int wrapping}) =>
+          {int? id,
+          String? barcode,
+          String? lot,
+          double? quantity,
+          int? product,
+          int? wrapping}) =>
       Packet(
         id: id ?? this.id,
         barcode: barcode ?? this.barcode,
@@ -175,7 +159,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
   final Value<String> lot;
   final Value<double> quantity;
   final Value<int> product;
-  final Value<int> wrapping;
+  final Value<int?> wrapping;
   const PacketsCompanion({
     this.id = const Value.absent(),
     this.barcode = const Value.absent(),
@@ -186,22 +170,22 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
   });
   PacketsCompanion.insert({
     this.id = const Value.absent(),
-    @required String barcode,
-    @required String lot,
-    @required double quantity,
-    @required int product,
+    required String barcode,
+    required String lot,
+    required double quantity,
+    required int product,
     this.wrapping = const Value.absent(),
   })  : barcode = Value(barcode),
         lot = Value(lot),
         quantity = Value(quantity),
         product = Value(product);
   static Insertable<Packet> custom({
-    Expression<int> id,
-    Expression<String> barcode,
-    Expression<String> lot,
-    Expression<double> quantity,
-    Expression<int> product,
-    Expression<int> wrapping,
+    Expression<int>? id,
+    Expression<String>? barcode,
+    Expression<String>? lot,
+    Expression<double>? quantity,
+    Expression<int>? product,
+    Expression<int?>? wrapping,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -214,12 +198,12 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
   }
 
   PacketsCompanion copyWith(
-      {Value<int> id,
-      Value<String> barcode,
-      Value<String> lot,
-      Value<double> quantity,
-      Value<int> product,
-      Value<int> wrapping}) {
+      {Value<int>? id,
+      Value<String>? barcode,
+      Value<String>? lot,
+      Value<double>? quantity,
+      Value<int>? product,
+      Value<int?>? wrapping}) {
     return PacketsCompanion(
       id: id ?? this.id,
       barcode: barcode ?? this.barcode,
@@ -249,7 +233,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
       map['product'] = Variable<int>(product.value);
     }
     if (wrapping.present) {
-      map['wrapping'] = Variable<int>(wrapping.value);
+      map['wrapping'] = Variable<int?>(wrapping.value);
     }
     return map;
   }
@@ -270,21 +254,19 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
 
 class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $PacketsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _barcodeMeta = const VerificationMeta('barcode');
-  GeneratedTextColumn _barcode;
   @override
-  GeneratedTextColumn get barcode => _barcode ??= _constructBarcode();
+  late final GeneratedTextColumn barcode = _constructBarcode();
   GeneratedTextColumn _constructBarcode() {
     return GeneratedTextColumn(
       'barcode',
@@ -294,9 +276,8 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
   }
 
   final VerificationMeta _lotMeta = const VerificationMeta('lot');
-  GeneratedTextColumn _lot;
   @override
-  GeneratedTextColumn get lot => _lot ??= _constructLot();
+  late final GeneratedTextColumn lot = _constructLot();
   GeneratedTextColumn _constructLot() {
     return GeneratedTextColumn(
       'lot',
@@ -306,9 +287,8 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
   }
 
   final VerificationMeta _quantityMeta = const VerificationMeta('quantity');
-  GeneratedRealColumn _quantity;
   @override
-  GeneratedRealColumn get quantity => _quantity ??= _constructQuantity();
+  late final GeneratedRealColumn quantity = _constructQuantity();
   GeneratedRealColumn _constructQuantity() {
     return GeneratedRealColumn(
       'quantity',
@@ -318,18 +298,16 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
   }
 
   final VerificationMeta _productMeta = const VerificationMeta('product');
-  GeneratedIntColumn _product;
   @override
-  GeneratedIntColumn get product => _product ??= _constructProduct();
+  late final GeneratedIntColumn product = _constructProduct();
   GeneratedIntColumn _constructProduct() {
     return GeneratedIntColumn('product', $tableName, false,
         $customConstraints: 'REFERENCES products(id)');
   }
 
   final VerificationMeta _wrappingMeta = const VerificationMeta('wrapping');
-  GeneratedIntColumn _wrapping;
   @override
-  GeneratedIntColumn get wrapping => _wrapping ??= _constructWrapping();
+  late final GeneratedIntColumn wrapping = _constructWrapping();
   GeneratedIntColumn _constructWrapping() {
     return GeneratedIntColumn('wrapping', $tableName, true,
         $customConstraints: 'NULLABLE REFERENCES packets(id)');
@@ -350,35 +328,35 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('barcode')) {
       context.handle(_barcodeMeta,
-          barcode.isAcceptableOrUnknown(data['barcode'], _barcodeMeta));
+          barcode.isAcceptableOrUnknown(data['barcode']!, _barcodeMeta));
     } else if (isInserting) {
       context.missing(_barcodeMeta);
     }
     if (data.containsKey('lot')) {
       context.handle(
-          _lotMeta, lot.isAcceptableOrUnknown(data['lot'], _lotMeta));
+          _lotMeta, lot.isAcceptableOrUnknown(data['lot']!, _lotMeta));
     } else if (isInserting) {
       context.missing(_lotMeta);
     }
     if (data.containsKey('quantity')) {
       context.handle(_quantityMeta,
-          quantity.isAcceptableOrUnknown(data['quantity'], _quantityMeta));
+          quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta));
     } else if (isInserting) {
       context.missing(_quantityMeta);
     }
     if (data.containsKey('product')) {
       context.handle(_productMeta,
-          product.isAcceptableOrUnknown(data['product'], _productMeta));
+          product.isAcceptableOrUnknown(data['product']!, _productMeta));
     } else if (isInserting) {
       context.missing(_productMeta);
     }
     if (data.containsKey('wrapping')) {
       context.handle(_wrappingMeta,
-          wrapping.isAcceptableOrUnknown(data['wrapping'], _wrappingMeta));
+          wrapping.isAcceptableOrUnknown(data['wrapping']!, _wrappingMeta));
     }
     return context;
   }
@@ -386,7 +364,7 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Packet map(Map<String, dynamic> data, {String tablePrefix}) {
+  Packet map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return Packet.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -403,41 +381,35 @@ class Product extends DataClass implements Insertable<Product> {
 
   /// product number
   final String productNr;
-  Product({@required this.id, @required this.productNr});
+  Product({required this.id, required this.productNr});
   factory Product.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
     return Product(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       productNr: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}product_nr']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}product_nr'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
-    }
-    if (!nullToAbsent || productNr != null) {
-      map['product_nr'] = Variable<String>(productNr);
-    }
+    map['id'] = Variable<int>(id);
+    map['product_nr'] = Variable<String>(productNr);
     return map;
   }
 
   ProductsCompanion toCompanion(bool nullToAbsent) {
     return ProductsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      productNr: productNr == null && nullToAbsent
-          ? const Value.absent()
-          : Value(productNr),
+      id: Value(id),
+      productNr: Value(productNr),
     );
   }
 
   factory Product.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Product(
       id: serializer.fromJson<int>(json['id']),
@@ -445,7 +417,7 @@ class Product extends DataClass implements Insertable<Product> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -453,7 +425,7 @@ class Product extends DataClass implements Insertable<Product> {
     };
   }
 
-  Product copyWith({int id, String productNr}) => Product(
+  Product copyWith({int? id, String? productNr}) => Product(
         id: id ?? this.id,
         productNr: productNr ?? this.productNr,
       );
@@ -485,11 +457,11 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   });
   ProductsCompanion.insert({
     this.id = const Value.absent(),
-    @required String productNr,
+    required String productNr,
   }) : productNr = Value(productNr);
   static Insertable<Product> custom({
-    Expression<int> id,
-    Expression<String> productNr,
+    Expression<int>? id,
+    Expression<String>? productNr,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -497,7 +469,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     });
   }
 
-  ProductsCompanion copyWith({Value<int> id, Value<String> productNr}) {
+  ProductsCompanion copyWith({Value<int>? id, Value<String>? productNr}) {
     return ProductsCompanion(
       id: id ?? this.id,
       productNr: productNr ?? this.productNr,
@@ -528,21 +500,19 @@ class ProductsCompanion extends UpdateCompanion<Product> {
 
 class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $ProductsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _productNrMeta = const VerificationMeta('productNr');
-  GeneratedTextColumn _productNr;
   @override
-  GeneratedTextColumn get productNr => _productNr ??= _constructProductNr();
+  late final GeneratedTextColumn productNr = _constructProductNr();
   GeneratedTextColumn _constructProductNr() {
     return GeneratedTextColumn(
       'product_nr',
@@ -565,11 +535,11 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('product_nr')) {
       context.handle(_productNrMeta,
-          productNr.isAcceptableOrUnknown(data['product_nr'], _productNrMeta));
+          productNr.isAcceptableOrUnknown(data['product_nr']!, _productNrMeta));
     } else if (isInserting) {
       context.missing(_productNrMeta);
     }
@@ -579,7 +549,7 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Product map(Map<String, dynamic> data, {String tablePrefix}) {
+  Product map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return Product.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -596,41 +566,35 @@ class Order extends DataClass implements Insertable<Order> {
 
   /// order number
   final String orderNr;
-  Order({@required this.id, @required this.orderNr});
+  Order({required this.id, required this.orderNr});
   factory Order.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
     return Order(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       orderNr: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}order_nr']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}order_nr'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
-    }
-    if (!nullToAbsent || orderNr != null) {
-      map['order_nr'] = Variable<String>(orderNr);
-    }
+    map['id'] = Variable<int>(id);
+    map['order_nr'] = Variable<String>(orderNr);
     return map;
   }
 
   OrdersCompanion toCompanion(bool nullToAbsent) {
     return OrdersCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      orderNr: orderNr == null && nullToAbsent
-          ? const Value.absent()
-          : Value(orderNr),
+      id: Value(id),
+      orderNr: Value(orderNr),
     );
   }
 
   factory Order.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Order(
       id: serializer.fromJson<int>(json['id']),
@@ -638,7 +602,7 @@ class Order extends DataClass implements Insertable<Order> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -646,7 +610,7 @@ class Order extends DataClass implements Insertable<Order> {
     };
   }
 
-  Order copyWith({int id, String orderNr}) => Order(
+  Order copyWith({int? id, String? orderNr}) => Order(
         id: id ?? this.id,
         orderNr: orderNr ?? this.orderNr,
       );
@@ -676,11 +640,11 @@ class OrdersCompanion extends UpdateCompanion<Order> {
   });
   OrdersCompanion.insert({
     this.id = const Value.absent(),
-    @required String orderNr,
+    required String orderNr,
   }) : orderNr = Value(orderNr);
   static Insertable<Order> custom({
-    Expression<int> id,
-    Expression<String> orderNr,
+    Expression<int>? id,
+    Expression<String>? orderNr,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -688,7 +652,7 @@ class OrdersCompanion extends UpdateCompanion<Order> {
     });
   }
 
-  OrdersCompanion copyWith({Value<int> id, Value<String> orderNr}) {
+  OrdersCompanion copyWith({Value<int>? id, Value<String>? orderNr}) {
     return OrdersCompanion(
       id: id ?? this.id,
       orderNr: orderNr ?? this.orderNr,
@@ -719,21 +683,19 @@ class OrdersCompanion extends UpdateCompanion<Order> {
 
 class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $OrdersTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _orderNrMeta = const VerificationMeta('orderNr');
-  GeneratedTextColumn _orderNr;
   @override
-  GeneratedTextColumn get orderNr => _orderNr ??= _constructOrderNr();
+  late final GeneratedTextColumn orderNr = _constructOrderNr();
   GeneratedTextColumn _constructOrderNr() {
     return GeneratedTextColumn(
       'order_nr',
@@ -756,11 +718,11 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('order_nr')) {
       context.handle(_orderNrMeta,
-          orderNr.isAcceptableOrUnknown(data['order_nr'], _orderNrMeta));
+          orderNr.isAcceptableOrUnknown(data['order_nr']!, _orderNrMeta));
     } else if (isInserting) {
       context.missing(_orderNrMeta);
     }
@@ -770,7 +732,7 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Order map(Map<String, dynamic> data, {String tablePrefix}) {
+  Order map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return Order.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -787,39 +749,34 @@ class OrderPosition extends DataClass implements Insertable<OrderPosition> {
 
   /// foreign key -> order
   final int order;
-  OrderPosition({@required this.id, @required this.order});
+  OrderPosition({required this.id, required this.order});
   factory OrderPosition.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     return OrderPosition(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order']),
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
-    }
-    if (!nullToAbsent || order != null) {
-      map['order'] = Variable<int>(order);
-    }
+    map['id'] = Variable<int>(id);
+    map['order'] = Variable<int>(order);
     return map;
   }
 
   OrderPositionsCompanion toCompanion(bool nullToAbsent) {
     return OrderPositionsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      order:
-          order == null && nullToAbsent ? const Value.absent() : Value(order),
+      id: Value(id),
+      order: Value(order),
     );
   }
 
   factory OrderPosition.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return OrderPosition(
       id: serializer.fromJson<int>(json['id']),
@@ -827,7 +784,7 @@ class OrderPosition extends DataClass implements Insertable<OrderPosition> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -835,7 +792,7 @@ class OrderPosition extends DataClass implements Insertable<OrderPosition> {
     };
   }
 
-  OrderPosition copyWith({int id, int order}) => OrderPosition(
+  OrderPosition copyWith({int? id, int? order}) => OrderPosition(
         id: id ?? this.id,
         order: order ?? this.order,
       );
@@ -867,11 +824,11 @@ class OrderPositionsCompanion extends UpdateCompanion<OrderPosition> {
   });
   OrderPositionsCompanion.insert({
     this.id = const Value.absent(),
-    @required int order,
+    required int order,
   }) : order = Value(order);
   static Insertable<OrderPosition> custom({
-    Expression<int> id,
-    Expression<int> order,
+    Expression<int>? id,
+    Expression<int>? order,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -879,7 +836,7 @@ class OrderPositionsCompanion extends UpdateCompanion<OrderPosition> {
     });
   }
 
-  OrderPositionsCompanion copyWith({Value<int> id, Value<int> order}) {
+  OrderPositionsCompanion copyWith({Value<int>? id, Value<int>? order}) {
     return OrderPositionsCompanion(
       id: id ?? this.id,
       order: order ?? this.order,
@@ -911,21 +868,19 @@ class OrderPositionsCompanion extends UpdateCompanion<OrderPosition> {
 class $OrderPositionsTable extends OrderPositions
     with TableInfo<$OrderPositionsTable, OrderPosition> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $OrderPositionsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _orderMeta = const VerificationMeta('order');
-  GeneratedIntColumn _order;
   @override
-  GeneratedIntColumn get order => _order ??= _constructOrder();
+  late final GeneratedIntColumn order = _constructOrder();
   GeneratedIntColumn _constructOrder() {
     return GeneratedIntColumn('order', $tableName, false,
         $customConstraints: 'REFERENCES orders(id)');
@@ -945,11 +900,11 @@ class $OrderPositionsTable extends OrderPositions
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('order')) {
       context.handle(
-          _orderMeta, order.isAcceptableOrUnknown(data['order'], _orderMeta));
+          _orderMeta, order.isAcceptableOrUnknown(data['order']!, _orderMeta));
     } else if (isInserting) {
       context.missing(_orderMeta);
     }
@@ -959,7 +914,7 @@ class $OrderPositionsTable extends OrderPositions
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  OrderPosition map(Map<String, dynamic> data, {String tablePrefix}) {
+  OrderPosition map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return OrderPosition.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -976,42 +931,36 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
 
   /// production order number
   final String productionOrderNr;
-  ProductionOrder({@required this.id, @required this.productionOrderNr});
+  ProductionOrder({required this.id, required this.productionOrderNr});
   factory ProductionOrder.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
     return ProductionOrder(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       productionOrderNr: stringType.mapFromDatabaseResponse(
-          data['${effectivePrefix}production_order_nr']),
+          data['${effectivePrefix}production_order_nr'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
-    }
-    if (!nullToAbsent || productionOrderNr != null) {
-      map['production_order_nr'] = Variable<String>(productionOrderNr);
-    }
+    map['id'] = Variable<int>(id);
+    map['production_order_nr'] = Variable<String>(productionOrderNr);
     return map;
   }
 
   ProductionOrdersCompanion toCompanion(bool nullToAbsent) {
     return ProductionOrdersCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      productionOrderNr: productionOrderNr == null && nullToAbsent
-          ? const Value.absent()
-          : Value(productionOrderNr),
+      id: Value(id),
+      productionOrderNr: Value(productionOrderNr),
     );
   }
 
   factory ProductionOrder.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ProductionOrder(
       id: serializer.fromJson<int>(json['id']),
@@ -1019,7 +968,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -1027,7 +976,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
     };
   }
 
-  ProductionOrder copyWith({int id, String productionOrderNr}) =>
+  ProductionOrder copyWith({int? id, String? productionOrderNr}) =>
       ProductionOrder(
         id: id ?? this.id,
         productionOrderNr: productionOrderNr ?? this.productionOrderNr,
@@ -1060,11 +1009,11 @@ class ProductionOrdersCompanion extends UpdateCompanion<ProductionOrder> {
   });
   ProductionOrdersCompanion.insert({
     this.id = const Value.absent(),
-    @required String productionOrderNr,
+    required String productionOrderNr,
   }) : productionOrderNr = Value(productionOrderNr);
   static Insertable<ProductionOrder> custom({
-    Expression<int> id,
-    Expression<String> productionOrderNr,
+    Expression<int>? id,
+    Expression<String>? productionOrderNr,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1073,7 +1022,7 @@ class ProductionOrdersCompanion extends UpdateCompanion<ProductionOrder> {
   }
 
   ProductionOrdersCompanion copyWith(
-      {Value<int> id, Value<String> productionOrderNr}) {
+      {Value<int>? id, Value<String>? productionOrderNr}) {
     return ProductionOrdersCompanion(
       id: id ?? this.id,
       productionOrderNr: productionOrderNr ?? this.productionOrderNr,
@@ -1105,12 +1054,11 @@ class ProductionOrdersCompanion extends UpdateCompanion<ProductionOrder> {
 class $ProductionOrdersTable extends ProductionOrders
     with TableInfo<$ProductionOrdersTable, ProductionOrder> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $ProductionOrdersTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
@@ -1118,10 +1066,9 @@ class $ProductionOrdersTable extends ProductionOrders
 
   final VerificationMeta _productionOrderNrMeta =
       const VerificationMeta('productionOrderNr');
-  GeneratedTextColumn _productionOrderNr;
   @override
-  GeneratedTextColumn get productionOrderNr =>
-      _productionOrderNr ??= _constructProductionOrderNr();
+  late final GeneratedTextColumn productionOrderNr =
+      _constructProductionOrderNr();
   GeneratedTextColumn _constructProductionOrderNr() {
     return GeneratedTextColumn(
       'production_order_nr',
@@ -1144,13 +1091,13 @@ class $ProductionOrdersTable extends ProductionOrders
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('production_order_nr')) {
       context.handle(
           _productionOrderNrMeta,
           productionOrderNr.isAcceptableOrUnknown(
-              data['production_order_nr'], _productionOrderNrMeta));
+              data['production_order_nr']!, _productionOrderNrMeta));
     } else if (isInserting) {
       context.missing(_productionOrderNrMeta);
     }
@@ -1160,7 +1107,7 @@ class $ProductionOrdersTable extends ProductionOrders
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ProductionOrder map(Map<String, dynamic> data, {String tablePrefix}) {
+  ProductionOrder map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return ProductionOrder.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -1178,39 +1125,34 @@ class ProductionMaterial extends DataClass
 
   /// foreign key -> production order
   final int order;
-  ProductionMaterial({@required this.id, @required this.order});
+  ProductionMaterial({required this.id, required this.order});
   factory ProductionMaterial.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     return ProductionMaterial(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order']),
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
-    }
-    if (!nullToAbsent || order != null) {
-      map['order'] = Variable<int>(order);
-    }
+    map['id'] = Variable<int>(id);
+    map['order'] = Variable<int>(order);
     return map;
   }
 
   ProductionMaterialsCompanion toCompanion(bool nullToAbsent) {
     return ProductionMaterialsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      order:
-          order == null && nullToAbsent ? const Value.absent() : Value(order),
+      id: Value(id),
+      order: Value(order),
     );
   }
 
   factory ProductionMaterial.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ProductionMaterial(
       id: serializer.fromJson<int>(json['id']),
@@ -1218,7 +1160,7 @@ class ProductionMaterial extends DataClass
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -1226,7 +1168,7 @@ class ProductionMaterial extends DataClass
     };
   }
 
-  ProductionMaterial copyWith({int id, int order}) => ProductionMaterial(
+  ProductionMaterial copyWith({int? id, int? order}) => ProductionMaterial(
         id: id ?? this.id,
         order: order ?? this.order,
       );
@@ -1258,11 +1200,11 @@ class ProductionMaterialsCompanion extends UpdateCompanion<ProductionMaterial> {
   });
   ProductionMaterialsCompanion.insert({
     this.id = const Value.absent(),
-    @required int order,
+    required int order,
   }) : order = Value(order);
   static Insertable<ProductionMaterial> custom({
-    Expression<int> id,
-    Expression<int> order,
+    Expression<int>? id,
+    Expression<int>? order,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1270,7 +1212,7 @@ class ProductionMaterialsCompanion extends UpdateCompanion<ProductionMaterial> {
     });
   }
 
-  ProductionMaterialsCompanion copyWith({Value<int> id, Value<int> order}) {
+  ProductionMaterialsCompanion copyWith({Value<int>? id, Value<int>? order}) {
     return ProductionMaterialsCompanion(
       id: id ?? this.id,
       order: order ?? this.order,
@@ -1302,21 +1244,19 @@ class ProductionMaterialsCompanion extends UpdateCompanion<ProductionMaterial> {
 class $ProductionMaterialsTable extends ProductionMaterials
     with TableInfo<$ProductionMaterialsTable, ProductionMaterial> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $ProductionMaterialsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _orderMeta = const VerificationMeta('order');
-  GeneratedIntColumn _order;
   @override
-  GeneratedIntColumn get order => _order ??= _constructOrder();
+  late final GeneratedIntColumn order = _constructOrder();
   GeneratedIntColumn _constructOrder() {
     return GeneratedIntColumn('order', $tableName, false,
         $customConstraints: 'REFERENCES orders(id)');
@@ -1336,11 +1276,11 @@ class $ProductionMaterialsTable extends ProductionMaterials
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('order')) {
       context.handle(
-          _orderMeta, order.isAcceptableOrUnknown(data['order'], _orderMeta));
+          _orderMeta, order.isAcceptableOrUnknown(data['order']!, _orderMeta));
     } else if (isInserting) {
       context.missing(_orderMeta);
     }
@@ -1350,7 +1290,7 @@ class $ProductionMaterialsTable extends ProductionMaterials
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ProductionMaterial map(Map<String, dynamic> data, {String tablePrefix}) {
+  ProductionMaterial map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return ProductionMaterial.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -1368,39 +1308,34 @@ class ProductionResult extends DataClass
 
   /// foreign key -> production order
   final int order;
-  ProductionResult({@required this.id, @required this.order});
+  ProductionResult({required this.id, required this.order});
   factory ProductionResult.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     return ProductionResult(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order']),
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
-    }
-    if (!nullToAbsent || order != null) {
-      map['order'] = Variable<int>(order);
-    }
+    map['id'] = Variable<int>(id);
+    map['order'] = Variable<int>(order);
     return map;
   }
 
   ProductionResultsCompanion toCompanion(bool nullToAbsent) {
     return ProductionResultsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      order:
-          order == null && nullToAbsent ? const Value.absent() : Value(order),
+      id: Value(id),
+      order: Value(order),
     );
   }
 
   factory ProductionResult.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ProductionResult(
       id: serializer.fromJson<int>(json['id']),
@@ -1408,7 +1343,7 @@ class ProductionResult extends DataClass
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -1416,7 +1351,7 @@ class ProductionResult extends DataClass
     };
   }
 
-  ProductionResult copyWith({int id, int order}) => ProductionResult(
+  ProductionResult copyWith({int? id, int? order}) => ProductionResult(
         id: id ?? this.id,
         order: order ?? this.order,
       );
@@ -1448,11 +1383,11 @@ class ProductionResultsCompanion extends UpdateCompanion<ProductionResult> {
   });
   ProductionResultsCompanion.insert({
     this.id = const Value.absent(),
-    @required int order,
+    required int order,
   }) : order = Value(order);
   static Insertable<ProductionResult> custom({
-    Expression<int> id,
-    Expression<int> order,
+    Expression<int>? id,
+    Expression<int>? order,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1460,7 +1395,7 @@ class ProductionResultsCompanion extends UpdateCompanion<ProductionResult> {
     });
   }
 
-  ProductionResultsCompanion copyWith({Value<int> id, Value<int> order}) {
+  ProductionResultsCompanion copyWith({Value<int>? id, Value<int>? order}) {
     return ProductionResultsCompanion(
       id: id ?? this.id,
       order: order ?? this.order,
@@ -1492,21 +1427,19 @@ class ProductionResultsCompanion extends UpdateCompanion<ProductionResult> {
 class $ProductionResultsTable extends ProductionResults
     with TableInfo<$ProductionResultsTable, ProductionResult> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $ProductionResultsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _orderMeta = const VerificationMeta('order');
-  GeneratedIntColumn _order;
   @override
-  GeneratedIntColumn get order => _order ??= _constructOrder();
+  late final GeneratedIntColumn order = _constructOrder();
   GeneratedIntColumn _constructOrder() {
     return GeneratedIntColumn('order', $tableName, false,
         $customConstraints: 'REFERENCES orders(id)');
@@ -1526,11 +1459,11 @@ class $ProductionResultsTable extends ProductionResults
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('order')) {
       context.handle(
-          _orderMeta, order.isAcceptableOrUnknown(data['order'], _orderMeta));
+          _orderMeta, order.isAcceptableOrUnknown(data['order']!, _orderMeta));
     } else if (isInserting) {
       context.missing(_orderMeta);
     }
@@ -1540,7 +1473,7 @@ class $ProductionResultsTable extends ProductionResults
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ProductionResult map(Map<String, dynamic> data, {String tablePrefix}) {
+  ProductionResult map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return ProductionResult.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -1553,33 +1486,20 @@ class $ProductionResultsTable extends ProductionResults
 
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
-  $PacketsTable _packets;
-  $PacketsTable get packets => _packets ??= $PacketsTable(this);
-  $ProductsTable _products;
-  $ProductsTable get products => _products ??= $ProductsTable(this);
-  $OrdersTable _orders;
-  $OrdersTable get orders => _orders ??= $OrdersTable(this);
-  $OrderPositionsTable _orderPositions;
-  $OrderPositionsTable get orderPositions =>
-      _orderPositions ??= $OrderPositionsTable(this);
-  $ProductionOrdersTable _productionOrders;
-  $ProductionOrdersTable get productionOrders =>
-      _productionOrders ??= $ProductionOrdersTable(this);
-  $ProductionMaterialsTable _productionMaterials;
-  $ProductionMaterialsTable get productionMaterials =>
-      _productionMaterials ??= $ProductionMaterialsTable(this);
-  $ProductionResultsTable _productionResults;
-  $ProductionResultsTable get productionResults =>
-      _productionResults ??= $ProductionResultsTable(this);
-  PacketsDao _packetsDao;
-  PacketsDao get packetsDao => _packetsDao ??= PacketsDao(this as Database);
-  ProductsDao _productsDao;
-  ProductsDao get productsDao => _productsDao ??= ProductsDao(this as Database);
-  OrdersDao _ordersDao;
-  OrdersDao get ordersDao => _ordersDao ??= OrdersDao(this as Database);
-  ProductionDao _productionDao;
-  ProductionDao get productionDao =>
-      _productionDao ??= ProductionDao(this as Database);
+  late final $PacketsTable packets = $PacketsTable(this);
+  late final $ProductsTable products = $ProductsTable(this);
+  late final $OrdersTable orders = $OrdersTable(this);
+  late final $OrderPositionsTable orderPositions = $OrderPositionsTable(this);
+  late final $ProductionOrdersTable productionOrders =
+      $ProductionOrdersTable(this);
+  late final $ProductionMaterialsTable productionMaterials =
+      $ProductionMaterialsTable(this);
+  late final $ProductionResultsTable productionResults =
+      $ProductionResultsTable(this);
+  late final PacketsDao packetsDao = PacketsDao(this as Database);
+  late final ProductsDao productsDao = ProductsDao(this as Database);
+  late final OrdersDao ordersDao = OrdersDao(this as Database);
+  late final ProductionDao productionDao = ProductionDao(this as Database);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

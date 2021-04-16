@@ -117,6 +117,21 @@ class ProductionModel {
   ProductionModel(this.prodOrder, this.materials, this.results);
 }
 
+// ignore: avoid_classes_with_only_static_members
+/// use DatabaseFactory to get database instance
+class DatabaseFactory {
+  static Database? _databaseInstance;
+
+  /// retrieves database instance, creating one on first call
+  static Database getDatabaseInstance() {
+    if (_databaseInstance == null) {
+      _databaseInstance = Database(Database.createDefaultQueryExecutor());
+    }
+
+    return _databaseInstance!;
+  }
+}
+
 @UseMoor(tables: [
   Packets,
   Products,

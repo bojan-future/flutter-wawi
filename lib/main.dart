@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kuda_lager/business_logic/packets_controller.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
@@ -8,9 +9,12 @@ import 'database/database.dart';
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
 
-  runApp(Provider<Database>(
-    create: (context) => Database(Database.createDefaultQueryExecutor()),
-    dispose: (context, db) => db.close(),
+  runApp(MultiProvider(
+    providers: [
+      Provider<PacketsController>(
+        create: (context) => PacketsController(),
+      )
+    ],
     child: MyApp(),
   ));
 }
@@ -47,7 +51,7 @@ class MyApp extends StatelessWidget {
 /// Home screen
 class MyHomePage extends StatefulWidget {
   ///
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -138,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       CupertinoPageRoute(
                           builder: (context) => Delivery(
                                 title: "Anlieferung",
-                                color: Colors.blue[300],
+                                color: (Colors.blue[300])!,
                               )),
                     );
                   },
@@ -178,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           CupertinoPageRoute(
                               builder: (context) => Delivery(
                                     title: "Auslieferung",
-                                    color: Colors.amber[300],
+                                    color: (Colors.amber[300])!,
                                   )),
                         ));
                   },
@@ -220,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           CupertinoPageRoute(
                               builder: (context) => Delivery(
                                     title: "Caddies Scannen",
-                                    color: Colors.deepOrange[300],
+                                    color: (Colors.deepOrange[300])!,
                                   )),
                         ));
                   },
@@ -235,7 +239,8 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class Delivery extends StatefulWidget {
-  Delivery({Key key, this.title, this.color}) : super(key: key);
+  Delivery({Key? key, required this.title, required this.color})
+      : super(key: key);
 
   final String title;
   final Color color;

@@ -12,17 +12,17 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
   PacketsDao(Database db) : super(db);
 
   /// inserts given packet into database
-  Future createPacket(PacketsCompanion packet) {
+  Future<int> createPacket(PacketsCompanion packet) {
     return into(packets).insert(packet, mode: InsertMode.replace);
   }
 
   /// updates packet in the database
-  Future updatePacket(Packet packet) {
+  Future<bool> updatePacket(Packet packet) {
     return update(packets).replace(packet);
   }
 
   /// deletes packet from the database
-  Future deletePacket(Packet packet) {
+  Future<int> deletePacket(Packet packet) {
     return delete(packets).delete(packet);
   }
 
