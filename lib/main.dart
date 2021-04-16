@@ -112,6 +112,10 @@ class _MyHomePageState extends State<MyHomePage> {
               leading: Icon(Icons.settings),
               title: Text('Einstellungen'),
             ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Abmelden'),
+            ),
           ],
         ),
       ),
