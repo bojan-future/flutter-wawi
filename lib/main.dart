@@ -128,10 +128,13 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Expanded(
                 flex: 2,
-                child: FlatButton.icon(
+                child: TextButton.icon(
                   icon: Icon(Mdi.dolly, size: 48),
                   label: Text("Anlieferung", style: TextStyle(fontSize: 24)),
-                  color: Colors.blue[300],
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    primary: Colors.black,
+                  ),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -147,10 +150,13 @@ class _MyHomePageState extends State<MyHomePage> {
               SizedBox(height: 10),
               Expanded(
                 flex: 2,
-                child: FlatButton.icon(
+                child: TextButton.icon(
                   icon: Icon(Mdi.truckDelivery, size: 48),
                   label: Text("Auslieferung", style: TextStyle(fontSize: 24)),
-                  color: Colors.amber[300],
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.amber,
+                    primary: Colors.black,
+                  ),
                   onPressed: () {
                     showModalBottomSheet<void>(
                       context: context,
@@ -186,13 +192,17 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               SizedBox(height: 10),
               Expanded(
-                child: FlatButton.icon(
+                flex: 2,
+                child: TextButton.icon(
                   icon: Icon(
                     Mdi.packageVariant,
                     size: 48,
                   ),
                   label: Text("Auspacken", style: TextStyle(fontSize: 24)),
-                  color: Colors.deepOrange[300],
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.deepOrangeAccent,
+                    primary: Colors.black,
+                  ),
                   onPressed: () {
                     showModalBottomSheet<void>(
                       context: context,
@@ -266,11 +276,14 @@ class _DeliveryState extends State<Delivery> {
       ),
       body: Column(
         children: [
-          RaisedButton(
+          ElevatedButton(
             onPressed: () {
               addItemToList();
             },
-            color: Colors.amber,
+            style: ElevatedButton.styleFrom(
+              primary: Colors.amber,
+              onPrimary: Colors.black,
+            ),
             child: Icon(Mdi.barcodeScan),
           ),
           Expanded(
