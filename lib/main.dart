@@ -71,6 +71,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //temp: this list is only used to demonstrate use of ScanView
   final List<String> _testScanViewList = <String>[];
 
   @override
@@ -145,19 +146,28 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      CupertinoPageRoute(
-                          builder: (context) => ScanView(
-                                title: "Anlieferung",
-                                color: (Colors.blue[300])!,
-                                onScan: _testScanViewList.add,
-                                itemCount: _testScanViewList.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    leading: Text((index + 1).toString()),
-                                    title: Text(_testScanViewList[index]),
-                                  );
-                                },
-                              )),
+                      CupertinoPageRoute(builder: (context) {
+                        return StatefulBuilder(
+                          //todo: maybe it is not necesary to use StatefulBuilder, if list variable is inside new page
+                          builder: (context, setInnerState) => ScanView(
+                            title: "Anlieferung",
+                            color: (Colors.blue[300])!,
+                            onScan: (barcode) {
+                              setState(() {
+                                _testScanViewList.add(barcode);
+                                setInnerState(() {});
+                              });
+                            },
+                            itemCount: _testScanViewList.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                leading: Text((index + 1).toString()),
+                                title: Text(_testScanViewList[index]),
+                              );
+                            },
+                          ),
+                        );
+                      }),
                     );
                   },
                 ),

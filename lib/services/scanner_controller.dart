@@ -23,7 +23,7 @@ class ScannerController {
   void registerCallback(void Function(String) scanCallback) {
     _scanCallback = scanCallback;
     _scanChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
-    _createProfile("Playground");
+    _createProfile("KudaLager");
   }
 
   /// unset callback in order not to receive any scandata
@@ -46,9 +46,9 @@ class ScannerController {
   }
 
   static const MethodChannel _methodChannel =
-      MethodChannel('com.example.playground/command');
+      MethodChannel('at.futurefactory.kuda_lager/command');
   static const EventChannel _scanChannel =
-      EventChannel('com.example.playground/scan');
+      EventChannel('at.futurefactory.kuda_lager/scan');
 
   Future<void> _sendDataWedgeCommand(String command, String parameter) async {
     try {

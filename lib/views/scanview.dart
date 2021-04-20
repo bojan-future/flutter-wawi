@@ -25,20 +25,21 @@ class ScanView extends StatefulWidget {
   final IndexedWidgetBuilder _itemBuilder;
 
   @override
-  _ScanViewState createState() => _ScanViewState();
+  _ScanViewState createState() => _ScanViewState(_onScan);
 }
 
 class _ScanViewState extends State<ScanView> {
   final ScrollController _scrollController = ScrollController();
   final ScannerController _scanner = ScannerController();
+  final void Function(String) _scanCallback;
 
-  _ScanViewState() {
-    _scanner.registerCallback(widget._onScan);
+  _ScanViewState(this._scanCallback) {
+    _scanner.registerCallback(_scanCallback);
   }
 
   @override
   void dispose() {
-    _scanner.unregisterCallback(widget._onScan);
+    _scanner.unregisterCallback(_scanCallback);
     super.dispose();
   }
 

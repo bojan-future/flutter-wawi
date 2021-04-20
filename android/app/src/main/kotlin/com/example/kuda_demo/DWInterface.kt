@@ -1,4 +1,4 @@
-package com.futurefactory-software.kuda_lager
+package at.futurefactory.kuda_lager
 
 import android.content.Context
 import android.content.Intent

@@ -1,4 +1,4 @@
-package com.futurefactory-software.kuda_lager
+package at.futurefactory.kuda_lager
 
 import android.content.*
 import android.os.Bundle
@@ -14,9 +14,9 @@ import java.util.*
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
 class MainActivity: FlutterActivity() {
-    private val COMMAND_CHANNEL = "com.futurefactory-software.kuda_lager/command"
-    private val SCAN_CHANNEL = "com.futurefactory-software.kuda_lager/scan"
-    private val PROFILE_INTENT_ACTION = "com.futurefactory-software.kuda_lager.SCAN"
+    private val COMMAND_CHANNEL = "at.futurefactory.kuda_lager/command"
+    private val SCAN_CHANNEL = "at.futurefactory.kuda_lager/scan"
+    private val PROFILE_INTENT_ACTION = "at.futurefactory.kuda_lager.SCAN"
     private val PROFILE_INTENT_BROADCAST = "2"
 
     private val dwInterface = DWInterface()
