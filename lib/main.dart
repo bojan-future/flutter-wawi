@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kuda_lager/business_logic/packets_controller.dart';
+import 'package:kuda_lager/views/scanview.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
@@ -70,6 +71,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final List<String> _testScanViewList = <String>[];
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -143,9 +146,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                          builder: (context) => Delivery(
+                          builder: (context) => ScanView(
                                 title: "Anlieferung",
                                 color: (Colors.blue[300])!,
+                                onScan: _testScanViewList.add,
+                                itemCount: _testScanViewList.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    leading: Text((index + 1).toString()),
+                                    title: Text(_testScanViewList[index]),
+                                  );
+                                },
                               )),
                     );
                   },
