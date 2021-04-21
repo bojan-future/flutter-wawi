@@ -210,41 +210,66 @@ class _MyHomePageState extends State<MyHomePage> {
               SizedBox(height: 10),
               Expanded(
                 flex: 2,
-                child: FlatButton.icon(
-                  icon: Icon(Mdi.hammerWrench, size: 48),
-                  label:
-                      Text("Produktion-Start", style: TextStyle(fontSize: 24)),
-                  color: Colors.lightGreen[300],
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) => Delivery(
-                                title: "Produktion-Start",
-                                color: (Colors.lightGreen[300])!,
-                              )),
-                    );
-                  },
-                ),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                flex: 2,
-                child: FlatButton.icon(
-                  icon: Icon(Mdi.check, size: 48),
-                  label: Text("Produktion-Abschluss",
-                      style: TextStyle(fontSize: 24)),
-                  color: Colors.green[400],
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) => Delivery(
-                                title: "Produktion-Abschluss",
-                                color: (Colors.green[400])!,
-                              )),
-                    );
-                  },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        child: Column(
+                          children: [
+                            Icon(Mdi.hammerWrench, size: 48),
+                            Text(
+                              "Produktion\nStart",
+                              style: TextStyle(fontSize: 22),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.lightGreen[300],
+                          primary: Colors.black,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) => Delivery(
+                                      title: "Produktion-Start",
+                                      color: (Colors.lightGreen[300])!,
+                                    )),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextButton(
+                        child: Column(
+                          children: [
+                            Icon(Mdi.check, size: 48),
+                            Text(
+                              "Produktion\nAbschluss",
+                              style: TextStyle(fontSize: 22),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.green[400],
+                          primary: Colors.black,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) => Delivery(
+                                      title: "Produktion-Abschluss",
+                                      color: (Colors.green[400])!,
+                                    )),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
