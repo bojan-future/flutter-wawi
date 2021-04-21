@@ -240,6 +240,46 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 ),
               ),
+              SizedBox(height: 10),
+              Expanded(
+                flex: 2,
+                child: FlatButton.icon(
+                  icon: Icon(Mdi.hammerWrench, size: 48),
+                  label:
+                      Text("Produktion-Start", style: TextStyle(fontSize: 24)),
+                  color: Colors.lightGreen[300],
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => Delivery(
+                                title: "Produktion-Start",
+                                color: (Colors.lightGreen[300])!,
+                              )),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                flex: 2,
+                child: FlatButton.icon(
+                  icon: Icon(Mdi.check, size: 48),
+                  label: Text("Produktion-Abschluss",
+                      style: TextStyle(fontSize: 24)),
+                  color: Colors.green[400],
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => Delivery(
+                                title: "Produktion-Abschluss",
+                                color: (Colors.green[400])!,
+                              )),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
