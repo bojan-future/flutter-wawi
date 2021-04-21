@@ -118,8 +118,137 @@ class _MyHomePageState extends State<MyHomePage> {
                       Colors.deepOrange[300]!),
                 ],
               ),
-            ),
-          ]),
+              SizedBox(height: 10),
+              Expanded(
+                flex: 2,
+                child: TextButton.icon(
+                  icon: Icon(Mdi.truckDelivery, size: 48),
+                  label: Text("Auslieferung", style: TextStyle(fontSize: 24)),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.amber,
+                    primary: Colors.black,
+                  ),
+                  onPressed: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          height: 200,
+                          color: Colors.amber[300],
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                const Text('Auftrag Scannen'),
+                                ElevatedButton(
+                                  child: const Icon(Mdi.barcodeScan),
+                                  onPressed: () => Navigator.pop(context),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ).then((value) => Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => Delivery(
+                                    title: "Auslieferung",
+                                    color: (Colors.amber[300])!,
+                                  )),
+                        ));
+                  },
+                ),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                flex: 2,
+                child: TextButton.icon(
+                  icon: Icon(
+                    Mdi.packageVariant,
+                    size: 48,
+                  ),
+                  label: Text("Auspacken", style: TextStyle(fontSize: 24)),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.deepOrangeAccent,
+                    primary: Colors.black,
+                  ),
+                  onPressed: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          height: 200,
+                          color: Colors.deepOrange[300],
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                const Text('Außenpaket Scannen'),
+                                ElevatedButton(
+                                  child: const Icon(Mdi.barcodeScan),
+                                  onPressed: () => Navigator.pop(context),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ).then((value) => Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => Delivery(
+                                    title: "Caddies Scannen",
+                                    color: (Colors.deepOrange[300])!,
+                                  )),
+                        ));
+                  },
+                ),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                flex: 2,
+                child: FlatButton.icon(
+                  icon: Icon(Mdi.hammerWrench, size: 48),
+                  label:
+                      Text("Produktion-Start", style: TextStyle(fontSize: 24)),
+                  color: Colors.lightGreen[300],
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => Delivery(
+                                title: "Produktion-Start",
+                                color: (Colors.lightGreen[300])!,
+                              )),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                flex: 2,
+                child: FlatButton.icon(
+                  icon: Icon(Mdi.check, size: 48),
+                  label: Text("Produktion-Abschluss",
+                      style: TextStyle(fontSize: 24)),
+                  color: Colors.green[400],
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => Delivery(
+                                title: "Produktion-Abschluss",
+                                color: (Colors.green[400])!,
+                              )),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
