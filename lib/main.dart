@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kuda_lager/business_logic/packets_controller.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
-import 'database/database.dart';
+import 'business_logic/packets_controller.dart';
+import 'ui_widgets/drawer.dart';
+import 'ui_widgets/homepage_buttons.dart';
+
+//ignore_for_file: public_member_api_docs
+//ignore_for_file: lines_longer_than_80_chars
 
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
@@ -43,7 +47,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Kuda Lager'),
+      home: MyHomePage(title: 'Test'),
     );
   }
 }
@@ -77,171 +81,48 @@ class _MyHomePageState extends State<MyHomePage> {
     //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    //     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: const <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Kuda Lager Demo',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Mdi.buffer),
-              title: Text('Inventur'),
-            ),
-            ListTile(
-              leading: Icon(Icons.history),
-              title: Text('Historie'),
-            ),
-            ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text('Mitarbeiter'),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Einstellungen'),
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Abmelden'),
-            ),
-          ],
-        ),
-      ),
+      drawer: DrawerWidget(),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: TextButton.icon(
-                  icon: Icon(Mdi.dolly, size: 48),
-                  label: Text("Anlieferung", style: TextStyle(fontSize: 24)),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    primary: Colors.black,
+          child: Column(children: <Widget>[
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Icon, Buttonlabel, Bottomsheet Text, Title, Color, Wrap
+                  TextButtonWidget(Mdi.dolly, "Anlieferung", "", "Anlieferung",
+                      Colors.blue[300]!,
+                      textWrap: false),
+                  SizedBox(height: 10),
+                  TextButtonWidget(
+                    Mdi.truckDelivery,
+                    "Auslieferung",
+                    "Auftrag Scannen",
+                    "Auslieferung",
+                    Colors.amber[300]!,
+                    textWrap: false,
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) => Delivery(
-                                title: "Anlieferung",
-                                color: (Colors.blue[300])!,
-                              )),
-                    );
-                  },
-                ),
+                  SizedBox(height: 10),
+                  TextButtonWidget(
+                      Mdi.packageVariant,
+                      "Auspacken",
+                      "Außenpaket Scannen",
+                      "Caddies Scannen",
+                      Colors.deepOrange[300]!,
+                      textWrap: false),
+                ],
               ),
-              SizedBox(height: 10),
-              Expanded(
-                flex: 2,
-                child: TextButton.icon(
-                  icon: Icon(Mdi.truckDelivery, size: 48),
-                  label: Text("Auslieferung", style: TextStyle(fontSize: 24)),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.amber,
-                    primary: Colors.black,
-                  ),
-                  onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          height: 200,
-                          color: Colors.amber[300],
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                const Text('Auftrag Scannen'),
-                                ElevatedButton(
-                                  child: const Icon(Mdi.barcodeScan),
-                                  onPressed: () => Navigator.pop(context),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ).then((value) => Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => Delivery(
-                                    title: "Auslieferung",
-                                    color: (Colors.amber[300])!,
-                                  )),
-                        ));
-                  },
-                ),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                flex: 2,
-                child: TextButton.icon(
-                  icon: Icon(
-                    Mdi.packageVariant,
-                    size: 48,
-                  ),
-                  label: Text("Auspacken", style: TextStyle(fontSize: 24)),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.deepOrangeAccent,
-                    primary: Colors.black,
-                  ),
-                  onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          height: 200,
-                          color: Colors.deepOrange[300],
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                const Text('Außenpaket Scannen'),
-                                ElevatedButton(
-                                  child: const Icon(Mdi.barcodeScan),
-                                  onPressed: () => Navigator.pop(context),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ).then((value) => Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => Delivery(
-                                    title: "Caddies Scannen",
-                                    color: (Colors.deepOrange[300])!,
-                                  )),
-                        ));
-                  },
-                ),
-              ),
-            ],
-          ),
+            ),
+          ]),
         ),
       ),
     );
@@ -261,12 +142,12 @@ class Delivery extends StatefulWidget {
 
 class _DeliveryState extends State<Delivery> {
   final List<String> _scanList = <String>[];
-  ScrollController _scrollController = new ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   void addItemToList() {
     setState(() {
-      final int nextItemNumber = _scanList.length + 1;
-      _scanList.add("Artikel " + nextItemNumber.toString());
+      final nextItemNumber = _scanList.length + 1;
+      _scanList.add("Artikel $nextItemNumber");
       _scrollController.animateTo(_scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
     });
@@ -282,9 +163,7 @@ class _DeliveryState extends State<Delivery> {
       body: Column(
         children: [
           ElevatedButton(
-            onPressed: () {
-              addItemToList();
-            },
+            onPressed: addItemToList,
             style: ElevatedButton.styleFrom(
               primary: Colors.amber,
               onPrimary: Colors.black,
