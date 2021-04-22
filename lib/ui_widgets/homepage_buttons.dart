@@ -12,29 +12,15 @@ class TextButtonWidget extends StatelessWidget {
   final String bottomSheetText;
   final String title;
   final Color col;
-  final bool textWrap;
 
   const TextButtonWidget(
-      this.icon, this.buttonLabel, this.bottomSheetText, this.title, this.col,
-      {required this.textWrap});
+      this.icon, this.buttonLabel, this.bottomSheetText, this.title, this.col);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: TextButton(
-        child: textWrap
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, size: 48),
-                  Text(
-                    buttonLabel,
-                    style: TextStyle(fontSize: 22),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              )
-            : Row(
+        child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(icon, size: 48),
