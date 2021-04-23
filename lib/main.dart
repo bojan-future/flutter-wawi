@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kuda_lager/business_logic/packets_controller.dart';
-import 'package:kuda_lager/views/scanview.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
-import 'database/database.dart';
+import 'business_logic/packets_controller.dart';
+import 'services/scanner_controller.dart';
+import 'test_helpers/scannercontroller_mock.dart';
+import 'views/scanlistview.dart';
 
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
@@ -14,6 +15,9 @@ void main() {
     providers: [
       Provider<PacketsController>(
         create: (context) => PacketsController(),
+      ),
+      Provider<ScannerController>(
+        create: (context) => ScannerControllerImplMock(['123456789']),
       )
     ],
     child: MyApp(),

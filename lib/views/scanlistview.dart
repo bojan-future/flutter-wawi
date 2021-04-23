@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
+import 'package:provider/provider.dart';
 
 import '../services/scanner_controller.dart';
 
@@ -32,16 +33,17 @@ class ScanListView extends StatefulWidget {
 
 class _ScanListViewState extends State<ScanListView> {
   final ScrollController _scrollController = ScrollController();
-  final ScannerController _scanner = ScannerController();
   final void Function(String) _scanCallback;
 
   _ScanListViewState(this._scanCallback) {
-    _scanner.registerCallback(_scanCallback);
+    var scanner = Provider.of<ScannerController>(context, listen: false);
+    scanner.registerCallback(_scanCallback);
   }
 
   @override
   void dispose() {
-    _scanner.unregisterCallback(_scanCallback);
+    var scanner = Provider.of<ScannerController>(context, listen: false);
+    scanner.unregisterCallback(_scanCallback);
     super.dispose();
   }
 
@@ -64,10 +66,14 @@ class _ScanListViewState extends State<ScanListView> {
             // When the child is tapped, show a snackbar.
             onTapDown: (tapDownDetails) {
               //startScan();
-              _scanner.startScan();
+              var scanner =
+                  Provider.of<ScannerController>(context, listen: false);
+              scanner.startScan();
             },
             onTapUp: (tapUpDetails) {
-              _scanner.stopScan();
+              var scanner =
+                  Provider.of<ScannerController>(context, listen: false);
+              scanner.stopScan();
             },
             child: Container(
                 margin: EdgeInsets.all(8.0),

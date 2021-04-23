@@ -2,16 +2,31 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
-/// scaner service controller
-class ScannerController {
-  static ScannerController? _instance;
+///scanner controller interface
+abstract class ScannerController {
+  ///register callback to be called when any data from scanner arrives
+  void registerCallback(void Function(String) scanCallback) {}
 
-  ScannerController._internal();
+  /// unset callback in order not to receive any scandata
+  void unregisterCallback(void Function(String) scanCallback) {}
+
+  /// turn scanner on
+  void startScan() {}
+
+  /// turn scanner off
+  void stopScan() {}
+}
+
+/// scaner service controller
+class ScannerControllerImplDataWedge implements ScannerController {
+  static ScannerControllerImplDataWedge? _instance;
+
+  ScannerControllerImplDataWedge._internal();
 
   /// singleton factory
-  factory ScannerController() {
+  factory ScannerControllerImplDataWedge() {
     if (_instance == null) {
-      _instance = ScannerController._internal();
+      _instance = ScannerControllerImplDataWedge._internal();
     }
 
     return _instance!;
