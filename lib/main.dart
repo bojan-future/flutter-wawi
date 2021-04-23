@@ -4,15 +4,10 @@ import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
 import 'business_logic/packets_controller.dart';
+import 'services/scanner_controller.dart';
+import 'test_helpers/scannercontroller_mock.dart';
 import 'ui_widgets/drawer.dart';
 import 'ui_widgets/homepage_buttons.dart';
-
-import 'services/scanner_controller.dart';
-//import 'test_helpers/scannercontroller_mock.dart';
-import 'views/scanlistview.dart';
-
-//ignore_for_file: public_member_api_docs
-//ignore_for_file: lines_longer_than_80_chars
 
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
@@ -23,10 +18,11 @@ void main() {
         create: (context) => PacketsController(),
       ),
       Provider<ScannerController>(
-          create: (context) => ScannerControllerImplDataWedge()
-          //use this implementation in Emulator
-          //ScannerControllerImplMock(['123456789', '987654321', 'text']),
-          )
+        //create: (context) => ScannerControllerImplDataWedge()
+        //use this implementation in Emulator
+        create: (context) =>
+            ScannerControllerImplMock(['123456789', '987654321', 'text']),
+      )
     ],
     child: MyApp(),
   ));
@@ -83,9 +79,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  //temp: this list is only used to demonstrate use of ScanView
-  final List<String> _testScanViewList = <String>[];
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -133,7 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+// ignore: public_member_api_docs
 class Delivery extends StatefulWidget {
+  // ignore: public_member_api_docs
   Delivery({Key? key, required this.title, required this.color})
       : super(key: key);
 
