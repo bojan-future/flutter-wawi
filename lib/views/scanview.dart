@@ -3,8 +3,10 @@ import 'package:mdi/mdi.dart';
 
 import '../services/scanner_controller.dart';
 
-class ScanView extends StatefulWidget {
-  ScanView({
+/// ListView with built in scan functionality
+class ScanListView extends StatefulWidget {
+  ///
+  ScanListView({
     Key? key,
     required String title,
     Color color = Colors.blue,
@@ -25,15 +27,15 @@ class ScanView extends StatefulWidget {
   final IndexedWidgetBuilder _itemBuilder;
 
   @override
-  _ScanViewState createState() => _ScanViewState(_onScan);
+  _ScanListViewState createState() => _ScanListViewState(_onScan);
 }
 
-class _ScanViewState extends State<ScanView> {
+class _ScanListViewState extends State<ScanListView> {
   final ScrollController _scrollController = ScrollController();
   final ScannerController _scanner = ScannerController();
   final void Function(String) _scanCallback;
 
-  _ScanViewState(this._scanCallback) {
+  _ScanListViewState(this._scanCallback) {
     _scanner.registerCallback(_scanCallback);
   }
 

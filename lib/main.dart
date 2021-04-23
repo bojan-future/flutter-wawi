@@ -149,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       CupertinoPageRoute(builder: (context) {
                         return StatefulBuilder(
                           //todo: maybe it is not necesary to use StatefulBuilder, if list variable is inside new page
-                          builder: (context, setInnerState) => ScanView(
+                          builder: (context, setInnerState) => ScanListView(
                             title: "Anlieferung",
                             color: (Colors.blue[300])!,
                             onScan: (barcode) {
