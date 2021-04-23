@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kuda_lager/views/scanlistview.dart';
+import '../views/scanlistview.dart';
 
+/// MaterialApp Wrap for the tested widget
 class ScanListViewTestWidgetWrap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -11,24 +12,23 @@ class ScanListViewTestWidgetWrap extends StatelessWidget {
           title: Text('Test'),
         ),
         body: Center(
-          //child: ScanListViewTestWidget(),
-          child: Text('TestScanListView'),
+          child: ScanListViewTestWidget(),
         ),
       ),
     );
   }
 }
 
+///
 class ScanListViewTestWidget extends StatefulWidget {
   @override
   _ScanListViewTestWidgetState createState() => _ScanListViewTestWidgetState();
 }
 
 class _ScanListViewTestWidgetState extends State<ScanListViewTestWidget> {
+  final List<String> _testScanViewList = [];
   @override
   Widget build(BuildContext context) {
-    var _testScanViewList = <String>[];
-
     return Container(
       child: ScanListView(
           title: "TestScanListView",

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'business_logic/packets_controller.dart';
 import 'services/scanner_controller.dart';
-import 'test_helpers/scannercontroller_mock.dart';
+//import 'test_helpers/scannercontroller_mock.dart';
 import 'views/scanlistview.dart';
 
 void main() {
@@ -17,8 +17,10 @@ void main() {
         create: (context) => PacketsController(),
       ),
       Provider<ScannerController>(
-        create: (context) => ScannerControllerImplMock(['123456789']),
-      )
+          create: (context) => ScannerControllerImplDataWedge()
+          //use this implementation in Emulator
+          //ScannerControllerImplMock(['123456789', '987654321', 'text']),
+          )
     ],
     child: MyApp(),
   ));

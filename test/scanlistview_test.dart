@@ -17,4 +17,20 @@ void main() {
 
     expect(find.text('TestScanListView'), findsOneWidget);
   });
+
+  testWidgets('ScanListView ScanOne', (tester) async {
+    await tester.pumpWidget(
+      Provider<ScannerController>(
+        create: (context) => ScannerControllerImplMock(['123456789']),
+        child: ScanListViewTestWidgetWrap(),
+      ),
+    );
+
+    expect(find.text('TestScanListView'), findsOneWidget);
+    await tester.tap(find.byType(GestureDetector));
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(find.text('123456789'), findsOneWidget);
+  });
 }

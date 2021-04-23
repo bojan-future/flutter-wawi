@@ -35,17 +35,7 @@ class _ScanListViewState extends State<ScanListView> {
   final ScrollController _scrollController = ScrollController();
   final void Function(String) _scanCallback;
 
-  _ScanListViewState(this._scanCallback) {
-    var scanner = Provider.of<ScannerController>(context, listen: false);
-    scanner.registerCallback(_scanCallback);
-  }
-
-  @override
-  void dispose() {
-    var scanner = Provider.of<ScannerController>(context, listen: false);
-    scanner.unregisterCallback(_scanCallback);
-    super.dispose();
-  }
+  _ScanListViewState(this._scanCallback);
 
   void onScan(String barcode) {
     setState(() {
@@ -55,6 +45,9 @@ class _ScanListViewState extends State<ScanListView> {
 
   @override
   Widget build(BuildContext context) {
+    var scanner = Provider.of<ScannerController>(context);
+    scanner.registerCallback(_scanCallback);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: widget._color,
@@ -66,13 +59,9 @@ class _ScanListViewState extends State<ScanListView> {
             // When the child is tapped, show a snackbar.
             onTapDown: (tapDownDetails) {
               //startScan();
-              var scanner =
-                  Provider.of<ScannerController>(context, listen: false);
               scanner.startScan();
             },
             onTapUp: (tapUpDetails) {
-              var scanner =
-                  Provider.of<ScannerController>(context, listen: false);
               scanner.stopScan();
             },
             child: Container(
