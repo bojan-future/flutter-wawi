@@ -97,177 +97,43 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(children: <Widget>[
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Icon, Buttonlabel, Bottomsheet Text, Title, Color, Wrap
-                  TextButtonWidget(Mdi.dolly, "Anlieferung", "", "Anlieferung",
-                      Colors.blue[300]!),
-                  SizedBox(height: 10),
-                  TextButtonWidget(Mdi.truckDelivery, "Auslieferung",
-                      "Auftrag Scannen", "Auslieferung", Colors.amber[300]!),
-                  SizedBox(height: 10),
-                  TextButtonWidget(
-                      Mdi.packageVariant,
-                      "Auspacken",
-                      "Außenpaket Scannen",
-                      "Caddies Scannen",
-                      Colors.deepOrange[300]!),
-                ],
-              ),
-              SizedBox(height: 10),
+          child: Column(
+            children: [
               Expanded(
-                flex: 2,
-                child: TextButton.icon(
-                  icon: Icon(Mdi.truckDelivery, size: 48),
-                  label: Text("Auslieferung", style: TextStyle(fontSize: 24)),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.amber,
-                    primary: Colors.black,
-                  ),
-                  onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          height: 200,
-                          color: Colors.amber[300],
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                const Text('Auftrag Scannen'),
-                                ElevatedButton(
-                                  child: const Icon(Mdi.barcodeScan),
-                                  onPressed: () => Navigator.pop(context),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ).then((value) => Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => Delivery(
-                                    title: "Auslieferung",
-                                    color: (Colors.amber[300])!,
-                                  )),
-                        ));
-                  },
-                ),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                flex: 2,
-                child: TextButton.icon(
-                  icon: Icon(
-                    Mdi.packageVariant,
-                    size: 48,
-                  ),
-                  label: Text("Auspacken", style: TextStyle(fontSize: 24)),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.deepOrangeAccent,
-                    primary: Colors.black,
-                  ),
-                  onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          height: 200,
-                          color: Colors.deepOrange[300],
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                const Text('Außenpaket Scannen'),
-                                ElevatedButton(
-                                  child: const Icon(Mdi.barcodeScan),
-                                  onPressed: () => Navigator.pop(context),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ).then((value) => Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => Delivery(
-                                    title: "Caddies Scannen",
-                                    color: (Colors.deepOrange[300])!,
-                                  )),
-                        ));
-                  },
-                ),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                flex: 2,
-                child: Row(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: TextButton(
-                        child: Column(
-                          children: [
-                            Icon(Mdi.hammerWrench, size: 48),
-                            Text(
-                              "Produktion\nStart",
-                              style: TextStyle(fontSize: 22),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.lightGreen[300],
-                          primary: Colors.black,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) => Delivery(
-                                      title: "Produktion-Start",
-                                      color: (Colors.lightGreen[300])!,
-                                    )),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: TextButton(
-                        child: Column(
-                          children: [
-                            Icon(Mdi.check, size: 48),
-                            Text(
-                              "Produktion\nAbschluss",
-                              style: TextStyle(fontSize: 22),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.teal[300],
-                          primary: Colors.black,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) => Delivery(
-                                      title: "Produktion-Abschluss",
-                                      color: (Colors.teal[300])!,
-                                    )),
-                          );
-                        },
-                      ),
+                    // Icon, Buttonlabel, Bottomsheet Text, Title, Color, Wrap
+                    TextButtonWidget(Mdi.dolly, "Anlieferung", "",
+                        "Anlieferung", Colors.blue[300]!),
+                    SizedBox(height: 10),
+                    TextButtonWidget(Mdi.truckDelivery, "Auslieferung",
+                        "Auftrag Scannen", "Auslieferung", Colors.amber[300]!),
+                    SizedBox(height: 10),
+                    TextButtonWidget(
+                        Mdi.packageVariant,
+                        "Auspacken",
+                        "Außenpaket Scannen",
+                        "Caddies Scannen",
+                        Colors.deepOrange[300]!),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        TextButtonWidget(
+                            Mdi.hammerWrench,
+                            "Produktion\nStart",
+                            "Produktionsauftrag Scannen",
+                            "Produktion-Start",
+                            Colors.lightGreen[300]!),
+                        SizedBox(width: 10),
+                        TextButtonWidget(
+                            Mdi.check,
+                            "Produktion\nAbschluss",
+                            "Produktionsauftrag Scannen",
+                            "Produktion-Abschluss",
+                            Colors.teal[300]!),
+                      ],
                     ),
                   ],
                 ),
@@ -311,7 +177,9 @@ class _DeliveryState extends State<Delivery> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: widget.color,
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+        ),
       ),
       body: Column(
         children: [

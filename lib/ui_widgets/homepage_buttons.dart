@@ -21,16 +21,16 @@ class TextButtonWidget extends StatelessWidget {
     return Expanded(
       child: TextButton(
         child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, size: 48),
-                  Text(
-                    buttonLabel,
-                    style: TextStyle(fontSize: 22),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 48),
+            Text(
+              buttonLabel,
+              style: TextStyle(fontSize: 22),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
         style: TextButton.styleFrom(
           backgroundColor: col,
           primary: Colors.black,
@@ -72,7 +72,7 @@ class TextButtonWidget extends StatelessWidget {
                   CupertinoPageRoute(
                       builder: (context) => Delivery(
                             title: title,
-                            color: (Colors.amber[300])!,
+                            color: col,
                           )),
                 ));
           }
