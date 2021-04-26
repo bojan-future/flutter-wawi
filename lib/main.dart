@@ -287,7 +287,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                         ),
                         style: TextButton.styleFrom(
-                          backgroundColor: Colors.green[400],
+                          backgroundColor: Colors.teal[300],
                           primary: Colors.black,
                         ),
                         onPressed: () {
@@ -296,7 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             CupertinoPageRoute(
                                 builder: (context) => Delivery(
                                       title: "Produktion-Abschluss",
-                                      color: (Colors.green[400])!,
+                                      color: (Colors.teal[300])!,
                                     )),
                           );
                         },
