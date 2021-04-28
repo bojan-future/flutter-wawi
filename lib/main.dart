@@ -18,11 +18,11 @@ void main() {
         create: (context) => PacketsController(),
       ),
       Provider<ScannerController>(
-        //create: (context) => ScannerControllerImplDataWedge()
-        //use this implementation in Emulator
-        create: (context) =>
-            ScannerControllerImplMock(['123456789', '987654321', 'text']),
-      )
+          create: (context) => ScannerControllerImplDataWedge()
+          //use this implementation in Emulator
+          //create: (context) =>
+          //ScannerControllerImplMock(['123456789', '987654321', 'text']),
+          )
     ],
     child: MyApp(),
   ));
@@ -104,18 +104,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Icon, Buttonlabel, Bottomsheet Text, Title, Color, Wrap
-                  TextButtonWidget(Mdi.dolly, "Anlieferung", "", "Anlieferung",
-                      Colors.blue[300]!),
+                  TextButtonWidget(Mdi.dolly, "Anlieferung", null,
+                      "Anlieferung", Colors.blue[300]!, null),
                   SizedBox(height: 10),
-                  TextButtonWidget(Mdi.truckDelivery, "Auslieferung",
-                      "Auftrag Scannen", "Auslieferung", Colors.amber[300]!),
+                  TextButtonWidget(
+                      Mdi.truckDelivery,
+                      "Auslieferung",
+                      "Auftrag Scannen",
+                      "Auslieferung",
+                      Colors.amber[300]!, (barcode) {
+                    return barcode.isNotEmpty;
+                  }),
                   SizedBox(height: 10),
                   TextButtonWidget(
                       Mdi.packageVariant,
                       "Auspacken",
                       "Außenpaket Scannen",
                       "Caddies Scannen",
-                      Colors.deepOrange[300]!),
+                      Colors.deepOrange[300]!, (barcode) {
+                    return barcode.isNotEmpty;
+                  }),
                 ],
               ),
             ),
