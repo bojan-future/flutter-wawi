@@ -10,8 +10,13 @@ import '../main.dart';
 import '../services/scanner_controller.dart';
 
 // ignore: public_member_api_docs
-void scanPopup(String popupText, String title, Color popupColor,
-    void Function(String) scanCallback, BuildContext context) {
+
+void scanPopup(
+    {required String popupText,
+    required String title,
+    Color popupColor = Colors.amber,
+    required void Function(String) scanCallback,
+    required BuildContext context}) {
   showModalBottomSheet<void>(
       context: context,
       builder: (context) {

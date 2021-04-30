@@ -52,13 +52,18 @@ class TextButtonWidget extends StatelessWidget {
           if (bottomSheetText == null || onScanBottomSheet == null) {
             openListView(context);
           } else {
-            scanPopup(bottomSheetText!, title, col, (barcode) {
-              var openListDialog = onScanBottomSheet!(barcode);
-              if (openListDialog) {
-                openListView(context);
-              }
-              //todo - close popup
-            }, context);
+            scanPopup(
+                popupText: bottomSheetText!,
+                title: title,
+                popupColor: col,
+                scanCallback: (barcode) {
+                  var openListDialog = onScanBottomSheet!(barcode);
+                  if (openListDialog) {
+                    Navigator.pop(context);
+                    openListView(context);
+                  }
+                },
+                context: context);
           }
         },
       ),
