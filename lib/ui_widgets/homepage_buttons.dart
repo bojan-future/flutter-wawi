@@ -2,35 +2,41 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 
-import '../main.dart';
-
 // ignore_for_file: public_member_api_docs
 
 class TextButtonWidget extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
   final String buttonLabel;
   final String bottomSheetText;
   final String title;
   final Color col;
+  final Widget listScreenSelect;
+  final void Function()? onOpen;
 
-  const TextButtonWidget(
-      this.icon, this.buttonLabel, this.bottomSheetText, this.title, this.col);
+  const TextButtonWidget({
+      required this.icon,
+      required this.buttonLabel,
+      required this.bottomSheetText,
+      required this.title,
+      required this.col,
+      required this.listScreenSelect,
+      required this.onOpen});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: TextButton(
         child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, size: 48),
-                  Text(
-                    buttonLabel,
-                    style: TextStyle(fontSize: 22),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 48),
+            Text(
+              buttonLabel,
+              style: TextStyle(fontSize: 22),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
         style: TextButton.styleFrom(
           backgroundColor: col,
           primary: Colors.black,
@@ -39,11 +45,7 @@ class TextButtonWidget extends StatelessWidget {
           if (bottomSheetText.isEmpty) {
             Navigator.push(
               context,
-              CupertinoPageRoute(
-                  builder: (context) => Delivery(
-                        title: title,
-                        color: col,
-                      )),
+              buildCupertinoPageRoute(),
             );
           } else {
             showModalBottomSheet<void>(
@@ -69,15 +71,18 @@ class TextButtonWidget extends StatelessWidget {
               },
             ).then((value) => Navigator.push(
                   context,
-                  CupertinoPageRoute(
-                      builder: (context) => Delivery(
-                            title: title,
-                            color: (Colors.amber[300])!,
-                          )),
+                  buildCupertinoPageRoute(),
                 ));
           }
         },
       ),
+    );
+  }
+
+  CupertinoPageRoute buildCupertinoPageRoute() {
+    onOpen!.call();
+    return CupertinoPageRoute(
+      builder: (context) => listScreenSelect,
     );
   }
 }

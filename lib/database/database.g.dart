@@ -1484,6 +1484,419 @@ class $ProductionResultsTable extends ProductionResults
   }
 }
 
+class Delivery extends DataClass implements Insertable<Delivery> {
+  /// primary key
+  final int id;
+
+  /// delivery number
+  final String deliveryNr;
+  Delivery({required this.id, required this.deliveryNr});
+  factory Delivery.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return Delivery(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      deliveryNr: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}delivery_nr'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['delivery_nr'] = Variable<String>(deliveryNr);
+    return map;
+  }
+
+  DeliveriesCompanion toCompanion(bool nullToAbsent) {
+    return DeliveriesCompanion(
+      id: Value(id),
+      deliveryNr: Value(deliveryNr),
+    );
+  }
+
+  factory Delivery.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Delivery(
+      id: serializer.fromJson<int>(json['id']),
+      deliveryNr: serializer.fromJson<String>(json['deliveryNr']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'deliveryNr': serializer.toJson<String>(deliveryNr),
+    };
+  }
+
+  Delivery copyWith({int? id, String? deliveryNr}) => Delivery(
+        id: id ?? this.id,
+        deliveryNr: deliveryNr ?? this.deliveryNr,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Delivery(')
+          ..write('id: $id, ')
+          ..write('deliveryNr: $deliveryNr')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(id.hashCode, deliveryNr.hashCode));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is Delivery &&
+          other.id == this.id &&
+          other.deliveryNr == this.deliveryNr);
+}
+
+class DeliveriesCompanion extends UpdateCompanion<Delivery> {
+  final Value<int> id;
+  final Value<String> deliveryNr;
+  const DeliveriesCompanion({
+    this.id = const Value.absent(),
+    this.deliveryNr = const Value.absent(),
+  });
+  DeliveriesCompanion.insert({
+    this.id = const Value.absent(),
+    required String deliveryNr,
+  }) : deliveryNr = Value(deliveryNr);
+  static Insertable<Delivery> custom({
+    Expression<int>? id,
+    Expression<String>? deliveryNr,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (deliveryNr != null) 'delivery_nr': deliveryNr,
+    });
+  }
+
+  DeliveriesCompanion copyWith({Value<int>? id, Value<String>? deliveryNr}) {
+    return DeliveriesCompanion(
+      id: id ?? this.id,
+      deliveryNr: deliveryNr ?? this.deliveryNr,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (deliveryNr.present) {
+      map['delivery_nr'] = Variable<String>(deliveryNr.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DeliveriesCompanion(')
+          ..write('id: $id, ')
+          ..write('deliveryNr: $deliveryNr')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DeliveriesTable extends Deliveries
+    with TableInfo<$DeliveriesTable, Delivery> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $DeliveriesTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedIntColumn id = _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _deliveryNrMeta = const VerificationMeta('deliveryNr');
+  @override
+  late final GeneratedTextColumn deliveryNr = _constructDeliveryNr();
+  GeneratedTextColumn _constructDeliveryNr() {
+    return GeneratedTextColumn(
+      'delivery_nr',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, deliveryNr];
+  @override
+  $DeliveriesTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'deliveries';
+  @override
+  final String actualTableName = 'deliveries';
+  @override
+  VerificationContext validateIntegrity(Insertable<Delivery> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('delivery_nr')) {
+      context.handle(
+          _deliveryNrMeta,
+          deliveryNr.isAcceptableOrUnknown(
+              data['delivery_nr']!, _deliveryNrMeta));
+    } else if (isInserting) {
+      context.missing(_deliveryNrMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Delivery map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Delivery.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $DeliveriesTable createAlias(String alias) {
+    return $DeliveriesTable(_db, alias);
+  }
+}
+
+class DeliveryPosition extends DataClass
+    implements Insertable<DeliveryPosition> {
+  /// primary key
+  final int id;
+
+  /// foreign key -> delivery
+  final int delivery;
+
+  /// foreign key -> packets
+  final int packet;
+  DeliveryPosition(
+      {required this.id, required this.delivery, required this.packet});
+  factory DeliveryPosition.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    return DeliveryPosition(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      delivery:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}delivery'])!,
+      packet:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['delivery'] = Variable<int>(delivery);
+    map['packet'] = Variable<int>(packet);
+    return map;
+  }
+
+  DeliveryPositionsCompanion toCompanion(bool nullToAbsent) {
+    return DeliveryPositionsCompanion(
+      id: Value(id),
+      delivery: Value(delivery),
+      packet: Value(packet),
+    );
+  }
+
+  factory DeliveryPosition.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return DeliveryPosition(
+      id: serializer.fromJson<int>(json['id']),
+      delivery: serializer.fromJson<int>(json['delivery']),
+      packet: serializer.fromJson<int>(json['packet']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'delivery': serializer.toJson<int>(delivery),
+      'packet': serializer.toJson<int>(packet),
+    };
+  }
+
+  DeliveryPosition copyWith({int? id, int? delivery, int? packet}) =>
+      DeliveryPosition(
+        id: id ?? this.id,
+        delivery: delivery ?? this.delivery,
+        packet: packet ?? this.packet,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('DeliveryPosition(')
+          ..write('id: $id, ')
+          ..write('delivery: $delivery, ')
+          ..write('packet: $packet')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(delivery.hashCode, packet.hashCode)));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is DeliveryPosition &&
+          other.id == this.id &&
+          other.delivery == this.delivery &&
+          other.packet == this.packet);
+}
+
+class DeliveryPositionsCompanion extends UpdateCompanion<DeliveryPosition> {
+  final Value<int> id;
+  final Value<int> delivery;
+  final Value<int> packet;
+  const DeliveryPositionsCompanion({
+    this.id = const Value.absent(),
+    this.delivery = const Value.absent(),
+    this.packet = const Value.absent(),
+  });
+  DeliveryPositionsCompanion.insert({
+    this.id = const Value.absent(),
+    required int delivery,
+    required int packet,
+  })   : delivery = Value(delivery),
+        packet = Value(packet);
+  static Insertable<DeliveryPosition> custom({
+    Expression<int>? id,
+    Expression<int>? delivery,
+    Expression<int>? packet,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (delivery != null) 'delivery': delivery,
+      if (packet != null) 'packet': packet,
+    });
+  }
+
+  DeliveryPositionsCompanion copyWith(
+      {Value<int>? id, Value<int>? delivery, Value<int>? packet}) {
+    return DeliveryPositionsCompanion(
+      id: id ?? this.id,
+      delivery: delivery ?? this.delivery,
+      packet: packet ?? this.packet,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (delivery.present) {
+      map['delivery'] = Variable<int>(delivery.value);
+    }
+    if (packet.present) {
+      map['packet'] = Variable<int>(packet.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DeliveryPositionsCompanion(')
+          ..write('id: $id, ')
+          ..write('delivery: $delivery, ')
+          ..write('packet: $packet')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DeliveryPositionsTable extends DeliveryPositions
+    with TableInfo<$DeliveryPositionsTable, DeliveryPosition> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $DeliveryPositionsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedIntColumn id = _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _deliveryMeta = const VerificationMeta('delivery');
+  @override
+  late final GeneratedIntColumn delivery = _constructDelivery();
+  GeneratedIntColumn _constructDelivery() {
+    return GeneratedIntColumn('delivery', $tableName, false,
+        $customConstraints: 'REFERENCES deliveries(id)');
+  }
+
+  final VerificationMeta _packetMeta = const VerificationMeta('packet');
+  @override
+  late final GeneratedIntColumn packet = _constructPacket();
+  GeneratedIntColumn _constructPacket() {
+    return GeneratedIntColumn('packet', $tableName, false,
+        $customConstraints: 'REFERENCES packets(id)');
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, delivery, packet];
+  @override
+  $DeliveryPositionsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'delivery_positions';
+  @override
+  final String actualTableName = 'delivery_positions';
+  @override
+  VerificationContext validateIntegrity(Insertable<DeliveryPosition> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('delivery')) {
+      context.handle(_deliveryMeta,
+          delivery.isAcceptableOrUnknown(data['delivery']!, _deliveryMeta));
+    } else if (isInserting) {
+      context.missing(_deliveryMeta);
+    }
+    if (data.containsKey('packet')) {
+      context.handle(_packetMeta,
+          packet.isAcceptableOrUnknown(data['packet']!, _packetMeta));
+    } else if (isInserting) {
+      context.missing(_packetMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DeliveryPosition map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return DeliveryPosition.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $DeliveryPositionsTable createAlias(String alias) {
+    return $DeliveryPositionsTable(_db, alias);
+  }
+}
+
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   late final $PacketsTable packets = $PacketsTable(this);
@@ -1496,10 +1909,16 @@ abstract class _$Database extends GeneratedDatabase {
       $ProductionMaterialsTable(this);
   late final $ProductionResultsTable productionResults =
       $ProductionResultsTable(this);
+  late final $DeliveriesTable deliveries = $DeliveriesTable(this);
+  late final $DeliveryPositionsTable deliveryPositions =
+      $DeliveryPositionsTable(this);
   late final PacketsDao packetsDao = PacketsDao(this as Database);
   late final ProductsDao productsDao = ProductsDao(this as Database);
   late final OrdersDao ordersDao = OrdersDao(this as Database);
   late final ProductionDao productionDao = ProductionDao(this as Database);
+  late final DeliveriesDao deliveriesDao = DeliveriesDao(this as Database);
+  late final DeliveryPositionsDao deliveryPositionsDao =
+      DeliveryPositionsDao(this as Database);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
@@ -1510,6 +1929,8 @@ abstract class _$Database extends GeneratedDatabase {
         orderPositions,
         productionOrders,
         productionMaterials,
-        productionResults
+        productionResults,
+        deliveries,
+        deliveryPositions
       ];
 }

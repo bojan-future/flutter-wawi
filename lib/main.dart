@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
+import 'business_logic/delivery_controller.dart';
 import 'business_logic/packets_controller.dart';
+import 'database/database.dart';
 import 'services/scanner_controller.dart';
 import 'test_helpers/scannercontroller_mock.dart';
 import 'ui_widgets/drawer.dart';
 import 'ui_widgets/homepage_buttons.dart';
+import 'views/scanlistview.dart';
 
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
@@ -17,11 +20,17 @@ void main() {
       Provider<PacketsController>(
         create: (context) => PacketsController(),
       ),
+      Provider<DeliveryController>(
+        create: (context) => DeliveryController(),
+      ),
       Provider<ScannerController>(
         //create: (context) => ScannerControllerImplDataWedge()
         //use this implementation in Emulator
-        create: (context) =>
-            ScannerControllerImplMock(['123456789', '987654321', 'text']),
+        create: (context) => ScannerControllerImplMock([
+          '1234567890123456789012345678901234',
+          '1234567890123456789012345678901234',
+          '1234567890123456789012345678901234'
+        ]),
       )
     ],
     child: MyApp(),
@@ -79,6 +88,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<Packet> scanViewList = <Packet>[];
+  int actualDeliveryId = 0;
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -103,86 +115,95 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Icon, Buttonlabel, Bottomsheet Text, Title, Color, Wrap
-                  TextButtonWidget(Mdi.dolly, "Anlieferung", "", "Anlieferung",
-                      Colors.blue[300]!),
-                  SizedBox(height: 10),
-                  TextButtonWidget(Mdi.truckDelivery, "Auslieferung",
-                      "Auftrag Scannen", "Auslieferung", Colors.amber[300]!),
+                  TextButtonWidget(
+                    icon: Mdi.dolly,
+                    buttonLabel: "Anlieferung",
+                    bottomSheetText: "",
+                    title: "Anlieferung",
+                    col: Colors.blue[300]!,
+                    onOpen: () async {
+                      //scanViewList = <Packet>[];
+                      var deliveryController = Provider.of<DeliveryController>(
+                          context,
+                          listen: false);
+                      actualDeliveryId = await deliveryController.addDelivery();
+                    },
+                    listScreenSelect: ScanListView(
+                      title: 'Delivery',
+                      onScan: (barcode) async {
+                        var deliveryController =
+                            Provider.of<DeliveryController>(context,
+                                listen: false);
+                        var packetsController = Provider.of<PacketsController>(
+                            context,
+                            listen: false);
+
+                        var deliveryPositionID = await deliveryController
+                            .addDeliveryPosition(barcode, actualDeliveryId);
+
+                        var deliveryPosition = await deliveryController
+                            .getDeliveryPosition(deliveryPositionID);
+
+                        var packetID = deliveryPosition.packet;
+
+                        var packet =
+                            await packetsController.getPacketWithId(packetID);
+
+                        setState(() {
+                          scanViewList.add(packet);
+                        });
+                      },
+                      itemCount: scanViewList.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: Text((index + 1).toString()),
+                          title:
+                              Text("Barcode:\n${scanViewList[index].barcode}\n"
+                                  "Trace: ${scanViewList[index].lot}\n"
+                                  "Quantity: ${scanViewList[index].quantity} "),
+                        );
+                      },
+                    ),
+                  ),
                   SizedBox(height: 10),
                   TextButtonWidget(
-                      Mdi.packageVariant,
-                      "Auspacken",
-                      "Außenpaket Scannen",
-                      "Caddies Scannen",
-                      Colors.deepOrange[300]!),
+                    icon: Mdi.truckDelivery,
+                    buttonLabel: "Auslieferung",
+                    bottomSheetText: "Auftrag Scannen",
+                    title: "Auslieferung",
+                    col: Colors.amber[300]!,
+                    listScreenSelect: ScanListView(
+                      title: 'Delivery',
+                      onScan: (barcode) {},
+                      itemCount: 1,
+                      itemBuilder: (context, index) {
+                        return ListTile();
+                      },
+                    ),
+                    onOpen: () async {},
+                  ),
+                  SizedBox(height: 10),
+                  TextButtonWidget(
+                    icon: Mdi.packageVariant,
+                    buttonLabel: "Auspacken",
+                    bottomSheetText: "Außenpaket Scannen",
+                    title: "Caddies Scannen",
+                    col: Colors.deepOrange[300]!,
+                    listScreenSelect: ScanListView(
+                      title: 'Delivery',
+                      onScan: (barcode) {},
+                      itemCount: 1,
+                      itemBuilder: (context, index) {
+                        return ListTile();
+                      },
+                    ),
+                    onOpen: () async {},
+                  ),
                 ],
               ),
             ),
           ]),
         ),
-      ),
-    );
-  }
-}
-
-// ignore: public_member_api_docs
-class Delivery extends StatefulWidget {
-  // ignore: public_member_api_docs
-  Delivery({Key? key, required this.title, required this.color})
-      : super(key: key);
-
-  final String title;
-  final Color color;
-
-  @override
-  _DeliveryState createState() => _DeliveryState();
-}
-
-class _DeliveryState extends State<Delivery> {
-  final List<String> _scanList = <String>[];
-  final ScrollController _scrollController = ScrollController();
-
-  void addItemToList() {
-    setState(() {
-      final nextItemNumber = _scanList.length + 1;
-      _scanList.add("Artikel $nextItemNumber");
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: widget.color,
-        title: Text(widget.title),
-      ),
-      body: Column(
-        children: [
-          ElevatedButton(
-            onPressed: addItemToList,
-            style: ElevatedButton.styleFrom(
-              primary: Colors.amber,
-              onPrimary: Colors.black,
-            ),
-            child: Icon(Mdi.barcodeScan),
-          ),
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              shrinkWrap: true,
-              itemCount: _scanList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: Text((index + 1).toString()),
-                  title: Text(_scanList[index]),
-                );
-              },
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -5,17 +5,7 @@ import '../views/scanlistview.dart';
 class ScanListViewTestWidgetWrap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Test',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Test'),
-        ),
-        body: Center(
-          child: ScanListViewTestWidget(),
-        ),
-      ),
-    );
+    return ScanListViewTestWidget();
   }
 }
 
@@ -27,6 +17,7 @@ class ScanListViewTestWidget extends StatefulWidget {
 
 class _ScanListViewTestWidgetState extends State<ScanListViewTestWidget> {
   final List<String> _testScanViewList = [];
+
   @override
   Widget build(BuildContext context) {
     return Container(

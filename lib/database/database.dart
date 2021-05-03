@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
-import 'package:kuda_lager/database/orders_dao.dart';
-import 'package:kuda_lager/database/products_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
+import 'deliveries_dao.dart';
+import 'deliverypositions_dao.dart';
+import 'orders_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
+import 'products_dao.dart';
 
 part 'database.g.dart';
 
@@ -66,6 +68,34 @@ class OrderPositions extends Table {
 
   /// foreign key -> order
   IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
+}
+
+@DataClassName('Delivery')
+
+/// represents a delivery, has many positions
+class Deliveries extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// delivery number
+  TextColumn get deliveryNr => text()();
+}
+
+@DataClassName('DeliveryPosition')
+
+/// one position in a delivery
+class DeliveryPositions extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// foreign key -> delivery
+  IntColumn get delivery =>
+      integer().customConstraint('REFERENCES deliveries(id)')();
+
+  /// foreign key -> packets
+  IntColumn get packet =>
+      integer().customConstraint('REFERENCES packets(id)')();
+
 }
 
 @DataClassName('ProductionOrder')
@@ -140,11 +170,15 @@ class DatabaseFactory {
   ProductionOrders,
   ProductionMaterials,
   ProductionResults,
+  Deliveries,
+  DeliveryPositions,
 ], daos: [
   PacketsDao,
   ProductsDao,
   OrdersDao,
   ProductionDao,
+  DeliveriesDao,
+  DeliveryPositionsDao,
 ])
 
 /// Main database

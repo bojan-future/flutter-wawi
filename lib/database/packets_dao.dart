@@ -27,7 +27,7 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
   }
 
   /// watcher for packet with given id
-  Stream<Packet> watchPacketWithId(int id) {
-    return (select(packets)..where((p) => p.id.equals(id))).watchSingle();
+  Future<Packet> getPacketWithId(int id) {
+    return (select(packets)..where((p) => p.id.equals(id))).getSingle();
   }
 }

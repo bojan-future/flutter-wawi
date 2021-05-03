@@ -28,7 +28,7 @@ void main() {
       product: Value(testProduct.id),
     ));
 
-    final packet = await database!.packetsDao.watchPacketWithId(id).first;
+    final packet = await database!.packetsDao.getPacketWithId(id);
 
     expect(packet.barcode, testBarcode);
     expect(packet.product, testProduct.id);

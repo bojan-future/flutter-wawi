@@ -37,12 +37,6 @@ class _ScanListViewState extends State<ScanListView> {
 
   _ScanListViewState(this._scanCallback);
 
-  void onScan(String barcode) {
-    setState(() {
-      widget._onScan(barcode);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     var scanner = Provider.of<ScannerController>(context);
@@ -60,6 +54,9 @@ class _ScanListViewState extends State<ScanListView> {
             onTapDown: (tapDownDetails) {
               //startScan();
               scanner.startScan();
+              setState(() {
+
+              });
             },
             onTapUp: (tapUpDetails) {
               scanner.stopScan();
