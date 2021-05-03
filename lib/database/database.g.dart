@@ -381,7 +381,29 @@ class Product extends DataClass implements Insertable<Product> {
 
   /// product number
   final String productNr;
-  Product({required this.id, required this.productNr});
+
+  /// gtin 1
+  final int gtin1;
+
+  /// gtin 2
+  final int gtin2;
+
+  /// gtin 3
+  final int gtin3;
+
+  /// gtin 4
+  final int gtin4;
+
+  /// gtin 5
+  final int gtin5;
+  Product(
+      {required this.id,
+      required this.productNr,
+      required this.gtin1,
+      required this.gtin2,
+      required this.gtin3,
+      required this.gtin4,
+      required this.gtin5});
   factory Product.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -391,6 +413,11 @@ class Product extends DataClass implements Insertable<Product> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       productNr: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}product_nr'])!,
+      gtin1: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin1'])!,
+      gtin2: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin2'])!,
+      gtin3: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin3'])!,
+      gtin4: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin4'])!,
+      gtin5: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin5'])!,
     );
   }
   @override
@@ -398,6 +425,11 @@ class Product extends DataClass implements Insertable<Product> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['product_nr'] = Variable<String>(productNr);
+    map['gtin1'] = Variable<int>(gtin1);
+    map['gtin2'] = Variable<int>(gtin2);
+    map['gtin3'] = Variable<int>(gtin3);
+    map['gtin4'] = Variable<int>(gtin4);
+    map['gtin5'] = Variable<int>(gtin5);
     return map;
   }
 
@@ -405,6 +437,11 @@ class Product extends DataClass implements Insertable<Product> {
     return ProductsCompanion(
       id: Value(id),
       productNr: Value(productNr),
+      gtin1: Value(gtin1),
+      gtin2: Value(gtin2),
+      gtin3: Value(gtin3),
+      gtin4: Value(gtin4),
+      gtin5: Value(gtin5),
     );
   }
 
@@ -414,6 +451,11 @@ class Product extends DataClass implements Insertable<Product> {
     return Product(
       id: serializer.fromJson<int>(json['id']),
       productNr: serializer.fromJson<String>(json['productNr']),
+      gtin1: serializer.fromJson<int>(json['gtin1']),
+      gtin2: serializer.fromJson<int>(json['gtin2']),
+      gtin3: serializer.fromJson<int>(json['gtin3']),
+      gtin4: serializer.fromJson<int>(json['gtin4']),
+      gtin5: serializer.fromJson<int>(json['gtin5']),
     );
   }
   @override
@@ -422,57 +464,136 @@ class Product extends DataClass implements Insertable<Product> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'productNr': serializer.toJson<String>(productNr),
+      'gtin1': serializer.toJson<int>(gtin1),
+      'gtin2': serializer.toJson<int>(gtin2),
+      'gtin3': serializer.toJson<int>(gtin3),
+      'gtin4': serializer.toJson<int>(gtin4),
+      'gtin5': serializer.toJson<int>(gtin5),
     };
   }
 
-  Product copyWith({int? id, String? productNr}) => Product(
+  Product copyWith(
+          {int? id,
+          String? productNr,
+          int? gtin1,
+          int? gtin2,
+          int? gtin3,
+          int? gtin4,
+          int? gtin5}) =>
+      Product(
         id: id ?? this.id,
         productNr: productNr ?? this.productNr,
+        gtin1: gtin1 ?? this.gtin1,
+        gtin2: gtin2 ?? this.gtin2,
+        gtin3: gtin3 ?? this.gtin3,
+        gtin4: gtin4 ?? this.gtin4,
+        gtin5: gtin5 ?? this.gtin5,
       );
   @override
   String toString() {
     return (StringBuffer('Product(')
           ..write('id: $id, ')
-          ..write('productNr: $productNr')
+          ..write('productNr: $productNr, ')
+          ..write('gtin1: $gtin1, ')
+          ..write('gtin2: $gtin2, ')
+          ..write('gtin3: $gtin3, ')
+          ..write('gtin4: $gtin4, ')
+          ..write('gtin5: $gtin5')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, productNr.hashCode));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(
+          productNr.hashCode,
+          $mrjc(
+              gtin1.hashCode,
+              $mrjc(
+                  gtin2.hashCode,
+                  $mrjc(gtin3.hashCode,
+                      $mrjc(gtin4.hashCode, gtin5.hashCode)))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Product &&
           other.id == this.id &&
-          other.productNr == this.productNr);
+          other.productNr == this.productNr &&
+          other.gtin1 == this.gtin1 &&
+          other.gtin2 == this.gtin2 &&
+          other.gtin3 == this.gtin3 &&
+          other.gtin4 == this.gtin4 &&
+          other.gtin5 == this.gtin5);
 }
 
 class ProductsCompanion extends UpdateCompanion<Product> {
   final Value<int> id;
   final Value<String> productNr;
+  final Value<int> gtin1;
+  final Value<int> gtin2;
+  final Value<int> gtin3;
+  final Value<int> gtin4;
+  final Value<int> gtin5;
   const ProductsCompanion({
     this.id = const Value.absent(),
     this.productNr = const Value.absent(),
+    this.gtin1 = const Value.absent(),
+    this.gtin2 = const Value.absent(),
+    this.gtin3 = const Value.absent(),
+    this.gtin4 = const Value.absent(),
+    this.gtin5 = const Value.absent(),
   });
   ProductsCompanion.insert({
     this.id = const Value.absent(),
     required String productNr,
-  }) : productNr = Value(productNr);
+    required int gtin1,
+    required int gtin2,
+    required int gtin3,
+    required int gtin4,
+    required int gtin5,
+  })   : productNr = Value(productNr),
+        gtin1 = Value(gtin1),
+        gtin2 = Value(gtin2),
+        gtin3 = Value(gtin3),
+        gtin4 = Value(gtin4),
+        gtin5 = Value(gtin5);
   static Insertable<Product> custom({
     Expression<int>? id,
     Expression<String>? productNr,
+    Expression<int>? gtin1,
+    Expression<int>? gtin2,
+    Expression<int>? gtin3,
+    Expression<int>? gtin4,
+    Expression<int>? gtin5,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (productNr != null) 'product_nr': productNr,
+      if (gtin1 != null) 'gtin1': gtin1,
+      if (gtin2 != null) 'gtin2': gtin2,
+      if (gtin3 != null) 'gtin3': gtin3,
+      if (gtin4 != null) 'gtin4': gtin4,
+      if (gtin5 != null) 'gtin5': gtin5,
     });
   }
 
-  ProductsCompanion copyWith({Value<int>? id, Value<String>? productNr}) {
+  ProductsCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? productNr,
+      Value<int>? gtin1,
+      Value<int>? gtin2,
+      Value<int>? gtin3,
+      Value<int>? gtin4,
+      Value<int>? gtin5}) {
     return ProductsCompanion(
       id: id ?? this.id,
       productNr: productNr ?? this.productNr,
+      gtin1: gtin1 ?? this.gtin1,
+      gtin2: gtin2 ?? this.gtin2,
+      gtin3: gtin3 ?? this.gtin3,
+      gtin4: gtin4 ?? this.gtin4,
+      gtin5: gtin5 ?? this.gtin5,
     );
   }
 
@@ -485,6 +606,21 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     if (productNr.present) {
       map['product_nr'] = Variable<String>(productNr.value);
     }
+    if (gtin1.present) {
+      map['gtin1'] = Variable<int>(gtin1.value);
+    }
+    if (gtin2.present) {
+      map['gtin2'] = Variable<int>(gtin2.value);
+    }
+    if (gtin3.present) {
+      map['gtin3'] = Variable<int>(gtin3.value);
+    }
+    if (gtin4.present) {
+      map['gtin4'] = Variable<int>(gtin4.value);
+    }
+    if (gtin5.present) {
+      map['gtin5'] = Variable<int>(gtin5.value);
+    }
     return map;
   }
 
@@ -492,7 +628,12 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   String toString() {
     return (StringBuffer('ProductsCompanion(')
           ..write('id: $id, ')
-          ..write('productNr: $productNr')
+          ..write('productNr: $productNr, ')
+          ..write('gtin1: $gtin1, ')
+          ..write('gtin2: $gtin2, ')
+          ..write('gtin3: $gtin3, ')
+          ..write('gtin4: $gtin4, ')
+          ..write('gtin5: $gtin5')
           ..write(')'))
         .toString();
   }
@@ -521,8 +662,64 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     );
   }
 
+  final VerificationMeta _gtin1Meta = const VerificationMeta('gtin1');
   @override
-  List<GeneratedColumn> get $columns => [id, productNr];
+  late final GeneratedIntColumn gtin1 = _constructGtin1();
+  GeneratedIntColumn _constructGtin1() {
+    return GeneratedIntColumn(
+      'gtin1',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _gtin2Meta = const VerificationMeta('gtin2');
+  @override
+  late final GeneratedIntColumn gtin2 = _constructGtin2();
+  GeneratedIntColumn _constructGtin2() {
+    return GeneratedIntColumn(
+      'gtin2',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _gtin3Meta = const VerificationMeta('gtin3');
+  @override
+  late final GeneratedIntColumn gtin3 = _constructGtin3();
+  GeneratedIntColumn _constructGtin3() {
+    return GeneratedIntColumn(
+      'gtin3',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _gtin4Meta = const VerificationMeta('gtin4');
+  @override
+  late final GeneratedIntColumn gtin4 = _constructGtin4();
+  GeneratedIntColumn _constructGtin4() {
+    return GeneratedIntColumn(
+      'gtin4',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _gtin5Meta = const VerificationMeta('gtin5');
+  @override
+  late final GeneratedIntColumn gtin5 = _constructGtin5();
+  GeneratedIntColumn _constructGtin5() {
+    return GeneratedIntColumn(
+      'gtin5',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, productNr, gtin1, gtin2, gtin3, gtin4, gtin5];
   @override
   $ProductsTable get asDslTable => this;
   @override
@@ -542,6 +739,36 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
           productNr.isAcceptableOrUnknown(data['product_nr']!, _productNrMeta));
     } else if (isInserting) {
       context.missing(_productNrMeta);
+    }
+    if (data.containsKey('gtin1')) {
+      context.handle(
+          _gtin1Meta, gtin1.isAcceptableOrUnknown(data['gtin1']!, _gtin1Meta));
+    } else if (isInserting) {
+      context.missing(_gtin1Meta);
+    }
+    if (data.containsKey('gtin2')) {
+      context.handle(
+          _gtin2Meta, gtin2.isAcceptableOrUnknown(data['gtin2']!, _gtin2Meta));
+    } else if (isInserting) {
+      context.missing(_gtin2Meta);
+    }
+    if (data.containsKey('gtin3')) {
+      context.handle(
+          _gtin3Meta, gtin3.isAcceptableOrUnknown(data['gtin3']!, _gtin3Meta));
+    } else if (isInserting) {
+      context.missing(_gtin3Meta);
+    }
+    if (data.containsKey('gtin4')) {
+      context.handle(
+          _gtin4Meta, gtin4.isAcceptableOrUnknown(data['gtin4']!, _gtin4Meta));
+    } else if (isInserting) {
+      context.missing(_gtin4Meta);
+    }
+    if (data.containsKey('gtin5')) {
+      context.handle(
+          _gtin5Meta, gtin5.isAcceptableOrUnknown(data['gtin5']!, _gtin5Meta));
+    } else if (isInserting) {
+      context.missing(_gtin5Meta);
     }
     return context;
   }
@@ -1487,33 +1714,25 @@ class $ProductionResultsTable extends ProductionResults
 class Delivery extends DataClass implements Insertable<Delivery> {
   /// primary key
   final int id;
-
-  /// delivery number
-  final String deliveryNr;
-  Delivery({required this.id, required this.deliveryNr});
+  Delivery({required this.id});
   factory Delivery.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return Delivery(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      deliveryNr: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}delivery_nr'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['delivery_nr'] = Variable<String>(deliveryNr);
     return map;
   }
 
   DeliveriesCompanion toCompanion(bool nullToAbsent) {
     return DeliveriesCompanion(
       id: Value(id),
-      deliveryNr: Value(deliveryNr),
     );
   }
 
@@ -1522,7 +1741,6 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Delivery(
       id: serializer.fromJson<int>(json['id']),
-      deliveryNr: serializer.fromJson<String>(json['deliveryNr']),
     );
   }
   @override
@@ -1530,58 +1748,43 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'deliveryNr': serializer.toJson<String>(deliveryNr),
     };
   }
 
-  Delivery copyWith({int? id, String? deliveryNr}) => Delivery(
+  Delivery copyWith({int? id}) => Delivery(
         id: id ?? this.id,
-        deliveryNr: deliveryNr ?? this.deliveryNr,
       );
   @override
   String toString() {
-    return (StringBuffer('Delivery(')
-          ..write('id: $id, ')
-          ..write('deliveryNr: $deliveryNr')
-          ..write(')'))
-        .toString();
+    return (StringBuffer('Delivery(')..write('id: $id')..write(')')).toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, deliveryNr.hashCode));
+  int get hashCode => $mrjf(id.hashCode);
   @override
   bool operator ==(dynamic other) =>
-      identical(this, other) ||
-      (other is Delivery &&
-          other.id == this.id &&
-          other.deliveryNr == this.deliveryNr);
+      identical(this, other) || (other is Delivery && other.id == this.id);
 }
 
 class DeliveriesCompanion extends UpdateCompanion<Delivery> {
   final Value<int> id;
-  final Value<String> deliveryNr;
   const DeliveriesCompanion({
     this.id = const Value.absent(),
-    this.deliveryNr = const Value.absent(),
   });
   DeliveriesCompanion.insert({
     this.id = const Value.absent(),
-    required String deliveryNr,
-  }) : deliveryNr = Value(deliveryNr);
+  });
   static Insertable<Delivery> custom({
     Expression<int>? id,
-    Expression<String>? deliveryNr,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (deliveryNr != null) 'delivery_nr': deliveryNr,
     });
   }
 
-  DeliveriesCompanion copyWith({Value<int>? id, Value<String>? deliveryNr}) {
+  DeliveriesCompanion copyWith({Value<int>? id}) {
     return DeliveriesCompanion(
       id: id ?? this.id,
-      deliveryNr: deliveryNr ?? this.deliveryNr,
     );
   }
 
@@ -1591,18 +1794,12 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (deliveryNr.present) {
-      map['delivery_nr'] = Variable<String>(deliveryNr.value);
-    }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('DeliveriesCompanion(')
-          ..write('id: $id, ')
-          ..write('deliveryNr: $deliveryNr')
-          ..write(')'))
+    return (StringBuffer('DeliveriesCompanion(')..write('id: $id')..write(')'))
         .toString();
   }
 }
@@ -1620,19 +1817,8 @@ class $DeliveriesTable extends Deliveries
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
-  final VerificationMeta _deliveryNrMeta = const VerificationMeta('deliveryNr');
   @override
-  late final GeneratedTextColumn deliveryNr = _constructDeliveryNr();
-  GeneratedTextColumn _constructDeliveryNr() {
-    return GeneratedTextColumn(
-      'delivery_nr',
-      $tableName,
-      false,
-    );
-  }
-
-  @override
-  List<GeneratedColumn> get $columns => [id, deliveryNr];
+  List<GeneratedColumn> get $columns => [id];
   @override
   $DeliveriesTable get asDslTable => this;
   @override
@@ -1646,14 +1832,6 @@ class $DeliveriesTable extends Deliveries
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('delivery_nr')) {
-      context.handle(
-          _deliveryNrMeta,
-          deliveryNr.isAcceptableOrUnknown(
-              data['delivery_nr']!, _deliveryNrMeta));
-    } else if (isInserting) {
-      context.missing(_deliveryNrMeta);
     }
     return context;
   }

@@ -28,8 +28,8 @@ void main() {
         //use this implementation in Emulator
         create: (context) => ScannerControllerImplMock([
           '1234567890123456789012345678901234',
-          '1234567890123456789012345678901234',
-          '1234567890123456789012345678901234'
+          '123456789012345678901234567890',
+          '123456789012345678901234567890'
         ]),
       )
     ],
@@ -88,7 +88,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Packet> scanViewList = <Packet>[];
+  List scanViewList = <Packet>[];
   int actualDeliveryId = 0;
 
   @override
@@ -131,6 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     listScreenSelect: ScanListView(
                       title: 'Delivery',
                       onScan: (barcode) async {
+                        var packet;
                         var deliveryController =
                             Provider.of<DeliveryController>(context,
                                 listen: false);
@@ -141,17 +142,25 @@ class _MyHomePageState extends State<MyHomePage> {
                         var deliveryPositionID = await deliveryController
                             .addDeliveryPosition(barcode, actualDeliveryId);
 
-                        var deliveryPosition = await deliveryController
-                            .getDeliveryPosition(deliveryPositionID);
+                        if (deliveryPositionID == -1) {
+                          scanViewList.add(Packet(
+                              id: 0,
+                              lot: '',
+                              product: 0,
+                              quantity: 0,
+                              barcode: 'Invalid Barcode'));
+                        } else {
+                          var deliveryPosition = await deliveryController
+                              .getDeliveryPosition(deliveryPositionID);
 
-                        var packetID = deliveryPosition.packet;
+                          var packetID = deliveryPosition.packet;
 
-                        var packet =
-                            await packetsController.getPacketWithId(packetID);
-
-                        setState(() {
+                          packet =
+                              await packetsController.getPacketWithId(packetID);
                           scanViewList.add(packet);
-                        });
+                        }
+
+                        setState(() {});
                       },
                       itemCount: scanViewList.length,
                       itemBuilder: (context, index) {
@@ -159,6 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           leading: Text((index + 1).toString()),
                           title:
                               Text("Barcode:\n${scanViewList[index].barcode}\n"
+                                  "Product Nr: ${scanViewList[index].product}\n"
                                   "Trace: ${scanViewList[index].lot}\n"
                                   "Quantity: ${scanViewList[index].quantity} "),
                         );

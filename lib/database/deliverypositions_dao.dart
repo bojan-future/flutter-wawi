@@ -1,4 +1,5 @@
 import 'package:moor_flutter/moor_flutter.dart';
+
 import 'database.dart';
 
 part 'deliverypositions_dao.g.dart';
@@ -14,10 +15,8 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
   /// inserts given delivery into database
   Future<int> createDeliveryPosition(
       DeliveryPositionsCompanion deliveryPosition) {
-    return into(deliveryPositions).insert(
-        deliveryPosition,
-        mode: InsertMode.replace
-    );
+    return into(deliveryPositions)
+        .insert(deliveryPosition, mode: InsertMode.replace);
   }
 
   /// updates delivery in the database
@@ -36,11 +35,11 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
   Future<DeliveryPosition> getDeliveryPositionByID(
       int deliveryPositionID) async {
     final deliveryPositionList = await (select(deliveryPositions)
-      ..where((o) => o.id.equals(deliveryPositionID)))
+          ..where((o) => o.id.equals(deliveryPositionID)))
         .get();
 
     if (deliveryPositionList.isEmpty) {
-      throw ("Deliveryposition not found!");
+      throw RecordNotFoundException();
     } else {
       return deliveryPositionList.first;
     }

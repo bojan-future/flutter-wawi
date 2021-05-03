@@ -8,6 +8,7 @@ import 'packets_dao.dart';
 import 'production_dao.dart';
 import 'products_dao.dart';
 
+part 'database.exception.dart';
 part 'database.g.dart';
 
 @DataClassName('Packet')
@@ -46,6 +47,21 @@ class Products extends Table {
 
   /// product number
   TextColumn get productNr => text()();
+
+  /// gtin 1
+  IntColumn get gtin1 => integer()();
+
+  /// gtin 2
+  IntColumn get gtin2 => integer()();
+
+  /// gtin 3
+  IntColumn get gtin3 => integer()();
+
+  /// gtin 4
+  IntColumn get gtin4 => integer()();
+
+  /// gtin 5
+  IntColumn get gtin5 => integer()();
 }
 
 @DataClassName('Order')
@@ -76,9 +92,6 @@ class OrderPositions extends Table {
 class Deliveries extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
-
-  /// delivery number
-  TextColumn get deliveryNr => text()();
 }
 
 @DataClassName('DeliveryPosition')
@@ -95,7 +108,6 @@ class DeliveryPositions extends Table {
   /// foreign key -> packets
   IntColumn get packet =>
       integer().customConstraint('REFERENCES packets(id)')();
-
 }
 
 @DataClassName('ProductionOrder')

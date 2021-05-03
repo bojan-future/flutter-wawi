@@ -26,8 +26,7 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
     return delete(products).delete(product);
   }
 
-  /// retrieves product with giver product number OR
-  /// creates a new one if product with given number does not exist
+  /// retrieves product with given product number
   Future<Product> getProductByNumber(String productNumber) async {
     final productList = await (select(products)
           ..where((p) => p.productNr.equals(productNumber)))
@@ -40,6 +39,23 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
       final newProductList =
           await (select(products)..where((p) => p.id.equals(newId))).get();
       return newProductList.first;
+    } else {
+      return productList.first;
+    }
+  }
+
+  /// retrieves product with given GTIN
+  Future<Product> getProductByGTIN(int gtin) async {
+    final productList = await (select(products)
+          ..where((p) => p.gtin1.equals(gtin))
+          ..where((p) => p.gtin2.equals(gtin))
+          ..where((p) => p.gtin3.equals(gtin))
+          ..where((p) => p.gtin4.equals(gtin))
+          ..where((p) => p.gtin5.equals(gtin)))
+        .get();
+
+    if (productList.isEmpty) {
+      throw RecordNotFoundException();
     } else {
       return productList.first;
     }
