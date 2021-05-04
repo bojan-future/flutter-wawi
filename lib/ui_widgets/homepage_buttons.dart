@@ -2,25 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 
-// ignore_for_file: public_member_api_docs
-
 class TextButtonWidget extends StatelessWidget {
   final IconData? icon;
   final String buttonLabel;
   final String bottomSheetText;
   final String title;
   final Color col;
-  final Widget listScreenSelect;
-  final void Function()? onOpen;
+  final Widget child;
 
-  const TextButtonWidget({
-      required this.icon,
+  const TextButtonWidget(
+      {required this.icon,
       required this.buttonLabel,
       required this.bottomSheetText,
       required this.title,
       required this.col,
-      required this.listScreenSelect,
-      required this.onOpen});
+      required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +76,10 @@ class TextButtonWidget extends StatelessWidget {
   }
 
   CupertinoPageRoute buildCupertinoPageRoute() {
-    onOpen!.call();
     return CupertinoPageRoute(
-      builder: (context) => listScreenSelect,
+      builder: (context) {
+        return child;
+      },
     );
   }
 }

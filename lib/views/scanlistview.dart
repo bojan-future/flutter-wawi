@@ -9,26 +9,21 @@ class ScanListView extends StatefulWidget {
   ///
   ScanListView({
     Key? key,
-    required String title,
-    Color color = Colors.blue,
-    required void Function(String) onScan,
-    required int itemCount,
-    required IndexedWidgetBuilder itemBuilder,
-  })   : _title = title,
-        _color = color,
-        _onScan = onScan,
-        _itemCount = itemCount,
-        _itemBuilder = itemBuilder,
-        super(key: key);
+    required this.title,
+    this.color = Colors.blue,
+    required this.onScan,
+    required this.itemCount,
+    required this.itemBuilder,
+  }) : super(key: key);
 
-  final String _title;
-  final Color _color;
-  final void Function(String) _onScan;
-  final int _itemCount;
-  final IndexedWidgetBuilder _itemBuilder;
+  final String title;
+  final Color color;
+  final void Function(String) onScan;
+  final int itemCount;
+  final IndexedWidgetBuilder itemBuilder;
 
   @override
-  _ScanListViewState createState() => _ScanListViewState(_onScan);
+  _ScanListViewState createState() => _ScanListViewState(onScan);
 }
 
 class _ScanListViewState extends State<ScanListView> {
@@ -36,13 +31,16 @@ class _ScanListViewState extends State<ScanListView> {
   final void Function(String) _scanCallback;
 
   _ScanListViewState(this._scanCallback);
-  void onScan(String barcode)
-  {
-    
-      this.setState(() {  
-        _scanCallback(barcode);
-
+  void onScan(String barcode) {
+    this.setState(() {
+      _scanCallback(barcode);
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -52,8 +50,8 @@ class _ScanListViewState extends State<ScanListView> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: widget._color,
-        title: Text(widget._title),
+        backgroundColor: widget.color,
+        title: Text(widget.title),
       ),
       body: Column(
         children: [
@@ -62,9 +60,7 @@ class _ScanListViewState extends State<ScanListView> {
             onTapDown: (tapDownDetails) {
               //startScan();
               scanner.startScan();
-              setState(() {
-
-              });
+              setState(() {});
             },
             onTapUp: (tapUpDetails) {
               scanner.stopScan();
@@ -84,8 +80,8 @@ class _ScanListViewState extends State<ScanListView> {
             child: ListView.builder(
               controller: _scrollController,
               shrinkWrap: true,
-              itemCount: widget._itemCount,
-              itemBuilder: widget._itemBuilder,
+              itemCount: widget.itemCount,
+              itemBuilder: widget.itemBuilder,
             ),
           ),
         ],

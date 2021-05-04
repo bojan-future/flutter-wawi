@@ -10,6 +10,7 @@ import 'services/scanner_controller.dart';
 import 'test_helpers/scannercontroller_mock.dart';
 import 'ui_widgets/drawer.dart';
 import 'ui_widgets/homepage_buttons.dart';
+import 'views/delivery_view.dart';
 import 'views/scanlistview.dart';
 
 void main() {
@@ -88,10 +89,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List scanViewList = <Packet>[];
-  int scanListLength = 0;
-  int actualDeliveryId = 0;
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -122,65 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     bottomSheetText: "",
                     title: "Anlieferung",
                     col: Colors.blue[300]!,
-                    onOpen: () async {
-                      //scanViewList = <Packet>[];
-                      var deliveryController = Provider.of<DeliveryController>(
-                          context,
-                          listen: false);
-                      actualDeliveryId = await deliveryController.addDelivery();
-                    },
-                    listScreenSelect: ScanListView(
-                      title: 'Anlieferung',
-                      onScan: (barcode) async {
-                        var packet;
-                        var deliveryController =
-                            Provider.of<DeliveryController>(context,
-                                listen: false);
-                        var packetsController = Provider.of<PacketsController>(
-                            context,
-                            listen: false);
-
-                        var deliveryPositionID = await deliveryController
-                            .addDeliveryPosition(barcode, actualDeliveryId);
-
-                        if (deliveryPositionID == -1) {
-                          setState(() {
-                            scanViewList.add(Packet(
-                                id: 0,
-                                lot: '',
-                                product: 0,
-                                quantity: 0,
-                                barcode: 'Invalid Barcode',
-                                productNr: ''));
-                                scanListLength = scanViewList.length;
-                              });
-                              
-                        } else {
-                          var deliveryPosition = await deliveryController
-                              .getDeliveryPosition(deliveryPositionID);
-
-                          var packetID = deliveryPosition.packet;
-
-                          packet =
-                              await packetsController.getPacketWithId(packetID);
-                          setState(() {
-                            scanViewList.add(packet);
-                            scanListLength = scanViewList.length;
-                          });                          
-                        }                       
-                      },
-                      itemCount: scanListLength,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: Text((index + 1).toString()),
-                          title: Text(
-                              "Barcode:\n${scanViewList[index].barcode}\n"
-                              "Product Nr: ${scanViewList[index].productNr}\n"
-                              "Trace: ${scanViewList[index].lot}\n"
-                              "Quantity: ${scanViewList[index].quantity} "),
-                        );
-                      },
-                    ),
+                    child: DeliveryView(),
                   ),
                   SizedBox(height: 10),
                   TextButtonWidget(
@@ -189,15 +128,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     bottomSheetText: "Auftrag Scannen",
                     title: "Auslieferung",
                     col: Colors.amber[300]!,
-                    listScreenSelect: ScanListView(
-                      title: 'Delivery',
+                    child: ScanListView(
+                      title: 'Auslieferung',
                       onScan: (barcode) {},
                       itemCount: 1,
                       itemBuilder: (context, index) {
                         return ListTile();
                       },
                     ),
-                    onOpen: () async {},
                   ),
                   SizedBox(height: 10),
                   TextButtonWidget(
@@ -206,15 +144,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     bottomSheetText: "Außenpaket Scannen",
                     title: "Caddies Scannen",
                     col: Colors.deepOrange[300]!,
-                    listScreenSelect: ScanListView(
-                      title: 'Delivery',
+                    child: ScanListView(
+                      title: 'Auspacken',
                       onScan: (barcode) {},
                       itemCount: 1,
                       itemBuilder: (context, index) {
                         return ListTile();
                       },
                     ),
-                    onOpen: () async {},
                   ),
                 ],
               ),
