@@ -89,6 +89,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List scanViewList = <Packet>[];
+  int scanListLength = 0;
   int actualDeliveryId = 0;
 
   @override
@@ -129,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       actualDeliveryId = await deliveryController.addDelivery();
                     },
                     listScreenSelect: ScanListView(
-                      title: 'Delivery',
+                      title: 'Anlieferung',
                       onScan: (barcode) async {
                         var packet;
                         var deliveryController =
@@ -143,13 +144,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             .addDeliveryPosition(barcode, actualDeliveryId);
 
                         if (deliveryPositionID == -1) {
-                          scanViewList.add(Packet(
-                              id: 0,
-                              lot: '',
-                              product: 0,
-                              quantity: 0,
-                              barcode: 'Invalid Barcode',
-                              productNr: ''));
+                          setState(() {
+                            scanViewList.add(Packet(
+                                id: 0,
+                                lot: '',
+                                product: 0,
+                                quantity: 0,
+                                barcode: 'Invalid Barcode',
+                                productNr: ''));
+                                scanListLength = scanViewList.length;
+                              });
+                              
                         } else {
                           var deliveryPosition = await deliveryController
                               .getDeliveryPosition(deliveryPositionID);
@@ -158,12 +163,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
                           packet =
                               await packetsController.getPacketWithId(packetID);
-                          scanViewList.add(packet);
-                        }
-
-                        setState(() {});
+                          setState(() {
+                            scanViewList.add(packet);
+                            scanListLength = scanViewList.length;
+                          });                          
+                        }                       
                       },
-                      itemCount: scanViewList.length,
+                      itemCount: scanListLength,
                       itemBuilder: (context, index) {
                         return ListTile(
                           leading: Text((index + 1).toString()),

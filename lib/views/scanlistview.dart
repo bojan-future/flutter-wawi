@@ -36,11 +36,19 @@ class _ScanListViewState extends State<ScanListView> {
   final void Function(String) _scanCallback;
 
   _ScanListViewState(this._scanCallback);
+  void onScan(String barcode)
+  {
+    
+      this.setState(() {  
+        _scanCallback(barcode);
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     var scanner = Provider.of<ScannerController>(context);
-    scanner.registerCallback(_scanCallback);
+    scanner.registerCallback(onScan);
 
     return Scaffold(
       appBar: AppBar(
