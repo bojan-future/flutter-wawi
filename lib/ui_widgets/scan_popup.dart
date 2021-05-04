@@ -36,9 +36,7 @@ void scanPopup(
                   style: TextStyle(fontSize: 20),
                 ),
                 GestureDetector(
-                  // When the child is tapped, show a snackbar.
                   onTapDown: (tapDownDetails) {
-                    //startScan();
                     scanner.startScan();
                   },
                   onTapUp: (tapUpDetails) {
