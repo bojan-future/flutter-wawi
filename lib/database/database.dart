@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
-import 'package:kuda_lager/database/orders_dao.dart';
-import 'package:kuda_lager/database/products_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
+import 'deliveries_dao.dart';
+import 'deliverypositions_dao.dart';
+import 'orders_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
+import 'products_dao.dart';
 
+part 'database.exception.dart';
 part 'database.g.dart';
 
 @DataClassName('Packet')
@@ -28,6 +31,12 @@ class Packets extends Table {
   IntColumn get product =>
       integer().customConstraint('REFERENCES products(id)')();
 
+  /// product name from product
+  TextColumn get productName => text()();
+  
+  /// product number from product 
+  TextColumn get productNr => text()();
+
   /// foreign key -> 'parent' packet in case this is part of larger packet,
   /// might be null
   IntColumn get wrapping => integer()
@@ -44,6 +53,24 @@ class Products extends Table {
 
   /// product number
   TextColumn get productNr => text()();
+
+  /// product name
+  TextColumn get productName => text()();
+
+  /// gtin 1
+  IntColumn get gtin1 => integer()();
+
+  /// gtin 2
+  IntColumn get gtin2 => integer()();
+
+  /// gtin 3
+  IntColumn get gtin3 => integer()();
+
+  /// gtin 4
+  IntColumn get gtin4 => integer()();
+
+  /// gtin 5
+  IntColumn get gtin5 => integer()();
 }
 
 @DataClassName('Order')
@@ -66,6 +93,30 @@ class OrderPositions extends Table {
 
   /// foreign key -> order
   IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
+}
+
+@DataClassName('Delivery')
+
+/// represents a delivery, has many positions
+class Deliveries extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+}
+
+@DataClassName('DeliveryPosition')
+
+/// one position in a delivery
+class DeliveryPositions extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// foreign key -> delivery
+  IntColumn get delivery =>
+      integer().customConstraint('REFERENCES deliveries(id)')();
+
+  /// foreign key -> packets
+  IntColumn get packet =>
+      integer().customConstraint('REFERENCES packets(id)')();
 }
 
 @DataClassName('ProductionOrder')
@@ -140,11 +191,15 @@ class DatabaseFactory {
   ProductionOrders,
   ProductionMaterials,
   ProductionResults,
+  Deliveries,
+  DeliveryPositions,
 ], daos: [
   PacketsDao,
   ProductsDao,
   OrdersDao,
   ProductionDao,
+  DeliveriesDao,
+  DeliveryPositionsDao,
 ])
 
 /// Main database
@@ -164,7 +219,32 @@ class Database extends _$Database {
       onUpgrade: (m, from, to) async {},
       beforeOpen: (details) async {
         if (details.wasCreated) {
-          //todo: insert default data
+          if (kDebugMode) {
+            final m = createMigrator(); // changed to this
+            for (final table in allTables) {
+              await m.deleteTable(table.actualTableName);
+              await m.createTable(table);
+            }
+          }
+          await into(products).insert(Product(
+              id: 1,
+              productNr: "123456789",
+              productName: "Faser NAT-35 Meatcling Kal. 80",
+              gtin1: 123,
+              gtin2: 123,
+              gtin3: 123,
+              gtin4: 123,
+              gtin5: 123));
+
+          await into(products).insert(Product(
+              id: 2,
+              productNr: "101010101",
+              productName: "Tripan farblos Kal. 110",
+              gtin1: 456789012345,
+              gtin2: 123,
+              gtin3: 123,
+              gtin4: 123,
+              gtin5: 123));
         }
       },
     );

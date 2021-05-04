@@ -1,4 +1,4 @@
-import 'package:kuda_lager/services/scanner_controller.dart';
+import  '../services/scanner_controller.dart';
 
 class ScannerControllerImplMock implements ScannerController {
   ScannerControllerImplMock(List<String> testBarcodes)

@@ -1,33 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mdi/mdi.dart';
 
-import '../main.dart';
 import '../ui_widgets/scan_popup.dart';
 
-// ignore_for_file: public_member_api_docs
-
+/// Widget representing the buttons on the homepage
 class TextButtonWidget extends StatelessWidget {
-  final IconData icon;
+
+  final IconData? icon;
   final String buttonLabel;
   final String? bottomSheetText;
   final String title;
   final Color col;
+  final Widget child;
   final bool Function(String)? onScanBottomSheet;
-
-  const TextButtonWidget(this.icon, this.buttonLabel, this.bottomSheetText,
-      this.title, this.col, this.onScanBottomSheet);
-
-  void openListView(BuildContext context) {
-    Navigator.push(
-      context,
-      CupertinoPageRoute(
-          builder: (context) => Delivery(
-                title: title,
-                color: col,
-              )),
-    );
-  }
+  
+  const TextButtonWidget(
+      {required this.icon,
+      required this.buttonLabel,
+      required this.bottomSheetText,
+      required this.title,
+      required this.col,
+      required this.child,
+      required this.onScanBottomSheet});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +44,7 @@ class TextButtonWidget extends StatelessWidget {
         ),
         onPressed: () {
           if (bottomSheetText == null || onScanBottomSheet == null) {
-            openListView(context);
+            buildCupertinoPageRoute();
           } else {
             scanPopup(
                 popupText: bottomSheetText!,
@@ -60,13 +54,22 @@ class TextButtonWidget extends StatelessWidget {
                   var openListDialog = onScanBottomSheet!(barcode);
                   if (openListDialog) {
                     Navigator.pop(context);
-                    openListView(context);
+                    buildCupertinoPageRoute();
                   }
                 },
                 context: context);
           }
         },
       ),
+    );
+  }
+
+  /// iOS transition to child widget
+  CupertinoPageRoute buildCupertinoPageRoute() {
+    return CupertinoPageRoute(
+      builder: (context) {
+        return child;
+      },
     );
   }
 }

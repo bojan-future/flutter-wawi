@@ -1,5 +1,4 @@
 import 'package:moor_flutter/moor_flutter.dart';
-
 import 'database.dart';
 
 part 'products_dao.g.dart';
@@ -26,20 +25,31 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
     return delete(products).delete(product);
   }
 
-  /// retrieves product with giver product number OR
-  /// creates a new one if product with given number does not exist
+  /// retrieves product with given product number
   Future<Product> getProductByNumber(String productNumber) async {
     final productList = await (select(products)
           ..where((p) => p.productNr.equals(productNumber)))
         .get();
 
     if (productList.isEmpty) {
-      //insert new product with given product number and return it
-      final newId = await createProduct(
-          ProductsCompanion(productNr: Value(productNumber)));
-      final newProductList =
-          await (select(products)..where((p) => p.id.equals(newId))).get();
-      return newProductList.first;
+      throw RecordNotFoundException();
+    } else {
+      return productList.first;
+    }
+  }
+
+  /// retrieves product with given GTIN
+  Future<Product> getProductByGTIN(int gtin) async {
+    final productList = await (select(products)
+          ..where((p) => p.gtin1.equals(gtin)
+          | p.gtin2.equals(gtin)
+          | p.gtin3.equals(gtin)
+          | p.gtin4.equals(gtin)
+          | p.gtin5.equals(gtin)))
+        .get();
+
+    if (productList.isEmpty) {
+      throw RecordNotFoundException();
     } else {
       return productList.first;
     }

@@ -34,14 +34,17 @@ dependencies:
 
   moor_flutter: ^4.0.0
 
+  rflutter_alert: ^2.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   test: ^1.16.5
   moor: ^4.2.1
 
-  moor_generator:
-  build_runner:
+  moor_generator: 4.2.2
+  build_runner: ^2.0.2
+  build_resolvers: ^2.0.1
 
   effective_dart: ^1.3.0
   
