@@ -5,7 +5,6 @@ import '../ui_widgets/scan_popup.dart';
 
 /// Widget representing the buttons on the homepage
 class TextButtonWidget extends StatelessWidget {
-
   final IconData? icon;
   final String buttonLabel;
   final String? bottomSheetText;
@@ -13,7 +12,7 @@ class TextButtonWidget extends StatelessWidget {
   final Color col;
   final Widget child;
   final bool Function(String)? onScanBottomSheet;
-  
+
   const TextButtonWidget(
       {required this.icon,
       required this.buttonLabel,
@@ -44,7 +43,10 @@ class TextButtonWidget extends StatelessWidget {
         ),
         onPressed: () {
           if (bottomSheetText == null || onScanBottomSheet == null) {
-            buildCupertinoPageRoute();
+            Navigator.push(
+              context,
+              buildCupertinoPageRoute(),
+            );
           } else {
             scanPopup(
                 popupText: bottomSheetText!,
@@ -54,7 +56,10 @@ class TextButtonWidget extends StatelessWidget {
                   var openListDialog = onScanBottomSheet!(barcode);
                   if (openListDialog) {
                     Navigator.pop(context);
-                    buildCupertinoPageRoute();
+                    Navigator.push(
+                      context,
+                      buildCupertinoPageRoute(),
+                    );
                   }
                 },
                 context: context);

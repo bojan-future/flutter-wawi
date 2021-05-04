@@ -109,7 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         body: Center(child: Text('Coming soon...')),
                       ),
-                      onScanBottomSheet: null,
+                      onScanBottomSheet: (barcode) {
+                        return barcode.isNotEmpty;
+                      },
                     ),
                     SizedBox(height: 10),
                     TextButtonWidget(
@@ -125,7 +127,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         body: Center(child: Text('Coming soon...')),
                       ),
-                      onScanBottomSheet: null,
+                      onScanBottomSheet: (barcode) {
+                        return barcode.isNotEmpty;
+                      },
                     ),
                     SizedBox(height: 10),
                     Row(
@@ -143,7 +147,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             body: Center(child: Text('Coming soon...')),
                           ),
-                          onScanBottomSheet: null,
+                          onScanBottomSheet: (barcode) {
+                            return barcode.isNotEmpty;
+                          },
                         ),
                         SizedBox(width: 10),
                         TextButtonWidget(
@@ -159,7 +165,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             body: Center(child: Text('Coming soon...')),
                           ),
-                          onScanBottomSheet: null,
+                          onScanBottomSheet: (barcode) {
+                            return barcode.isNotEmpty;
+                          },
                         ),
                       ],
                     ),
