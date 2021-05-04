@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:moor_flutter/moor_flutter.dart';
-import 'package:flutter/foundation.dart';
 
 import 'deliveries_dao.dart';
 import 'deliverypositions_dao.dart';
@@ -32,7 +31,10 @@ class Packets extends Table {
   IntColumn get product =>
       integer().customConstraint('REFERENCES products(id)')();
 
-  /// productNr from product
+  /// product name from product
+  TextColumn get productName => text()();
+  
+  /// product number from product 
   TextColumn get productNr => text()();
 
   /// foreign key -> 'parent' packet in case this is part of larger packet,
@@ -51,6 +53,9 @@ class Products extends Table {
 
   /// product number
   TextColumn get productNr => text()();
+
+  /// product name
+  TextColumn get productName => text()();
 
   /// gtin 1
   IntColumn get gtin1 => integer()();
@@ -224,12 +229,22 @@ class Database extends _$Database {
           await into(products).insert(Product(
               id: 1,
               productNr: "123456789",
+              productName: "Faser NAT-35 Meatcling Kal. 80",
+              gtin1: 123,
+              gtin2: 123,
+              gtin3: 123,
+              gtin4: 123,
+              gtin5: 123));
+
+          await into(products).insert(Product(
+              id: 2,
+              productNr: "101010101",
+              productName: "Tripan farblos Kal. 110",
               gtin1: 456789012345,
               gtin2: 123,
               gtin3: 123,
               gtin4: 123,
-              gtin5: 123
-          ));
+              gtin5: 123));
         }
       },
     );

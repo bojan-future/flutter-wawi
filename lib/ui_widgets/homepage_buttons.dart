@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 
+/// Widget representing the buttons on the homepage
 class TextButtonWidget extends StatelessWidget {
+
   final IconData? icon;
   final String buttonLabel;
   final String bottomSheetText;
@@ -75,6 +77,7 @@ class TextButtonWidget extends StatelessWidget {
     );
   }
 
+  /// iOS transition to child widget
   CupertinoPageRoute buildCupertinoPageRoute() {
     return CupertinoPageRoute(
       builder: (context) {

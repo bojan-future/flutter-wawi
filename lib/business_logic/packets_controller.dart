@@ -15,7 +15,7 @@ class PacketsController {
     var gtin;
     var product;
     var correctBarcode = false;
-
+   
     if (barcode.length == 44) {
       correctBarcode = true;
       gtin = barcode.substring(3, 15);
@@ -50,7 +50,8 @@ class PacketsController {
         lot: Value(lot),
         quantity: Value(quantity),
         product: Value(product.id),
-        productNr: Value(product.productNr)
+        productNr: Value(product.productNr),
+        productName: Value(product.productName)
       ));
     } else {
       return -1;

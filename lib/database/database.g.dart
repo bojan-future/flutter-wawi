@@ -23,7 +23,10 @@ class Packet extends DataClass implements Insertable<Packet> {
   /// foreign key -> product
   final int product;
 
-  /// productNr from product
+  /// product name from product
+  final String productName;
+
+  /// product number from product
   final String productNr;
 
   /// foreign key -> 'parent' packet in case this is part of larger packet,
@@ -35,6 +38,7 @@ class Packet extends DataClass implements Insertable<Packet> {
       required this.lot,
       required this.quantity,
       required this.product,
+      required this.productName,
       required this.productNr,
       this.wrapping});
   factory Packet.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -52,6 +56,8 @@ class Packet extends DataClass implements Insertable<Packet> {
           .mapFromDatabaseResponse(data['${effectivePrefix}quantity'])!,
       product:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}product'])!,
+      productName: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}product_name'])!,
       productNr: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}product_nr'])!,
       wrapping:
@@ -66,6 +72,7 @@ class Packet extends DataClass implements Insertable<Packet> {
     map['lot'] = Variable<String>(lot);
     map['quantity'] = Variable<double>(quantity);
     map['product'] = Variable<int>(product);
+    map['product_name'] = Variable<String>(productName);
     map['product_nr'] = Variable<String>(productNr);
     if (!nullToAbsent || wrapping != null) {
       map['wrapping'] = Variable<int?>(wrapping);
@@ -80,6 +87,7 @@ class Packet extends DataClass implements Insertable<Packet> {
       lot: Value(lot),
       quantity: Value(quantity),
       product: Value(product),
+      productName: Value(productName),
       productNr: Value(productNr),
       wrapping: wrapping == null && nullToAbsent
           ? const Value.absent()
@@ -96,6 +104,7 @@ class Packet extends DataClass implements Insertable<Packet> {
       lot: serializer.fromJson<String>(json['lot']),
       quantity: serializer.fromJson<double>(json['quantity']),
       product: serializer.fromJson<int>(json['product']),
+      productName: serializer.fromJson<String>(json['productName']),
       productNr: serializer.fromJson<String>(json['productNr']),
       wrapping: serializer.fromJson<int?>(json['wrapping']),
     );
@@ -109,6 +118,7 @@ class Packet extends DataClass implements Insertable<Packet> {
       'lot': serializer.toJson<String>(lot),
       'quantity': serializer.toJson<double>(quantity),
       'product': serializer.toJson<int>(product),
+      'productName': serializer.toJson<String>(productName),
       'productNr': serializer.toJson<String>(productNr),
       'wrapping': serializer.toJson<int?>(wrapping),
     };
@@ -120,6 +130,7 @@ class Packet extends DataClass implements Insertable<Packet> {
           String? lot,
           double? quantity,
           int? product,
+          String? productName,
           String? productNr,
           int? wrapping}) =>
       Packet(
@@ -128,6 +139,7 @@ class Packet extends DataClass implements Insertable<Packet> {
         lot: lot ?? this.lot,
         quantity: quantity ?? this.quantity,
         product: product ?? this.product,
+        productName: productName ?? this.productName,
         productNr: productNr ?? this.productNr,
         wrapping: wrapping ?? this.wrapping,
       );
@@ -139,6 +151,7 @@ class Packet extends DataClass implements Insertable<Packet> {
           ..write('lot: $lot, ')
           ..write('quantity: $quantity, ')
           ..write('product: $product, ')
+          ..write('productName: $productName, ')
           ..write('productNr: $productNr, ')
           ..write('wrapping: $wrapping')
           ..write(')'))
@@ -154,8 +167,10 @@ class Packet extends DataClass implements Insertable<Packet> {
               lot.hashCode,
               $mrjc(
                   quantity.hashCode,
-                  $mrjc(product.hashCode,
-                      $mrjc(productNr.hashCode, wrapping.hashCode)))))));
+                  $mrjc(
+                      product.hashCode,
+                      $mrjc(productName.hashCode,
+                          $mrjc(productNr.hashCode, wrapping.hashCode))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -165,6 +180,7 @@ class Packet extends DataClass implements Insertable<Packet> {
           other.lot == this.lot &&
           other.quantity == this.quantity &&
           other.product == this.product &&
+          other.productName == this.productName &&
           other.productNr == this.productNr &&
           other.wrapping == this.wrapping);
 }
@@ -175,6 +191,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
   final Value<String> lot;
   final Value<double> quantity;
   final Value<int> product;
+  final Value<String> productName;
   final Value<String> productNr;
   final Value<int?> wrapping;
   const PacketsCompanion({
@@ -183,6 +200,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
     this.lot = const Value.absent(),
     this.quantity = const Value.absent(),
     this.product = const Value.absent(),
+    this.productName = const Value.absent(),
     this.productNr = const Value.absent(),
     this.wrapping = const Value.absent(),
   });
@@ -192,12 +210,14 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
     required String lot,
     required double quantity,
     required int product,
+    required String productName,
     required String productNr,
     this.wrapping = const Value.absent(),
   })  : barcode = Value(barcode),
         lot = Value(lot),
         quantity = Value(quantity),
         product = Value(product),
+        productName = Value(productName),
         productNr = Value(productNr);
   static Insertable<Packet> custom({
     Expression<int>? id,
@@ -205,6 +225,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
     Expression<String>? lot,
     Expression<double>? quantity,
     Expression<int>? product,
+    Expression<String>? productName,
     Expression<String>? productNr,
     Expression<int?>? wrapping,
   }) {
@@ -214,6 +235,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
       if (lot != null) 'lot': lot,
       if (quantity != null) 'quantity': quantity,
       if (product != null) 'product': product,
+      if (productName != null) 'product_name': productName,
       if (productNr != null) 'product_nr': productNr,
       if (wrapping != null) 'wrapping': wrapping,
     });
@@ -225,6 +247,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
       Value<String>? lot,
       Value<double>? quantity,
       Value<int>? product,
+      Value<String>? productName,
       Value<String>? productNr,
       Value<int?>? wrapping}) {
     return PacketsCompanion(
@@ -233,6 +256,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
       lot: lot ?? this.lot,
       quantity: quantity ?? this.quantity,
       product: product ?? this.product,
+      productName: productName ?? this.productName,
       productNr: productNr ?? this.productNr,
       wrapping: wrapping ?? this.wrapping,
     );
@@ -256,6 +280,9 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
     if (product.present) {
       map['product'] = Variable<int>(product.value);
     }
+    if (productName.present) {
+      map['product_name'] = Variable<String>(productName.value);
+    }
     if (productNr.present) {
       map['product_nr'] = Variable<String>(productNr.value);
     }
@@ -273,6 +300,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
           ..write('lot: $lot, ')
           ..write('quantity: $quantity, ')
           ..write('product: $product, ')
+          ..write('productName: $productName, ')
           ..write('productNr: $productNr, ')
           ..write('wrapping: $wrapping')
           ..write(')'))
@@ -333,6 +361,18 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
         $customConstraints: 'REFERENCES products(id)');
   }
 
+  final VerificationMeta _productNameMeta =
+      const VerificationMeta('productName');
+  @override
+  late final GeneratedTextColumn productName = _constructProductName();
+  GeneratedTextColumn _constructProductName() {
+    return GeneratedTextColumn(
+      'product_name',
+      $tableName,
+      false,
+    );
+  }
+
   final VerificationMeta _productNrMeta = const VerificationMeta('productNr');
   @override
   late final GeneratedTextColumn productNr = _constructProductNr();
@@ -354,7 +394,7 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, barcode, lot, quantity, product, productNr, wrapping];
+      [id, barcode, lot, quantity, product, productName, productNr, wrapping];
   @override
   $PacketsTable get asDslTable => this;
   @override
@@ -393,6 +433,14 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
     } else if (isInserting) {
       context.missing(_productMeta);
     }
+    if (data.containsKey('product_name')) {
+      context.handle(
+          _productNameMeta,
+          productName.isAcceptableOrUnknown(
+              data['product_name']!, _productNameMeta));
+    } else if (isInserting) {
+      context.missing(_productNameMeta);
+    }
     if (data.containsKey('product_nr')) {
       context.handle(_productNrMeta,
           productNr.isAcceptableOrUnknown(data['product_nr']!, _productNrMeta));
@@ -427,6 +475,9 @@ class Product extends DataClass implements Insertable<Product> {
   /// product number
   final String productNr;
 
+  /// product name
+  final String productName;
+
   /// gtin 1
   final int gtin1;
 
@@ -444,6 +495,7 @@ class Product extends DataClass implements Insertable<Product> {
   Product(
       {required this.id,
       required this.productNr,
+      required this.productName,
       required this.gtin1,
       required this.gtin2,
       required this.gtin3,
@@ -458,6 +510,8 @@ class Product extends DataClass implements Insertable<Product> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       productNr: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}product_nr'])!,
+      productName: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}product_name'])!,
       gtin1: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin1'])!,
       gtin2: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin2'])!,
       gtin3: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin3'])!,
@@ -470,6 +524,7 @@ class Product extends DataClass implements Insertable<Product> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['product_nr'] = Variable<String>(productNr);
+    map['product_name'] = Variable<String>(productName);
     map['gtin1'] = Variable<int>(gtin1);
     map['gtin2'] = Variable<int>(gtin2);
     map['gtin3'] = Variable<int>(gtin3);
@@ -482,6 +537,7 @@ class Product extends DataClass implements Insertable<Product> {
     return ProductsCompanion(
       id: Value(id),
       productNr: Value(productNr),
+      productName: Value(productName),
       gtin1: Value(gtin1),
       gtin2: Value(gtin2),
       gtin3: Value(gtin3),
@@ -496,6 +552,7 @@ class Product extends DataClass implements Insertable<Product> {
     return Product(
       id: serializer.fromJson<int>(json['id']),
       productNr: serializer.fromJson<String>(json['productNr']),
+      productName: serializer.fromJson<String>(json['productName']),
       gtin1: serializer.fromJson<int>(json['gtin1']),
       gtin2: serializer.fromJson<int>(json['gtin2']),
       gtin3: serializer.fromJson<int>(json['gtin3']),
@@ -509,6 +566,7 @@ class Product extends DataClass implements Insertable<Product> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'productNr': serializer.toJson<String>(productNr),
+      'productName': serializer.toJson<String>(productName),
       'gtin1': serializer.toJson<int>(gtin1),
       'gtin2': serializer.toJson<int>(gtin2),
       'gtin3': serializer.toJson<int>(gtin3),
@@ -520,6 +578,7 @@ class Product extends DataClass implements Insertable<Product> {
   Product copyWith(
           {int? id,
           String? productNr,
+          String? productName,
           int? gtin1,
           int? gtin2,
           int? gtin3,
@@ -528,6 +587,7 @@ class Product extends DataClass implements Insertable<Product> {
       Product(
         id: id ?? this.id,
         productNr: productNr ?? this.productNr,
+        productName: productName ?? this.productName,
         gtin1: gtin1 ?? this.gtin1,
         gtin2: gtin2 ?? this.gtin2,
         gtin3: gtin3 ?? this.gtin3,
@@ -539,6 +599,7 @@ class Product extends DataClass implements Insertable<Product> {
     return (StringBuffer('Product(')
           ..write('id: $id, ')
           ..write('productNr: $productNr, ')
+          ..write('productName: $productName, ')
           ..write('gtin1: $gtin1, ')
           ..write('gtin2: $gtin2, ')
           ..write('gtin3: $gtin3, ')
@@ -554,17 +615,20 @@ class Product extends DataClass implements Insertable<Product> {
       $mrjc(
           productNr.hashCode,
           $mrjc(
-              gtin1.hashCode,
+              productName.hashCode,
               $mrjc(
-                  gtin2.hashCode,
-                  $mrjc(gtin3.hashCode,
-                      $mrjc(gtin4.hashCode, gtin5.hashCode)))))));
+                  gtin1.hashCode,
+                  $mrjc(
+                      gtin2.hashCode,
+                      $mrjc(gtin3.hashCode,
+                          $mrjc(gtin4.hashCode, gtin5.hashCode))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Product &&
           other.id == this.id &&
           other.productNr == this.productNr &&
+          other.productName == this.productName &&
           other.gtin1 == this.gtin1 &&
           other.gtin2 == this.gtin2 &&
           other.gtin3 == this.gtin3 &&
@@ -575,6 +639,7 @@ class Product extends DataClass implements Insertable<Product> {
 class ProductsCompanion extends UpdateCompanion<Product> {
   final Value<int> id;
   final Value<String> productNr;
+  final Value<String> productName;
   final Value<int> gtin1;
   final Value<int> gtin2;
   final Value<int> gtin3;
@@ -583,6 +648,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   const ProductsCompanion({
     this.id = const Value.absent(),
     this.productNr = const Value.absent(),
+    this.productName = const Value.absent(),
     this.gtin1 = const Value.absent(),
     this.gtin2 = const Value.absent(),
     this.gtin3 = const Value.absent(),
@@ -592,12 +658,14 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   ProductsCompanion.insert({
     this.id = const Value.absent(),
     required String productNr,
+    required String productName,
     required int gtin1,
     required int gtin2,
     required int gtin3,
     required int gtin4,
     required int gtin5,
   })   : productNr = Value(productNr),
+        productName = Value(productName),
         gtin1 = Value(gtin1),
         gtin2 = Value(gtin2),
         gtin3 = Value(gtin3),
@@ -606,6 +674,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   static Insertable<Product> custom({
     Expression<int>? id,
     Expression<String>? productNr,
+    Expression<String>? productName,
     Expression<int>? gtin1,
     Expression<int>? gtin2,
     Expression<int>? gtin3,
@@ -615,6 +684,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (productNr != null) 'product_nr': productNr,
+      if (productName != null) 'product_name': productName,
       if (gtin1 != null) 'gtin1': gtin1,
       if (gtin2 != null) 'gtin2': gtin2,
       if (gtin3 != null) 'gtin3': gtin3,
@@ -626,6 +696,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   ProductsCompanion copyWith(
       {Value<int>? id,
       Value<String>? productNr,
+      Value<String>? productName,
       Value<int>? gtin1,
       Value<int>? gtin2,
       Value<int>? gtin3,
@@ -634,6 +705,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     return ProductsCompanion(
       id: id ?? this.id,
       productNr: productNr ?? this.productNr,
+      productName: productName ?? this.productName,
       gtin1: gtin1 ?? this.gtin1,
       gtin2: gtin2 ?? this.gtin2,
       gtin3: gtin3 ?? this.gtin3,
@@ -650,6 +722,9 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     }
     if (productNr.present) {
       map['product_nr'] = Variable<String>(productNr.value);
+    }
+    if (productName.present) {
+      map['product_name'] = Variable<String>(productName.value);
     }
     if (gtin1.present) {
       map['gtin1'] = Variable<int>(gtin1.value);
@@ -674,6 +749,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     return (StringBuffer('ProductsCompanion(')
           ..write('id: $id, ')
           ..write('productNr: $productNr, ')
+          ..write('productName: $productName, ')
           ..write('gtin1: $gtin1, ')
           ..write('gtin2: $gtin2, ')
           ..write('gtin3: $gtin3, ')
@@ -702,6 +778,18 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
   GeneratedTextColumn _constructProductNr() {
     return GeneratedTextColumn(
       'product_nr',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _productNameMeta =
+      const VerificationMeta('productName');
+  @override
+  late final GeneratedTextColumn productName = _constructProductName();
+  GeneratedTextColumn _constructProductName() {
+    return GeneratedTextColumn(
+      'product_name',
       $tableName,
       false,
     );
@@ -764,7 +852,7 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, productNr, gtin1, gtin2, gtin3, gtin4, gtin5];
+      [id, productNr, productName, gtin1, gtin2, gtin3, gtin4, gtin5];
   @override
   $ProductsTable get asDslTable => this;
   @override
@@ -784,6 +872,14 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
           productNr.isAcceptableOrUnknown(data['product_nr']!, _productNrMeta));
     } else if (isInserting) {
       context.missing(_productNrMeta);
+    }
+    if (data.containsKey('product_name')) {
+      context.handle(
+          _productNameMeta,
+          productName.isAcceptableOrUnknown(
+              data['product_name']!, _productNameMeta));
+    } else if (isInserting) {
+      context.missing(_productNameMeta);
     }
     if (data.containsKey('gtin1')) {
       context.handle(

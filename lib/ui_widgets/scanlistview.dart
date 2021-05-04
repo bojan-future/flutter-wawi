@@ -32,15 +32,9 @@ class _ScanListViewState extends State<ScanListView> {
 
   _ScanListViewState(this._scanCallback);
   void onScan(String barcode) {
-    this.setState(() {
+    setState(() {
       _scanCallback(barcode);
     });
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
   }
 
   @override

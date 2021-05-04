@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../views/scanlistview.dart';
+import '../ui_widgets/scanlistview.dart';
 
 /// MaterialApp Wrap for the tested widget
 class ScanListViewTestWidgetWrap extends StatelessWidget {

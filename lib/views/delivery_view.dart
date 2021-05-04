@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import '../business_logic/delivery_controller.dart';
 import '../business_logic/packets_controller.dart';
 import '../database/database.dart';
-import 'scanlistview.dart';
+import '../ui_widgets/alert_warnings.dart';
+import '../ui_widgets/scanlistview.dart';
 
 /// Widget representing Delivery Screen
 class DeliveryView extends StatefulWidget {
@@ -42,13 +43,7 @@ class _DeliveryViewState extends State<DeliveryView> {
 
         if (deliveryPositionID == -1) {
           setState(() {
-            scanViewList.add(Packet(
-                id: 0,
-                lot: '',
-                product: 0,
-                quantity: 0,
-                barcode: 'Invalid Barcode',
-                productNr: ''));
+            buildAlertInvalidBarcode(context).show();
           });
         } else {
           var deliveryPosition =
@@ -66,7 +61,7 @@ class _DeliveryViewState extends State<DeliveryView> {
       itemBuilder: (context, index) {
         return Card(
           child: ListTile(
-            title: Text("Name, ${scanViewList[index].productNr}\n"),
+            title: Text("Name: ${scanViewList[index].productName}\n"),
             subtitle: Text("Product Nr: ${scanViewList[index].productNr}\n"
                 "Trace: ${scanViewList[index].lot}\n"
                 "Quantity: ${scanViewList[index].quantity} "),
