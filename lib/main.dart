@@ -18,11 +18,11 @@ void main() {
         create: (context) => PacketsController(),
       ),
       Provider<ScannerController>(
-        //create: (context) => ScannerControllerImplDataWedge()
-        //use this implementation in Emulator
-        create: (context) =>
-            ScannerControllerImplMock(['123456789', '987654321', 'text']),
-      )
+          create: (context) => ScannerControllerImplDataWedge()
+          //use this implementation in Emulator
+          //create: (context) =>
+          //ScannerControllerImplMock(['123456789', '987654321', 'text']),
+          )
     ],
     child: MyApp(),
   ));
@@ -97,27 +97,34 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Icon, Buttonlabel, Bottomsheet Text, Title, Color, Wrap
-                    TextButtonWidget(Mdi.dolly, "Anlieferung", "",
-                        "Anlieferung", Colors.blue[300]!),
-                    SizedBox(height: 10),
-                    TextButtonWidget(Mdi.truckDelivery, "Auslieferung",
-                        "Auftrag Scannen", "Auslieferung", Colors.amber[300]!),
-                    SizedBox(height: 10),
-                    TextButtonWidget(
-                        Mdi.packageVariant,
-                        "Auspacken",
-                        "Außenpaket Scannen",
-                        "Caddies Scannen",
-                        Colors.deepOrange[300]!),
-                    SizedBox(height: 10),
+          child: Column(children: <Widget>[
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Icon, Buttonlabel, Bottomsheet Text, Title, Color, Wrap
+                  TextButtonWidget(Mdi.dolly, "Anlieferung", null,
+                      "Anlieferung", Colors.blue[300]!, null),
+                  SizedBox(height: 10),
+                  TextButtonWidget(
+                      Mdi.truckDelivery,
+                      "Auslieferung",
+                      "Auftrag Scannen",
+                      "Auslieferung",
+                      Colors.amber[300]!, (barcode) {
+                    return barcode.isNotEmpty;
+                  }),
+                  SizedBox(height: 10),
+                  TextButtonWidget(
+                      Mdi.packageVariant,
+                      "Auspacken",
+                      "Außenpaket Scannen",
+                      "Caddies Scannen",
+                      Colors.deepOrange[300]!, (barcode) {
+                    return barcode.isNotEmpty;
+                  }),
+                  SizedBox(height: 10),
                     Row(
                       children: [
                         TextButtonWidget(
@@ -125,18 +132,21 @@ class _MyHomePageState extends State<MyHomePage> {
                             "Produktion\nStart",
                             "Produktionsauftrag Scannen",
                             "Produktion-Start",
-                            Colors.lightGreen[300]!),
+                            Colors.lightGreen[300]!, (barcode) {
+                              return barcode.isNotEmpty;
+                            }),
                         SizedBox(width: 10),
                         TextButtonWidget(
                             Mdi.check,
                             "Produktion\nAbschluss",
                             "Produktionsauftrag Scannen",
                             "Produktion-Abschluss",
-                            Colors.teal[300]!),
+                            Colors.teal[300]!, (barcode) {
+                              return barcode.isNotEmpty;
+                            }),
                       ],
                     ),
-                  ],
-                ),
+                ],
               ),
             ],
           ),

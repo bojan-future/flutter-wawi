@@ -3,18 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 
 import '../main.dart';
+import '../ui_widgets/scan_popup.dart';
 
 // ignore_for_file: public_member_api_docs
 
 class TextButtonWidget extends StatelessWidget {
   final IconData icon;
   final String buttonLabel;
-  final String bottomSheetText;
+  final String? bottomSheetText;
   final String title;
   final Color col;
+  final bool Function(String)? onScanBottomSheet;
 
-  const TextButtonWidget(
-      this.icon, this.buttonLabel, this.bottomSheetText, this.title, this.col);
+  const TextButtonWidget(this.icon, this.buttonLabel, this.bottomSheetText,
+      this.title, this.col, this.onScanBottomSheet);
+
+  void openListView(BuildContext context) {
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+          builder: (context) => Delivery(
+                title: title,
+                color: col,
+              )),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,45 +49,21 @@ class TextButtonWidget extends StatelessWidget {
           primary: Colors.black,
         ),
         onPressed: () {
-          if (bottomSheetText.isEmpty) {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  builder: (context) => Delivery(
-                        title: title,
-                        color: col,
-                      )),
-            );
+          if (bottomSheetText == null || onScanBottomSheet == null) {
+            openListView(context);
           } else {
-            showModalBottomSheet<void>(
-              context: context,
-              builder: (context) {
-                return Container(
-                  height: 200,
-                  color: col,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(bottomSheetText),
-                        ElevatedButton(
-                          child: const Icon(Mdi.barcodeScan),
-                          onPressed: () => Navigator.pop(context),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ).then((value) => Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                      builder: (context) => Delivery(
-                            title: title,
-                            color: col,
-                          )),
-                ));
+            scanPopup(
+                popupText: bottomSheetText!,
+                title: title,
+                popupColor: col,
+                scanCallback: (barcode) {
+                  var openListDialog = onScanBottomSheet!(barcode);
+                  if (openListDialog) {
+                    Navigator.pop(context);
+                    openListView(context);
+                  }
+                },
+                context: context);
           }
         },
       ),
