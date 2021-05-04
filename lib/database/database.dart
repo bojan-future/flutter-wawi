@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 import 'deliveries_dao.dart';
 import 'deliverypositions_dao.dart';
@@ -30,6 +31,9 @@ class Packets extends Table {
   /// foreign key -> product
   IntColumn get product =>
       integer().customConstraint('REFERENCES products(id)')();
+
+  /// productNr from product
+  TextColumn get productNr => text()();
 
   /// foreign key -> 'parent' packet in case this is part of larger packet,
   /// might be null
@@ -210,7 +214,22 @@ class Database extends _$Database {
       onUpgrade: (m, from, to) async {},
       beforeOpen: (details) async {
         if (details.wasCreated) {
-          //todo: insert default data
+          if (kDebugMode) {
+            final m = createMigrator(); // changed to this
+            for (final table in allTables) {
+              await m.deleteTable(table.actualTableName);
+              await m.createTable(table);
+            }
+          }
+          await into(products).insert(Product(
+              id: 1,
+              productNr: "123456789",
+              gtin1: 456789012345,
+              gtin2: 123,
+              gtin3: 123,
+              gtin4: 123,
+              gtin5: 123
+          ));
         }
       },
     );

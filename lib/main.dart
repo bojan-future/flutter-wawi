@@ -28,8 +28,8 @@ void main() {
         //use this implementation in Emulator
         create: (context) => ScannerControllerImplMock([
           '1234567890123456789012345678901234',
-          '123456789012345678901234567890',
-          '123456789012345678901234567890'
+          '12345678901234567890123456789012345678901234',
+          '123456789012345678901234567890123456'
         ]),
       )
     ],
@@ -148,7 +148,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               lot: '',
                               product: 0,
                               quantity: 0,
-                              barcode: 'Invalid Barcode'));
+                              barcode: 'Invalid Barcode',
+                              productNr: ''));
                         } else {
                           var deliveryPosition = await deliveryController
                               .getDeliveryPosition(deliveryPositionID);
@@ -166,11 +167,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       itemBuilder: (context, index) {
                         return ListTile(
                           leading: Text((index + 1).toString()),
-                          title:
-                              Text("Barcode:\n${scanViewList[index].barcode}\n"
-                                  "Product Nr: ${scanViewList[index].product}\n"
-                                  "Trace: ${scanViewList[index].lot}\n"
-                                  "Quantity: ${scanViewList[index].quantity} "),
+                          title: Text(
+                              "Barcode:\n${scanViewList[index].barcode}\n"
+                              "Product Nr: ${scanViewList[index].productNr}\n"
+                              "Trace: ${scanViewList[index].lot}\n"
+                              "Quantity: ${scanViewList[index].quantity} "),
                         );
                       },
                     ),

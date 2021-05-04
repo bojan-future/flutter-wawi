@@ -23,6 +23,9 @@ class Packet extends DataClass implements Insertable<Packet> {
   /// foreign key -> product
   final int product;
 
+  /// productNr from product
+  final String productNr;
+
   /// foreign key -> 'parent' packet in case this is part of larger packet,
   /// might be null
   final int? wrapping;
@@ -32,6 +35,7 @@ class Packet extends DataClass implements Insertable<Packet> {
       required this.lot,
       required this.quantity,
       required this.product,
+      required this.productNr,
       this.wrapping});
   factory Packet.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
@@ -48,6 +52,8 @@ class Packet extends DataClass implements Insertable<Packet> {
           .mapFromDatabaseResponse(data['${effectivePrefix}quantity'])!,
       product:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}product'])!,
+      productNr: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}product_nr'])!,
       wrapping:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}wrapping']),
     );
@@ -60,6 +66,7 @@ class Packet extends DataClass implements Insertable<Packet> {
     map['lot'] = Variable<String>(lot);
     map['quantity'] = Variable<double>(quantity);
     map['product'] = Variable<int>(product);
+    map['product_nr'] = Variable<String>(productNr);
     if (!nullToAbsent || wrapping != null) {
       map['wrapping'] = Variable<int?>(wrapping);
     }
@@ -73,6 +80,7 @@ class Packet extends DataClass implements Insertable<Packet> {
       lot: Value(lot),
       quantity: Value(quantity),
       product: Value(product),
+      productNr: Value(productNr),
       wrapping: wrapping == null && nullToAbsent
           ? const Value.absent()
           : Value(wrapping),
@@ -88,6 +96,7 @@ class Packet extends DataClass implements Insertable<Packet> {
       lot: serializer.fromJson<String>(json['lot']),
       quantity: serializer.fromJson<double>(json['quantity']),
       product: serializer.fromJson<int>(json['product']),
+      productNr: serializer.fromJson<String>(json['productNr']),
       wrapping: serializer.fromJson<int?>(json['wrapping']),
     );
   }
@@ -100,6 +109,7 @@ class Packet extends DataClass implements Insertable<Packet> {
       'lot': serializer.toJson<String>(lot),
       'quantity': serializer.toJson<double>(quantity),
       'product': serializer.toJson<int>(product),
+      'productNr': serializer.toJson<String>(productNr),
       'wrapping': serializer.toJson<int?>(wrapping),
     };
   }
@@ -110,6 +120,7 @@ class Packet extends DataClass implements Insertable<Packet> {
           String? lot,
           double? quantity,
           int? product,
+          String? productNr,
           int? wrapping}) =>
       Packet(
         id: id ?? this.id,
@@ -117,6 +128,7 @@ class Packet extends DataClass implements Insertable<Packet> {
         lot: lot ?? this.lot,
         quantity: quantity ?? this.quantity,
         product: product ?? this.product,
+        productNr: productNr ?? this.productNr,
         wrapping: wrapping ?? this.wrapping,
       );
   @override
@@ -127,6 +139,7 @@ class Packet extends DataClass implements Insertable<Packet> {
           ..write('lot: $lot, ')
           ..write('quantity: $quantity, ')
           ..write('product: $product, ')
+          ..write('productNr: $productNr, ')
           ..write('wrapping: $wrapping')
           ..write(')'))
         .toString();
@@ -139,8 +152,10 @@ class Packet extends DataClass implements Insertable<Packet> {
           barcode.hashCode,
           $mrjc(
               lot.hashCode,
-              $mrjc(quantity.hashCode,
-                  $mrjc(product.hashCode, wrapping.hashCode))))));
+              $mrjc(
+                  quantity.hashCode,
+                  $mrjc(product.hashCode,
+                      $mrjc(productNr.hashCode, wrapping.hashCode)))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -150,6 +165,7 @@ class Packet extends DataClass implements Insertable<Packet> {
           other.lot == this.lot &&
           other.quantity == this.quantity &&
           other.product == this.product &&
+          other.productNr == this.productNr &&
           other.wrapping == this.wrapping);
 }
 
@@ -159,6 +175,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
   final Value<String> lot;
   final Value<double> quantity;
   final Value<int> product;
+  final Value<String> productNr;
   final Value<int?> wrapping;
   const PacketsCompanion({
     this.id = const Value.absent(),
@@ -166,6 +183,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
     this.lot = const Value.absent(),
     this.quantity = const Value.absent(),
     this.product = const Value.absent(),
+    this.productNr = const Value.absent(),
     this.wrapping = const Value.absent(),
   });
   PacketsCompanion.insert({
@@ -174,17 +192,20 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
     required String lot,
     required double quantity,
     required int product,
+    required String productNr,
     this.wrapping = const Value.absent(),
   })  : barcode = Value(barcode),
         lot = Value(lot),
         quantity = Value(quantity),
-        product = Value(product);
+        product = Value(product),
+        productNr = Value(productNr);
   static Insertable<Packet> custom({
     Expression<int>? id,
     Expression<String>? barcode,
     Expression<String>? lot,
     Expression<double>? quantity,
     Expression<int>? product,
+    Expression<String>? productNr,
     Expression<int?>? wrapping,
   }) {
     return RawValuesInsertable({
@@ -193,6 +214,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
       if (lot != null) 'lot': lot,
       if (quantity != null) 'quantity': quantity,
       if (product != null) 'product': product,
+      if (productNr != null) 'product_nr': productNr,
       if (wrapping != null) 'wrapping': wrapping,
     });
   }
@@ -203,6 +225,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
       Value<String>? lot,
       Value<double>? quantity,
       Value<int>? product,
+      Value<String>? productNr,
       Value<int?>? wrapping}) {
     return PacketsCompanion(
       id: id ?? this.id,
@@ -210,6 +233,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
       lot: lot ?? this.lot,
       quantity: quantity ?? this.quantity,
       product: product ?? this.product,
+      productNr: productNr ?? this.productNr,
       wrapping: wrapping ?? this.wrapping,
     );
   }
@@ -232,6 +256,9 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
     if (product.present) {
       map['product'] = Variable<int>(product.value);
     }
+    if (productNr.present) {
+      map['product_nr'] = Variable<String>(productNr.value);
+    }
     if (wrapping.present) {
       map['wrapping'] = Variable<int?>(wrapping.value);
     }
@@ -246,6 +273,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
           ..write('lot: $lot, ')
           ..write('quantity: $quantity, ')
           ..write('product: $product, ')
+          ..write('productNr: $productNr, ')
           ..write('wrapping: $wrapping')
           ..write(')'))
         .toString();
@@ -305,6 +333,17 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
         $customConstraints: 'REFERENCES products(id)');
   }
 
+  final VerificationMeta _productNrMeta = const VerificationMeta('productNr');
+  @override
+  late final GeneratedTextColumn productNr = _constructProductNr();
+  GeneratedTextColumn _constructProductNr() {
+    return GeneratedTextColumn(
+      'product_nr',
+      $tableName,
+      false,
+    );
+  }
+
   final VerificationMeta _wrappingMeta = const VerificationMeta('wrapping');
   @override
   late final GeneratedIntColumn wrapping = _constructWrapping();
@@ -315,7 +354,7 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, barcode, lot, quantity, product, wrapping];
+      [id, barcode, lot, quantity, product, productNr, wrapping];
   @override
   $PacketsTable get asDslTable => this;
   @override
@@ -353,6 +392,12 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
           product.isAcceptableOrUnknown(data['product']!, _productMeta));
     } else if (isInserting) {
       context.missing(_productMeta);
+    }
+    if (data.containsKey('product_nr')) {
+      context.handle(_productNrMeta,
+          productNr.isAcceptableOrUnknown(data['product_nr']!, _productNrMeta));
+    } else if (isInserting) {
+      context.missing(_productNrMeta);
     }
     if (data.containsKey('wrapping')) {
       context.handle(_wrappingMeta,

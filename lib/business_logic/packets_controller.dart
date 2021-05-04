@@ -50,6 +50,7 @@ class PacketsController {
         lot: Value(lot),
         quantity: Value(quantity),
         product: Value(product.id),
+        productNr: Value(product.productNr)
       ));
     } else {
       return -1;
