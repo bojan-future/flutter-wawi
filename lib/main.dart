@@ -128,13 +128,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     bottomSheetText: "Auftrag Scannen",
                     title: "Auslieferung",
                     col: Colors.amber[300]!,
-                    child: ScanListView(
-                      title: 'Auslieferung',
-                      onScan: (barcode) {},
-                      itemCount: 1,
-                      itemBuilder: (context, index) {
-                        return ListTile();
-                      },
+                    child: Scaffold(
+                      appBar: AppBar(
+                        backgroundColor: Colors.amber[300]!,
+                        title: Text('Auslieferung'),
+                      ),
+                      body: Center(child: Text('Coming soon...')),
                     ),
                   ),
                   SizedBox(height: 10),
