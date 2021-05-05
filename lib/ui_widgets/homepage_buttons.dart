@@ -13,6 +13,7 @@ class TextButtonWidget extends StatelessWidget {
   final Widget child;
   final bool Function(String)? onScanBottomSheet;
 
+  /// required parameters when calling TextButtonWIdget
   const TextButtonWidget(
       {required this.icon,
       required this.buttonLabel,

@@ -1,5 +1,4 @@
 import 'package:moor_flutter/moor_flutter.dart';
-
 import 'database.dart';
 
 part 'production_dao.g.dart';

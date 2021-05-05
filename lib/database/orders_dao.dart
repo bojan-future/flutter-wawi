@@ -5,7 +5,7 @@ part 'orders_dao.g.dart';
 
 @UseDao(tables: [Orders])
 
-/// packets functionality extension for database
+/// orders functionality extension for database
 class OrdersDao extends DatabaseAccessor<Database> with _$OrdersDaoMixin {
   ///
   OrdersDao(Database db) : super(db);

@@ -7,7 +7,7 @@ import '../database/database.dart';
 import '../ui_widgets/alert_warnings.dart';
 import '../ui_widgets/scanlistview.dart';
 
-/// Widget representing Delivery Screen
+/// Widget representing the Delivery Screen
 class DeliveryView extends StatefulWidget {
   @override
   _DeliveryViewState createState() => _DeliveryViewState();
@@ -62,7 +62,8 @@ class _DeliveryViewState extends State<DeliveryView> {
         return Card(
           child: ListTile(
             title: Text("Name: ${scanViewList[index].productName}\n"),
-            subtitle: Text("Product Nr: ${scanViewList[index].productNr}\n"
+            subtitle: Text(
+                "Product Nr: ${scanViewList[index].productNr}\n"
                 "Trace: ${scanViewList[index].lot}\n"
                 "Quantity: ${scanViewList[index].quantity} "),
           ),

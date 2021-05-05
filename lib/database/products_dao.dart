@@ -5,7 +5,7 @@ part 'products_dao.g.dart';
 
 @UseDao(tables: [Products])
 
-/// packets functionality extension for database
+/// products functionality extension for database
 class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
   ///
   ProductsDao(Database db) : super(db);
@@ -41,11 +41,12 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
   /// retrieves product with given GTIN
   Future<Product> getProductByGTIN(int gtin) async {
     final productList = await (select(products)
-          ..where((p) => p.gtin1.equals(gtin)
-          | p.gtin2.equals(gtin)
-          | p.gtin3.equals(gtin)
-          | p.gtin4.equals(gtin)
-          | p.gtin5.equals(gtin)))
+          ..where((p) =>
+              p.gtin1.equals(gtin) |
+              p.gtin2.equals(gtin) |
+              p.gtin3.equals(gtin) |
+              p.gtin4.equals(gtin) |
+              p.gtin5.equals(gtin)))
         .get();
 
     if (productList.isEmpty) {
