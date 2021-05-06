@@ -30,6 +30,14 @@ class _LoginViewState extends State<LoginView> {
     _handleLoginSuccess(success: success, context: context);
   }
 
+  void loginWithNumber(BuildContext context) async {
+    var authController = Provider.of<AuthController>(context, listen: false);
+    var userNumber = textEditController.text;
+
+    var success = await authController.loginWithUserNumber(userNumber);
+    _handleLoginSuccess(success: success, context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     var scanner = Provider.of<ScannerController>(context);
@@ -59,6 +67,9 @@ class _LoginViewState extends State<LoginView> {
                       labelText: 'Mitarbeiternummer',
                     ),
                     controller: textEditController,
+                    onSubmitted: (value) {
+                      loginWithNumber(context);
+                    },
                   ),
                 ),
                 SizedBox(
@@ -70,14 +81,8 @@ class _LoginViewState extends State<LoginView> {
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(8.0)),
                   child: TextButton(
-                    onPressed: () async {
-                      var authController =
-                          Provider.of<AuthController>(context, listen: false);
-                      var userNumber = textEditController.text;
-
-                      var success =
-                          await authController.loginWithUserNumber(userNumber);
-                      _handleLoginSuccess(success: success, context: context);
+                    onPressed: () {
+                      loginWithNumber(context);
                     },
                     child: Icon(
                       Icons.done,
@@ -89,7 +94,7 @@ class _LoginViewState extends State<LoginView> {
               ],
             ),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             GestureDetector(
                 onTapDown: (tapDownDetails) {

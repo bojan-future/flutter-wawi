@@ -16,7 +16,7 @@ class UsersDao extends DatabaseAccessor<Database> with _$UsersDaoMixin {
         await (select(users)..where((u) => u.userNr.equals(userNr))).get();
 
     if (usersList.isEmpty) {
-      throw (RecordNotFoundException);
+      throw RecordNotFoundException();
     } else {
       return usersList.first;
     }
@@ -28,7 +28,7 @@ class UsersDao extends DatabaseAccessor<Database> with _$UsersDaoMixin {
         await (select(users)..where((u) => u.barcode.equals(barcode))).get();
 
     if (usersList.isEmpty) {
-      throw (RecordNotFoundException);
+      throw RecordNotFoundException();
     } else {
       return usersList.first;
     }

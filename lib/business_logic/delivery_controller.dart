@@ -1,18 +1,28 @@
-import 'package:kuda_lager/business_logic/auth_controller.dart';
-import 'package:kuda_lager/services/scanner_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../database/database.dart';
+import 'auth_controller.dart';
 import 'packets_controller.dart';
 
 /// Business Logic for Packets
 class DeliveryController {
   final database = DatabaseFactory.getDatabaseInstance();
 
+  final BuildContext _context;
+  late AuthController authController;
+  late dynamic userID;
+
+  DeliveryController(this._context) {
+    authController = Provider.of<AuthController>(_context, listen: false);
+    userID = authController.userID;
+  }
+
   /// add delivery
   Future<int> addDelivery() async {
     return database.deliveriesDao
-        .createDelivery(DeliveriesCompanion(user: Value(1)));
+        .createDelivery(DeliveriesCompanion(user: Value(userID)));
   }
 
   /// add delivery position together with an associated packet

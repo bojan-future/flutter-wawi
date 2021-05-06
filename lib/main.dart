@@ -18,14 +18,14 @@ void main() {
 
   runApp(MultiProvider(
     providers: [
+      Provider<AuthController>(
+        create: (context) => AuthController(),
+      ),
       Provider<PacketsController>(
         create: (context) => PacketsController(),
       ),
       Provider<DeliveryController>(
-        create: (context) => DeliveryController(),
-      ),
-      Provider<AuthController>(
-        create: (context) => AuthController(),
+        create: (context) => DeliveryController(context),
       ),
       Provider<ScannerController>(
         // create: (context) => ScannerControllerImplDataWedge()

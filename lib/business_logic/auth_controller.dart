@@ -11,7 +11,7 @@ class AuthController {
   Future<bool> loginWithUserNumber(String userNr) async {
     try {
       user = await database.usersDao.getUserByNumber(userNr);
-    } catch (e) {
+    } on RecordNotFoundException {
       return false;
     }
     userID = user.id;
@@ -22,7 +22,7 @@ class AuthController {
   Future<bool> loginWithBarcode(String barcode) async {
     try {
       user = await database.usersDao.getUserByBarcode(barcode);
-    } catch (e) {
+    } on RecordNotFoundException {
       return false;
     }
     userID = user.id;
