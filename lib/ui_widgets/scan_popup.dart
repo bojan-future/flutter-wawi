@@ -1,22 +1,18 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart';
 import '../services/scanner_controller.dart';
 
 // ignore: public_member_api_docs
-
 void scanPopup(
     {required String popupText,
     required String title,
     Color popupColor = Colors.amber,
     required void Function(String) scanCallback,
-    required BuildContext context}) {
+    required BuildContext context}
+    ) {
   showModalBottomSheet<void>(
       context: context,
       builder: (context) {

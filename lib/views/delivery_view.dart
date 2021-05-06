@@ -43,7 +43,9 @@ class _DeliveryViewState extends State<DeliveryView> {
 
         if (deliveryPositionID == -1) {
           setState(() {
-            buildAlertInvalidBarcode(context).show();
+            buildAlert(
+                    context, "Achtung!", "Der gescannte Barcode ist ungültig!")
+                .show();
           });
         } else {
           var deliveryPosition =

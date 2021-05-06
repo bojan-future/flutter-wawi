@@ -1,3 +1,5 @@
+import 'package:kuda_lager/business_logic/auth_controller.dart';
+import 'package:kuda_lager/services/scanner_controller.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 import '../database/database.dart';
@@ -9,7 +11,8 @@ class DeliveryController {
 
   /// add delivery
   Future<int> addDelivery() async {
-    return database.deliveriesDao.createDelivery(DeliveriesCompanion());
+    return database.deliveriesDao
+        .createDelivery(DeliveriesCompanion(user: Value(1)));
   }
 
   /// add delivery position together with an associated packet

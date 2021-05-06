@@ -62,7 +62,8 @@ class TextButtonWidget extends StatelessWidget {
                     );
                   }
                 },
-                context: context);
+                context: context
+                );
           }
         },
       ),

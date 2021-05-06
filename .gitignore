@@ -42,3 +42,4 @@ app.*.map.json
 pubspec.lock
 pubspec.lock
 /.vs/slnx.sqlite
+/.vscode/settings.json

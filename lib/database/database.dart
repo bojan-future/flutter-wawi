@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:kuda_lager/database/users_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 import 'deliveries_dao.dart';
@@ -11,9 +12,21 @@ import 'products_dao.dart';
 part 'database.exception.dart';
 part 'database.g.dart';
 
-@DataClassName('Packet')
+/// represents a user
+@DataClassName('User')
+class Users extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// barcode
+  TextColumn get barcode => text()();
+
+  /// user number
+  TextColumn get userNr => text()();
+}
 
 /// represents a physical package with product, barcode, lot and quantity
+@DataClassName('Packet')
 class Packets extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
@@ -33,8 +46,8 @@ class Packets extends Table {
 
   /// product name from product
   TextColumn get productName => text()();
-  
-  /// product number from product 
+
+  /// product number from product
   TextColumn get productNr => text()();
 
   /// foreign key -> 'parent' packet in case this is part of larger packet,
@@ -82,6 +95,9 @@ class Orders extends Table {
 
   /// order number
   TextColumn get orderNr => text()();
+
+  /// foreign key -> user
+  IntColumn get user => integer().customConstraint('REFERENCES users(id)')();
 }
 
 @DataClassName('OrderPosition')
@@ -101,6 +117,9 @@ class OrderPositions extends Table {
 class Deliveries extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
+
+  /// foreign key -> user
+  IntColumn get user => integer().customConstraint('REFERENCES users(id)')();
 }
 
 @DataClassName('DeliveryPosition')
@@ -184,6 +203,7 @@ class DatabaseFactory {
 }
 
 @UseMoor(tables: [
+  Users,
   Packets,
   Products,
   Orders,
@@ -194,6 +214,7 @@ class DatabaseFactory {
   Deliveries,
   DeliveryPositions,
 ], daos: [
+  UsersDao,
   PacketsDao,
   ProductsDao,
   OrdersDao,
@@ -245,6 +266,11 @@ class Database extends _$Database {
               gtin3: 123,
               gtin4: 123,
               gtin5: 123));
+          await into(users).insert(User(
+            barcode: '9999912345',
+            id: 1,
+            userNr: '12345'
+            ));
         }
       },
     );
