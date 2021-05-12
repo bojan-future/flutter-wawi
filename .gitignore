@@ -42,3 +42,5 @@ app.*.map.json
 pubspec.lock
 pubspec.lock
 /.vs/slnx.sqlite
+
+/pubspec.lock
