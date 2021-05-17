@@ -19,7 +19,7 @@ void main() {
   runApp(MultiProvider(
     providers: [
       Provider<AuthController>(
-        create: (context) => AuthController(),
+        create: (context) => AuthControllerImplDatabase(),
       ),
       Provider<PacketsController>(
         create: (context) => PacketsController(),

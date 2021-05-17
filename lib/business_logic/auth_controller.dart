@@ -1,11 +1,23 @@
 import '../database/database.dart';
 
-/// Business Logic for Packets
-class AuthController {
+abstract class AuthController {
+  int getUserId();
+
+  Future<bool> loginWithUserNumber(String userNr);
+
+  Future<bool> loginWithBarcode(String barcode);
+}
+
+class AuthControllerImplDatabase implements AuthController {
   final database = DatabaseFactory.getDatabaseInstance();
 
-  var userID;
-  var user;
+  User? user;
+
+  int getUserId() {
+    if (user == null) return -1;
+
+    return user!.id;
+  }
 
   /// retrieve user with given user number
   Future<bool> loginWithUserNumber(String userNr) async {
@@ -14,7 +26,6 @@ class AuthController {
     } on RecordNotFoundException {
       return false;
     }
-    userID = user.id;
     return true;
   }
 
@@ -25,7 +36,6 @@ class AuthController {
     } on RecordNotFoundException {
       return false;
     }
-    userID = user.id;
     return true;
   }
 }

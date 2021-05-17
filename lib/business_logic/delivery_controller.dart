@@ -16,7 +16,7 @@ class DeliveryController {
 
   DeliveryController(this._context) {
     authController = Provider.of<AuthController>(_context, listen: false);
-    userID = authController.userID;
+    userID = authController.getUserId();
   }
 
   /// add delivery
