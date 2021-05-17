@@ -15,19 +15,22 @@ class InventoryController {
 
   /// add inventory position together with an associated packet
   Future<int> addInventoryPosition(String barcode, int inventoryID) async {
-    var packetID = await PacketsController().addPacket(barcode);
-
-    if (packetID == -1) {
-      return packetID;
-    } else {
-      var packet = await PacketsController().getPacketWithId(packetID);
-      var packetQuantity = packet.quantity;
-      return database.inventoryPositionsDao.createInventoryPosition(
-          InventoryPositionsCompanion(
-              packet: Value(packetID),
-              inventory: Value(inventoryID),
-              quantity: Value(packetQuantity)));
+    Packet packet;
+    try {
+      packet = await PacketsController().getPacketWithBarcode(barcode);
+      // ignore: avoid_catching_errors
+    } on StateError {
+      var packetID = await PacketsController().addPacket(barcode);
+      packet = await PacketsController().getPacketWithId(packetID);
     }
+
+    var packetQuantity = packet.quantity;
+    var packetID = packet.id;
+    return database.inventoryPositionsDao.createInventoryPosition(
+        InventoryPositionsCompanion(
+            packet: Value(packetID),
+            inventory: Value(inventoryID),
+            quantity: Value(packetQuantity)));
   }
 
   /// get inventory position

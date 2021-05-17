@@ -17,20 +17,13 @@ class DeliveryController {
   Future<int> addDeliveryPosition(String barcode, int deliveryID) async {
     var packetID = await PacketsController().addPacket(barcode);
 
-    if (packetID == -1) {
-      return packetID;
-    } else {
-      return database.deliveryPositionsDao.createDeliveryPosition(
-          DeliveryPositionsCompanion(
-              packet: Value(packetID), 
-              delivery: Value(deliveryID)
-          ));
-    }
+    return database.deliveryPositionsDao.createDeliveryPosition(
+        DeliveryPositionsCompanion(
+            packet: Value(packetID), delivery: Value(deliveryID)));
   }
 
   /// get delivery position
-  Future<DeliveryPosition> getDeliveryPosition(
-    int deliveryPositionID) async {
+  Future<DeliveryPosition> getDeliveryPosition(int deliveryPositionID) async {
     return database.deliveryPositionsDao
         .getDeliveryPositionByID(deliveryPositionID);
   }

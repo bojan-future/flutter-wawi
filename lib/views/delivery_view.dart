@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kuda_lager/business_logic/business.exception.dart';
 import 'package:provider/provider.dart';
 
 import '../business_logic/delivery_controller.dart';
@@ -38,14 +39,9 @@ class _DeliveryViewState extends State<DeliveryView> {
         var packetsController =
             Provider.of<PacketsController>(context, listen: false);
 
-        var deliveryPositionID = await deliveryController.addDeliveryPosition(
-            barcode, actualDeliveryId);
-
-        if (deliveryPositionID == -1) {
-          setState(() {
-            buildAlertInvalidBarcode(context).show();
-          });
-        } else {
+        try {
+          var deliveryPositionID = await deliveryController.addDeliveryPosition(
+              barcode, actualDeliveryId);
           var deliveryPosition =
               await deliveryController.getDeliveryPosition(deliveryPositionID);
 
@@ -55,6 +51,10 @@ class _DeliveryViewState extends State<DeliveryView> {
           setState(() {
             scanViewList.add(packet);
           });
+        } on InvalidBarcodeException {
+          setState(() {
+            buildAlertInvalidBarcode(context).show();
+          });
         }
       },
       itemCount: scanViewList.length,
@@ -62,8 +62,7 @@ class _DeliveryViewState extends State<DeliveryView> {
         return Card(
           child: ListTile(
             title: Text("Name: ${scanViewList[index].productName}\n"),
-            subtitle: Text(
-                "Product Nr: ${scanViewList[index].productNr}\n"
+            subtitle: Text("Product Nr: ${scanViewList[index].productNr}\n"
                 "Trace: ${scanViewList[index].lot}\n"
                 "Quantity: ${scanViewList[index].quantity} "),
           ),

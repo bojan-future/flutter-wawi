@@ -1,6 +1,7 @@
 import 'package:moor_flutter/moor_flutter.dart';
 
 import '../database/database.dart';
+import 'business.exception.dart';
 
 /// Business Logic for Packets
 class PacketsController {
@@ -54,12 +55,17 @@ class PacketsController {
           productNr: Value(product.productNr),
           productName: Value(product.productName)));
     } else {
-      return -1;
+      return throw InvalidBarcodeException();
     }
   }
 
   /// retrieve packet with ID
   Future<Packet> getPacketWithId(int id) {
     return (database.packetsDao.getPacketWithId(id));
+  }
+
+  /// retrieve packet with barcode
+  Future<Packet> getPacketWithBarcode(String barcode) {
+    return (database.packetsDao.getPacketWithBarcode(barcode));
   }
 }
