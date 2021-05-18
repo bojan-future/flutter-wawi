@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kuda_lager/ui_widgets/scan_popup.dart';
+import '../ui_widgets/scan_popup.dart';
 
 /// MaterialApp Wrap for the tested widget
 class ScanPopupTestWidgetWrap extends StatelessWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../business_logic/business.exception.dart';
 import '../business_logic/inventory_controller.dart';
 import '../business_logic/packets_controller.dart';
 import '../database/database.dart';
@@ -39,15 +40,9 @@ class _InventoryViewState extends State<InventoryView> {
             Provider.of<InventoryController>(context, listen: false);
         var packetsController =
             Provider.of<PacketsController>(context, listen: false);
-
-        inventoryPositionID = await inventoryController.addInventoryPosition(
-            barcode, actualInventoryID);
-
-        if (inventoryPositionID == -1) {
-          setState(() {
-            buildAlertInvalidBarcode(context).show();
-          });
-        } else {
+        try {
+          var inventoryPositionID = await inventoryController
+              .addInventoryPosition(barcode, actualInventoryID);
           var inventoryPosition = await inventoryController
               .getInventoryPosition(inventoryPositionID);
 
@@ -56,6 +51,10 @@ class _InventoryViewState extends State<InventoryView> {
           packet = await packetsController.getPacketWithId(packetID);
           setState(() {
             scanViewList.add(packet);
+          });
+        } on InvalidBarcodeException {
+          setState(() {
+            buildAlertInvalidBarcode(context).show();
           });
         }
       },
