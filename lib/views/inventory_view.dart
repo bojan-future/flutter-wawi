@@ -66,63 +66,9 @@ class _InventoryViewState extends State<InventoryView> {
             subtitle: Text("Product Nr: ${scanViewList[index].productNr}\n"
                 "Trace: ${scanViewList[index].lot}\n"
                 "Quantity: ${scanViewList[index].quantity} "),
-            onLongPress: () {
-              buildShowDialog(context, index);
-            },
           ),
         );
       },
     );
-  }
-
-  Future<void> buildShowDialog(BuildContext context, int index) {
-    return showDialog<void>(
-      context: context,
-      builder: (context) {
-        return _SystemPadding(
-          child: AlertDialog(
-            contentPadding: const EdgeInsets.all(16.0),
-            content: Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    autofocus: true,
-                    decoration: InputDecoration(
-                        labelText: 'Menge ändern',
-                        helperText: "Originale Menge: "
-                            "${scanViewList[index].quantity}"),
-                  ),
-                )
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                  child: const Text('Abbrechen'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    //todo: update list
-                  })
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _SystemPadding extends StatelessWidget {
-  final Widget child;
-
-  _SystemPadding({Key? key, required this.child}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-        duration: const Duration(milliseconds: 300), child: child);
   }
 }
