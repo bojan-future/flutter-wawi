@@ -17,7 +17,6 @@ class InventoryView extends StatefulWidget {
 class _InventoryViewState extends State<InventoryView> {
   int actualInventoryID = 0;
   List<Packet> scanViewList = [];
-  int inventoryPositionID = 0;
 
   @override
   void initState() {
