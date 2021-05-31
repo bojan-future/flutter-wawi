@@ -664,7 +664,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     required int gtin3,
     required int gtin4,
     required int gtin5,
-  })   : productNr = Value(productNr),
+  })  : productNr = Value(productNr),
         productName = Value(productName),
         gtin1 = Value(gtin1),
         gtin2 = Value(gtin2),
@@ -2093,7 +2093,7 @@ class DeliveryPositionsCompanion extends UpdateCompanion<DeliveryPosition> {
     this.id = const Value.absent(),
     required int delivery,
     required int packet,
-  })   : delivery = Value(delivery),
+  })  : delivery = Value(delivery),
         packet = Value(packet);
   static Insertable<DeliveryPosition> custom({
     Expression<int>? id,
@@ -2216,6 +2216,419 @@ class $DeliveryPositionsTable extends DeliveryPositions
   }
 }
 
+class Inventory extends DataClass implements Insertable<Inventory> {
+  /// primary key
+  final int id;
+  Inventory({required this.id});
+  factory Inventory.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    return Inventory(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    return map;
+  }
+
+  InventoriesCompanion toCompanion(bool nullToAbsent) {
+    return InventoriesCompanion(
+      id: Value(id),
+    );
+  }
+
+  factory Inventory.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Inventory(
+      id: serializer.fromJson<int>(json['id']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+    };
+  }
+
+  Inventory copyWith({int? id}) => Inventory(
+        id: id ?? this.id,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Inventory(')..write('id: $id')..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf(id.hashCode);
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) || (other is Inventory && other.id == this.id);
+}
+
+class InventoriesCompanion extends UpdateCompanion<Inventory> {
+  final Value<int> id;
+  const InventoriesCompanion({
+    this.id = const Value.absent(),
+  });
+  InventoriesCompanion.insert({
+    this.id = const Value.absent(),
+  });
+  static Insertable<Inventory> custom({
+    Expression<int>? id,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+    });
+  }
+
+  InventoriesCompanion copyWith({Value<int>? id}) {
+    return InventoriesCompanion(
+      id: id ?? this.id,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InventoriesCompanion(')..write('id: $id')..write(')'))
+        .toString();
+  }
+}
+
+class $InventoriesTable extends Inventories
+    with TableInfo<$InventoriesTable, Inventory> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $InventoriesTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedIntColumn id = _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id];
+  @override
+  $InventoriesTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'inventories';
+  @override
+  final String actualTableName = 'inventories';
+  @override
+  VerificationContext validateIntegrity(Insertable<Inventory> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Inventory map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Inventory.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $InventoriesTable createAlias(String alias) {
+    return $InventoriesTable(_db, alias);
+  }
+}
+
+class InventoryPosition extends DataClass
+    implements Insertable<InventoryPosition> {
+  /// primary key
+  final int id;
+
+  /// foreign key -> inventory
+  final int inventory;
+
+  /// foreign key -> packets
+  final int packet;
+
+  /// quantity
+  final double quantity;
+  InventoryPosition(
+      {required this.id,
+      required this.inventory,
+      required this.packet,
+      required this.quantity});
+  factory InventoryPosition.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final doubleType = db.typeSystem.forDartType<double>();
+    return InventoryPosition(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      inventory:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}inventory'])!,
+      packet:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
+      quantity: doubleType
+          .mapFromDatabaseResponse(data['${effectivePrefix}quantity'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['inventory'] = Variable<int>(inventory);
+    map['packet'] = Variable<int>(packet);
+    map['quantity'] = Variable<double>(quantity);
+    return map;
+  }
+
+  InventoryPositionsCompanion toCompanion(bool nullToAbsent) {
+    return InventoryPositionsCompanion(
+      id: Value(id),
+      inventory: Value(inventory),
+      packet: Value(packet),
+      quantity: Value(quantity),
+    );
+  }
+
+  factory InventoryPosition.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return InventoryPosition(
+      id: serializer.fromJson<int>(json['id']),
+      inventory: serializer.fromJson<int>(json['inventory']),
+      packet: serializer.fromJson<int>(json['packet']),
+      quantity: serializer.fromJson<double>(json['quantity']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'inventory': serializer.toJson<int>(inventory),
+      'packet': serializer.toJson<int>(packet),
+      'quantity': serializer.toJson<double>(quantity),
+    };
+  }
+
+  InventoryPosition copyWith(
+          {int? id, int? inventory, int? packet, double? quantity}) =>
+      InventoryPosition(
+        id: id ?? this.id,
+        inventory: inventory ?? this.inventory,
+        packet: packet ?? this.packet,
+        quantity: quantity ?? this.quantity,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('InventoryPosition(')
+          ..write('id: $id, ')
+          ..write('inventory: $inventory, ')
+          ..write('packet: $packet, ')
+          ..write('quantity: $quantity')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(inventory.hashCode, $mrjc(packet.hashCode, quantity.hashCode))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is InventoryPosition &&
+          other.id == this.id &&
+          other.inventory == this.inventory &&
+          other.packet == this.packet &&
+          other.quantity == this.quantity);
+}
+
+class InventoryPositionsCompanion extends UpdateCompanion<InventoryPosition> {
+  final Value<int> id;
+  final Value<int> inventory;
+  final Value<int> packet;
+  final Value<double> quantity;
+  const InventoryPositionsCompanion({
+    this.id = const Value.absent(),
+    this.inventory = const Value.absent(),
+    this.packet = const Value.absent(),
+    this.quantity = const Value.absent(),
+  });
+  InventoryPositionsCompanion.insert({
+    this.id = const Value.absent(),
+    required int inventory,
+    required int packet,
+    required double quantity,
+  })  : inventory = Value(inventory),
+        packet = Value(packet),
+        quantity = Value(quantity);
+  static Insertable<InventoryPosition> custom({
+    Expression<int>? id,
+    Expression<int>? inventory,
+    Expression<int>? packet,
+    Expression<double>? quantity,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (inventory != null) 'inventory': inventory,
+      if (packet != null) 'packet': packet,
+      if (quantity != null) 'quantity': quantity,
+    });
+  }
+
+  InventoryPositionsCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? inventory,
+      Value<int>? packet,
+      Value<double>? quantity}) {
+    return InventoryPositionsCompanion(
+      id: id ?? this.id,
+      inventory: inventory ?? this.inventory,
+      packet: packet ?? this.packet,
+      quantity: quantity ?? this.quantity,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (inventory.present) {
+      map['inventory'] = Variable<int>(inventory.value);
+    }
+    if (packet.present) {
+      map['packet'] = Variable<int>(packet.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<double>(quantity.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InventoryPositionsCompanion(')
+          ..write('id: $id, ')
+          ..write('inventory: $inventory, ')
+          ..write('packet: $packet, ')
+          ..write('quantity: $quantity')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $InventoryPositionsTable extends InventoryPositions
+    with TableInfo<$InventoryPositionsTable, InventoryPosition> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $InventoryPositionsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedIntColumn id = _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _inventoryMeta = const VerificationMeta('inventory');
+  @override
+  late final GeneratedIntColumn inventory = _constructInventory();
+  GeneratedIntColumn _constructInventory() {
+    return GeneratedIntColumn('inventory', $tableName, false,
+        $customConstraints: 'REFERENCES inventories(id)');
+  }
+
+  final VerificationMeta _packetMeta = const VerificationMeta('packet');
+  @override
+  late final GeneratedIntColumn packet = _constructPacket();
+  GeneratedIntColumn _constructPacket() {
+    return GeneratedIntColumn('packet', $tableName, false,
+        $customConstraints: 'REFERENCES packets(id)');
+  }
+
+  final VerificationMeta _quantityMeta = const VerificationMeta('quantity');
+  @override
+  late final GeneratedRealColumn quantity = _constructQuantity();
+  GeneratedRealColumn _constructQuantity() {
+    return GeneratedRealColumn(
+      'quantity',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, inventory, packet, quantity];
+  @override
+  $InventoryPositionsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'inventory_positions';
+  @override
+  final String actualTableName = 'inventory_positions';
+  @override
+  VerificationContext validateIntegrity(Insertable<InventoryPosition> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('inventory')) {
+      context.handle(_inventoryMeta,
+          inventory.isAcceptableOrUnknown(data['inventory']!, _inventoryMeta));
+    } else if (isInserting) {
+      context.missing(_inventoryMeta);
+    }
+    if (data.containsKey('packet')) {
+      context.handle(_packetMeta,
+          packet.isAcceptableOrUnknown(data['packet']!, _packetMeta));
+    } else if (isInserting) {
+      context.missing(_packetMeta);
+    }
+    if (data.containsKey('quantity')) {
+      context.handle(_quantityMeta,
+          quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta));
+    } else if (isInserting) {
+      context.missing(_quantityMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  InventoryPosition map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return InventoryPosition.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $InventoryPositionsTable createAlias(String alias) {
+    return $InventoryPositionsTable(_db, alias);
+  }
+}
+
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   late final $PacketsTable packets = $PacketsTable(this);
@@ -2231,6 +2644,9 @@ abstract class _$Database extends GeneratedDatabase {
   late final $DeliveriesTable deliveries = $DeliveriesTable(this);
   late final $DeliveryPositionsTable deliveryPositions =
       $DeliveryPositionsTable(this);
+  late final $InventoriesTable inventories = $InventoriesTable(this);
+  late final $InventoryPositionsTable inventoryPositions =
+      $InventoryPositionsTable(this);
   late final PacketsDao packetsDao = PacketsDao(this as Database);
   late final ProductsDao productsDao = ProductsDao(this as Database);
   late final OrdersDao ordersDao = OrdersDao(this as Database);
@@ -2238,6 +2654,9 @@ abstract class _$Database extends GeneratedDatabase {
   late final DeliveriesDao deliveriesDao = DeliveriesDao(this as Database);
   late final DeliveryPositionsDao deliveryPositionsDao =
       DeliveryPositionsDao(this as Database);
+  late final InventoriesDao inventoriesDao = InventoriesDao(this as Database);
+  late final InventoryPositionsDao inventoryPositionsDao =
+      InventoryPositionsDao(this as Database);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
@@ -2250,6 +2669,8 @@ abstract class _$Database extends GeneratedDatabase {
         productionMaterials,
         productionResults,
         deliveries,
-        deliveryPositions
+        deliveryPositions,
+        inventories,
+        inventoryPositions
       ];
 }

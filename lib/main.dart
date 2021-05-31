@@ -4,6 +4,7 @@ import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
 import 'business_logic/delivery_controller.dart';
+import 'business_logic/inventory_controller.dart';
 import 'business_logic/packets_controller.dart';
 import 'services/scanner_controller.dart';
 import 'test_helpers/scannercontroller_mock.dart';
@@ -22,11 +23,15 @@ void main() {
       Provider<DeliveryController>(
         create: (context) => DeliveryController(),
       ),
+      Provider<InventoryController>(
+        create: (context) => InventoryController(),
+      ),
       Provider<ScannerController>(
         // create: (context) => ScannerControllerImplDataWedge()
         // use this implementation in Emulator
         // Barcode Lengths: 34 / 44 / 36 / 20
         create: (context) => ScannerControllerImplMock([
+          '1234567890123456789012345678901234',
           '1234567890123456789012345678901234',
           '12345678901234567890123456789012345678901234',
           '123456789012345678901234567890123456',
@@ -51,7 +56,7 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.amberAccent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Test'),
+      home: MyHomePage(title: 'Funktionen'),
     );
   }
 }
@@ -80,32 +85,67 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+              TextButtonWidget(
+                icon: Mdi.dolly,
+                buttonLabel: "Anlieferung",
+                bottomSheetText: "",
+                title: "Anlieferung",
+                col: Colors.blue[300]!,
+                child: DeliveryView(),
+                onScanBottomSheet: null,
+              ),
+              SizedBox(height: 10),
+              TextButtonWidget(
+                icon: Mdi.truckDelivery,
+                buttonLabel: "Auslieferung",
+                bottomSheetText: "Auftrag Scannen",
+                title: "Auslieferung",
+                col: Colors.amber[300]!,
+                child: Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Colors.amber[300]!,
+                    title: Text('Auslieferung'),
+                  ),
+                  body: Center(child: Text('Coming soon...')),
+                ),
+                onScanBottomSheet: (barcode) {
+                  return barcode.isNotEmpty;
+                },
+              ),
+              SizedBox(height: 10),
+              TextButtonWidget(
+                icon: Mdi.packageVariant,
+                buttonLabel: "Auspacken",
+                bottomSheetText: "Außenpaket Scannen",
+                title: "Caddies Scannen",
+                col: Colors.deepOrange[300]!,
+                child: Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Colors.amber[300]!,
+                    title: Text('Caddies Scannen'),
+                  ),
+                  body: Center(child: Text('Coming soon...')),
+                ),
+                onScanBottomSheet: (barcode) {
+                  return barcode.isNotEmpty;
+                },
+              ),
+              SizedBox(height: 10),
+              Flexible(
+                child: Row(
                   children: [
                     TextButtonWidget(
-                      icon: Mdi.dolly,
-                      buttonLabel: "Anlieferung",
-                      bottomSheetText: "",
-                      title: "Anlieferung",
-                      col: Colors.blue[300]!,
-                      child: DeliveryView(),
-                      onScanBottomSheet: null,
-                    ),
-                    SizedBox(height: 10),
-                    TextButtonWidget(
-                      icon: Mdi.truckDelivery,
-                      buttonLabel: "Auslieferung",
-                      bottomSheetText: "Auftrag Scannen",
-                      title: "Auslieferung",
-                      col: Colors.amber[300]!,
+                      icon: Mdi.hammerWrench,
+                      buttonLabel: "Produktion\nStart",
+                      bottomSheetText: "Produktionsauftrag Scannen",
+                      title: "Produktion-Start",
+                      col: Colors.lightGreen[300]!,
                       child: Scaffold(
                         appBar: AppBar(
                           backgroundColor: Colors.amber[300]!,
-                          title: Text('Auslieferung'),
+                          title: Text('Produktion-Start'),
                         ),
                         body: Center(child: Text('Coming soon...')),
                       ),
@@ -113,63 +153,23 @@ class _MyHomePageState extends State<MyHomePage> {
                         return barcode.isNotEmpty;
                       },
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(width: 10),
                     TextButtonWidget(
-                      icon: Mdi.packageVariant,
-                      buttonLabel: "Auspacken",
-                      bottomSheetText: "Außenpaket Scannen",
-                      title: "Caddies Scannen",
-                      col: Colors.deepOrange[300]!,
+                      icon: Mdi.hammerWrench,
+                      buttonLabel: "Produktion\nAbschluss",
+                      bottomSheetText: "Produktionsauftrag Scannen",
+                      title: "Produktion-Abschluss",
+                      col: Colors.teal[300]!,
                       child: Scaffold(
                         appBar: AppBar(
                           backgroundColor: Colors.amber[300]!,
-                          title: Text('Caddies Scannen'),
+                          title: Text('Produktion-Abschluss'),
                         ),
                         body: Center(child: Text('Coming soon...')),
                       ),
                       onScanBottomSheet: (barcode) {
                         return barcode.isNotEmpty;
                       },
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        TextButtonWidget(
-                          icon: Mdi.hammerWrench,
-                          buttonLabel: "Produktion\nStart",
-                          bottomSheetText: "Produktionsauftrag Scannen",
-                          title: "Produktion-Start",
-                          col: Colors.lightGreen[300]!,
-                          child: Scaffold(
-                            appBar: AppBar(
-                              backgroundColor: Colors.amber[300]!,
-                              title: Text('Produktion-Start'),
-                            ),
-                            body: Center(child: Text('Coming soon...')),
-                          ),
-                          onScanBottomSheet: (barcode) {
-                            return barcode.isNotEmpty;
-                          },
-                        ),
-                        SizedBox(width: 10),
-                        TextButtonWidget(
-                          icon: Mdi.hammerWrench,
-                          buttonLabel: "Produktion\nAbschluss",
-                          bottomSheetText: "Produktionsauftrag Scannen",
-                          title: "Produktion-Abschluss",
-                          col: Colors.teal[300]!,
-                          child: Scaffold(
-                            appBar: AppBar(
-                              backgroundColor: Colors.amber[300]!,
-                              title: Text('Produktion-Abschluss'),
-                            ),
-                            body: Center(child: Text('Coming soon...')),
-                          ),
-                          onScanBottomSheet: (barcode) {
-                            return barcode.isNotEmpty;
-                          },
-                        ),
-                      ],
                     ),
                   ],
                 ),

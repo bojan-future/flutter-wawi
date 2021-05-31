@@ -2,19 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 
+import '../views/inventory_view.dart';
+
 //ignore_for_file: public_member_api_docs
 
 class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({
-    Key? key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
-        children: const <Widget>[
+        children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(
               color: Colors.blue,
@@ -30,6 +28,10 @@ class DrawerWidget extends StatelessWidget {
           ListTile(
             leading: Icon(Mdi.buffer),
             title: Text('Inventur'),
+            onTap: () {
+              Navigator.push(context,
+                  CupertinoPageRoute(builder: (context) => InventoryView()));
+            },
           ),
           ListTile(
             leading: Icon(Icons.history),

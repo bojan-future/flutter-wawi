@@ -3,6 +3,8 @@ import 'package:moor_flutter/moor_flutter.dart';
 
 import 'deliveries_dao.dart';
 import 'deliverypositions_dao.dart';
+import 'inventories_dao.dart';
+import 'inventorypositions_dao.dart';
 import 'orders_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
@@ -119,6 +121,33 @@ class DeliveryPositions extends Table {
       integer().customConstraint('REFERENCES packets(id)')();
 }
 
+@DataClassName('Inventory')
+
+/// represents an inventory, has many positions
+class Inventories extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+}
+
+@DataClassName('InventoryPosition')
+
+/// one position in an inventory
+class InventoryPositions extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// foreign key -> inventory
+  IntColumn get inventory  =>
+      integer().customConstraint('REFERENCES inventories(id)')();
+
+  /// foreign key -> packets
+  IntColumn get packet =>
+      integer().customConstraint('REFERENCES packets(id)')();
+
+  /// quantity
+  RealColumn get quantity => real()();
+}
+
 @DataClassName('ProductionOrder')
 
 /// production order with input materials and output results
@@ -193,6 +222,8 @@ class DatabaseFactory {
   ProductionResults,
   Deliveries,
   DeliveryPositions,
+  Inventories,
+  InventoryPositions,
 ], daos: [
   PacketsDao,
   ProductsDao,
@@ -200,6 +231,8 @@ class DatabaseFactory {
   ProductionDao,
   DeliveriesDao,
   DeliveryPositionsDao,
+  InventoriesDao,
+  InventoryPositionsDao,
 ])
 
 /// Main database

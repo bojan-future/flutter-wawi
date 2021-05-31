@@ -1,5 +1,4 @@
 import 'package:moor_flutter/moor_flutter.dart';
-
 import 'database.dart';
 
 part 'packets_dao.g.dart';
@@ -29,5 +28,13 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
   /// watcher for packet with given id
   Future<Packet> getPacketWithId(int id) {
     return (select(packets)..where((p) => p.id.equals(id))).getSingle();
+  }
+
+  /// retrieves packet with given barcode
+  Future<Packet> getPacketWithBarcode(String barcode) async {
+    final packet =
+        (select(packets)..where((p) => p.barcode.equals(barcode))).getSingle();
+
+    return packet;
   }
 }
