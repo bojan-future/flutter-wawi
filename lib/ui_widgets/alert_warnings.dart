@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 /// Alert Popop when the scanned Barcode is invalid
-Alert buildAlertInvalidBarcode(BuildContext context) {
+Alert buildAlert(BuildContext context, String title, String desc) {
   return Alert(
     context: context,
     type: AlertType.warning,
-    title: "Achtung!",
-    desc: "Der gescannte Barcode ist ungültig!",
+    title: title,
+    desc: desc,
     buttons: [
       DialogButton(
         child: Text(

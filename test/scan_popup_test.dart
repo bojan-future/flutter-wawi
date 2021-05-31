@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kuda_lager/services/scanner_controller.dart';
 import 'package:kuda_lager/test_helpers/scannercontroller_mock.dart';

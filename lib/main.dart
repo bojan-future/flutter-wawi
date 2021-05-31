@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kuda_lager/business_logic/auth_controller.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
@@ -11,17 +12,21 @@ import 'test_helpers/scannercontroller_mock.dart';
 import 'ui_widgets/drawer.dart';
 import 'ui_widgets/homepage_buttons.dart';
 import 'views/delivery_view.dart';
+import 'views/login_view.dart';
 
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
 
   runApp(MultiProvider(
     providers: [
+      Provider<AuthController>(
+        create: (context) => AuthControllerImplDatabase(),
+      ),
       Provider<PacketsController>(
         create: (context) => PacketsController(),
       ),
       Provider<DeliveryController>(
-        create: (context) => DeliveryController(),
+        create: (context) => DeliveryController(context),
       ),
       Provider<InventoryController>(
         create: (context) => InventoryController(),
@@ -31,6 +36,7 @@ void main() {
         // use this implementation in Emulator
         // Barcode Lengths: 34 / 44 / 36 / 20
         create: (context) => ScannerControllerImplMock([
+          '9999912345',
           '1234567890123456789012345678901234',
           '1234567890123456789012345678901234',
           '12345678901234567890123456789012345678901234',
@@ -56,18 +62,17 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.amberAccent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Funktionen'),
+      home: LoginView(),
     );
   }
 }
 
 /// Home screen
 class MyHomePage extends StatefulWidget {
-  ///
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  static const routeName = '/homepage';
 
-  /// title is displayed on the top of the screen
-  final String title;
+  ///
+  MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -78,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text("Kuda Lager"),
       ),
       drawer: DrawerWidget(),
       body: Center(

@@ -44,3 +44,4 @@ pubspec.lock
 /.vs/slnx.sqlite
 
 /pubspec.lock
+/.vscode/settings.json

@@ -53,7 +53,9 @@ class _DeliveryViewState extends State<DeliveryView> {
           });
         } on InvalidBarcodeException {
           setState(() {
-            buildAlertInvalidBarcode(context).show();
+            buildAlert(
+                    context, "Achtung!", "Der gescannte Barcode ist ungültig!")
+                .show();
           });
         }
       },

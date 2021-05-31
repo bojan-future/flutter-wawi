@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 
-import '../views/inventory_view.dart';
+import '../views/login_view.dart';
 
 //ignore_for_file: public_member_api_docs
 
@@ -18,7 +18,7 @@ class DrawerWidget extends StatelessWidget {
               color: Colors.blue,
             ),
             child: Text(
-              'Kuda Lager Demo',
+              'Kuda Lager',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -48,6 +48,11 @@ class DrawerWidget extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.logout),
             title: Text('Abmelden'),
+            onTap: () {
+              Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                builder: (context) => LoginView(),
+              ));
+            },
           ),
         ],
       ),
