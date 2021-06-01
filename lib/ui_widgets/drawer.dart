@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 
+import '../views/inventory_view.dart';
 import '../views/login_view.dart';
 
 //ignore_for_file: public_member_api_docs

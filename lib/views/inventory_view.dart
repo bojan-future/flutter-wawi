@@ -53,7 +53,9 @@ class _InventoryViewState extends State<InventoryView> {
           });
         } on InvalidBarcodeException {
           setState(() {
-            buildAlertInvalidBarcode(context).show();
+            buildAlert(
+                    context, "Achtung!", "Der gescannte Barcode ist ungültig!")
+                .show();
           });
         }
       },
