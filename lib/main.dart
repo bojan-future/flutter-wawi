@@ -4,12 +4,16 @@ import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
 import 'business_logic/delivery_controller.dart';
+import 'business_logic/dispatch_controller.dart';
 import 'business_logic/packets_controller.dart';
+import 'database/orders_dao.dart';
 import 'services/scanner_controller.dart';
 import 'test_helpers/scannercontroller_mock.dart';
+import 'ui_widgets/alert_warnings.dart';
 import 'ui_widgets/drawer.dart';
 import 'ui_widgets/homepage_buttons.dart';
 import 'views/delivery_view.dart';
+import 'views/dispatch_view.dart';
 
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
@@ -21,6 +25,9 @@ void main() {
       ),
       Provider<DeliveryController>(
         create: (context) => DeliveryController(),
+      ),
+      Provider<DispatchController>(
+        create: (context) => DispatchController(),
       ),
       Provider<ScannerController>(
         // create: (context) => ScannerControllerImplDataWedge()
@@ -102,15 +109,24 @@ class _MyHomePageState extends State<MyHomePage> {
                       bottomSheetText: "Auftrag Scannen",
                       title: "Auslieferung",
                       col: Colors.amber[300]!,
-                      child: Scaffold(
-                        appBar: AppBar(
-                          backgroundColor: Colors.amber[300]!,
-                          title: Text('Auslieferung'),
-                        ),
-                        body: Center(child: Text('Coming soon...')),
-                      ),
+                      child: DispatchView(),
                       onScanBottomSheet: (barcode) {
-                        return barcode.isNotEmpty;
+                        var orderController = Provider.of<OrderController>(
+                            context,
+                            listen: false);
+                        var orderID =
+                            await orderController.getOrderByBarcode(barcode);
+
+                        if (orderID > 0) {
+                          return true;
+                        } else {
+                          setState(() {
+                            buildAlertInvalidBarcode(context,
+                                    "Der gescannte Auftrag konnte nicht gefunden werden!")
+                                .show();
+                          });
+                          return false;
+                        }
                       },
                     ),
                     SizedBox(height: 10),

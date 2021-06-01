@@ -3,6 +3,8 @@ import 'package:moor_flutter/moor_flutter.dart';
 
 import 'deliveries_dao.dart';
 import 'deliverypositions_dao.dart';
+import 'dispatches_dao.dart';
+import 'dispatchpositions_dao.dart';
 import 'orders_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
@@ -33,8 +35,8 @@ class Packets extends Table {
 
   /// product name from product
   TextColumn get productName => text()();
-  
-  /// product number from product 
+
+  /// product number from product
   TextColumn get productNr => text()();
 
   /// foreign key -> 'parent' packet in case this is part of larger packet,
@@ -82,6 +84,9 @@ class Orders extends Table {
 
   /// order number
   TextColumn get orderNr => text()();
+
+  /// order barcode
+  TextColumn get orderBarcode => text()();
 }
 
 @DataClassName('OrderPosition')
@@ -113,6 +118,30 @@ class DeliveryPositions extends Table {
   /// foreign key -> delivery
   IntColumn get delivery =>
       integer().customConstraint('REFERENCES deliveries(id)')();
+
+  /// foreign key -> packets
+  IntColumn get packet =>
+      integer().customConstraint('REFERENCES packets(id)')();
+}
+
+@DataClassName('Dispatch')
+
+/// represents a dispatch, has many positions
+class Dispatches extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+}
+
+@DataClassName('DispatchPosition')
+
+/// one position in a dispatch
+class DispatchPositions extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// foreign key -> dispatch
+  IntColumn get dispatch =>
+      integer().customConstraint('REFERENCES dispatches(id)')();
 
   /// foreign key -> packets
   IntColumn get packet =>
@@ -193,6 +222,8 @@ class DatabaseFactory {
   ProductionResults,
   Deliveries,
   DeliveryPositions,
+  Dispatches,
+  DispatchPositions,
 ], daos: [
   PacketsDao,
   ProductsDao,
@@ -200,6 +231,8 @@ class DatabaseFactory {
   ProductionDao,
   DeliveriesDao,
   DeliveryPositionsDao,
+  DispatchesDao,
+  DispatchPositionsDao,
 ])
 
 /// Main database

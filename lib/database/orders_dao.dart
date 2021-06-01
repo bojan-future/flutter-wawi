@@ -43,4 +43,16 @@ class OrdersDao extends DatabaseAccessor<Database> with _$OrdersDaoMixin {
       return orderList.first;
     }
   }
+
+  Future<int> getOrderByBarcode(String orderBarcode) async {
+    final orderList = await (select(orders)
+          ..where((o) => o.orderBarcode.equals(orderBarcode)))
+        .get();
+
+    if (orderList.isEmpty) {
+      return 0 - 1;
+    } else {
+      return orderList.first.id;
+    }
+  }
 }
