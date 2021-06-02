@@ -8,8 +8,9 @@ class DispatchController {
   final database = DatabaseFactory.getDatabaseInstance();
 
   /// add dispatch
-  Future<int> addDispatch() async {
-    return database.dispatchesDao.createDispatch(DispatchesCompanion());
+  Future<int> addDispatch(int orderID) async {
+    return database.dispatchesDao
+        .createDispatch(DispatchesCompanion(orderID: Value(orderID)));
   }
 
   /// add dispatch position together with an associated packet

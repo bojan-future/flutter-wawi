@@ -11,7 +11,7 @@ class TextButtonWidget extends StatelessWidget {
   final String title;
   final Color col;
   final Widget child;
-  final bool Function(String)? onScanBottomSheet;
+  final Future<bool> Function(String)? onScanBottomSheet;
 
   const TextButtonWidget(
       {required this.icon,
@@ -52,9 +52,10 @@ class TextButtonWidget extends StatelessWidget {
                 popupText: bottomSheetText!,
                 title: title,
                 popupColor: col,
-                scanCallback: (barcode) {
-                  var openListDialog = onScanBottomSheet!(barcode);
-                  if (openListDialog) {
+                scanCallback: (barcode) async {
+                  var openListDialog = await onScanBottomSheet!(barcode);
+                  print(openListDialog);
+                  if (openListDialog == true) {
                     Navigator.pop(context);
                     Navigator.push(
                       context,

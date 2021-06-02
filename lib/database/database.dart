@@ -130,6 +130,10 @@ class DeliveryPositions extends Table {
 class Dispatches extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
+
+  /// foreign key -> order
+  IntColumn get orderID =>
+      integer().customConstraint('REFERENCES orders(id)')();
 }
 
 @DataClassName('DispatchPosition')
@@ -278,6 +282,11 @@ class Database extends _$Database {
               gtin3: 123,
               gtin4: 123,
               gtin5: 123));
+
+          await into(orders).insert(Order(
+              id: 1,
+              orderNr: "1234",
+              orderBarcode: "123456789012345678901234567890123456"));
         }
       },
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kuda_lager/business_logic/globals.dart';
 import 'package:provider/provider.dart';
 
 import '../business_logic/dispatch_controller.dart';
@@ -9,6 +10,13 @@ import '../ui_widgets/scanlistview.dart';
 
 /// Widget representing Dispatch Screen
 class DispatchView extends StatefulWidget {
+  DispatchView({
+    Key? key,
+    required this.orderID,
+  }) : super(key: key);
+
+  final int orderID;
+
   @override
   _DispatchViewState createState() => _DispatchViewState();
 }
@@ -22,7 +30,7 @@ class _DispatchViewState extends State<DispatchView> {
     super.initState();
     var dispatchController =
         Provider.of<DispatchController>(context, listen: false);
-    dispatchController.addDispatch().then((dispatchId) {
+    dispatchController.addDispatch(GlobalVariables.gOrderID).then((dispatchId) {
       actualDispatchId = dispatchId;
     });
   }
@@ -30,7 +38,8 @@ class _DispatchViewState extends State<DispatchView> {
   @override
   Widget build(BuildContext context) {
     return ScanListView(
-      title: 'Anlieferung',
+      title: 'Auslieferung',
+      color: Colors.amber[300]!,
       onScan: (barcode) async {
         var packet;
         var dispatchController =

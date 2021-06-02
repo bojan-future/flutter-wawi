@@ -5,8 +5,9 @@ import 'package:provider/provider.dart';
 
 import 'business_logic/delivery_controller.dart';
 import 'business_logic/dispatch_controller.dart';
+import 'business_logic/globals.dart';
+import 'business_logic/order_controller.dart';
 import 'business_logic/packets_controller.dart';
-import 'database/orders_dao.dart';
 import 'services/scanner_controller.dart';
 import 'test_helpers/scannercontroller_mock.dart';
 import 'ui_widgets/alert_warnings.dart';
@@ -28,6 +29,9 @@ void main() {
       ),
       Provider<DispatchController>(
         create: (context) => DispatchController(),
+      ),
+      Provider<OrderController>(
+        create: (context) => OrderController(),
       ),
       Provider<ScannerController>(
         // create: (context) => ScannerControllerImplDataWedge()
@@ -109,8 +113,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       bottomSheetText: "Auftrag Scannen",
                       title: "Auslieferung",
                       col: Colors.amber[300]!,
-                      child: DispatchView(),
-                      onScanBottomSheet: (barcode) {
+                      child: DispatchView(orderID: GlobalVariables.gOrderID),
+                      onScanBottomSheet: (barcode) async {
                         var orderController = Provider.of<OrderController>(
                             context,
                             listen: false);
@@ -118,14 +122,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             await orderController.getOrderByBarcode(barcode);
 
                         if (orderID > 0) {
-                          return true;
+                          GlobalVariables.gOrderID = orderID;
+                          return Future<bool>.value(true);
                         } else {
                           setState(() {
                             buildAlertInvalidBarcode(context,
                                     "Der gescannte Auftrag konnte nicht gefunden werden!")
                                 .show();
                           });
-                          return false;
+                          return Future<bool>.value(false);
                         }
                       },
                     ),
@@ -143,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         body: Center(child: Text('Coming soon...')),
                       ),
-                      onScanBottomSheet: (barcode) {
+                      onScanBottomSheet: (barcode) async {
                         return barcode.isNotEmpty;
                       },
                     ),
@@ -163,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             body: Center(child: Text('Coming soon...')),
                           ),
-                          onScanBottomSheet: (barcode) {
+                          onScanBottomSheet: (barcode) async {
                             return barcode.isNotEmpty;
                           },
                         ),
@@ -181,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             body: Center(child: Text('Coming soon...')),
                           ),
-                          onScanBottomSheet: (barcode) {
+                          onScanBottomSheet: (barcode) async {
                             return barcode.isNotEmpty;
                           },
                         ),
