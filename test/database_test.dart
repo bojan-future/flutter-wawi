@@ -1,4 +1,3 @@
-import 'package:kuda_lager/database/packets_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:test/test.dart';
 import 'package:moor/ffi.dart';
@@ -32,5 +31,14 @@ void main() {
 
     expect(packet.barcode, testBarcode);
     expect(packet.product, testProduct.id);
+  });
+
+  test('dispatch can be created', () async {
+    final id = await database!.dispatchesDao
+        .createDispatch(DispatchesCompanion(orderID: Value(1)));
+    final dispatch = await database!.dispatchesDao.getDispatchByID(id);
+
+    expect(dispatch.id, id);
+    expect(dispatch.orderID, 1);
   });
 }

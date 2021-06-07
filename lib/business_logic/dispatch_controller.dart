@@ -13,6 +13,10 @@ class DispatchController {
         .createDispatch(DispatchesCompanion(orderID: Value(orderID)));
   }
 
+  Future<Dispatch> getDispatchByID(int id) async {
+    return database.dispatchesDao.getDispatchByID(id);
+  }
+
   /// add dispatch position together with an associated packet
   Future<int> addDispatchPosition(String barcode, int dispatchID) async {
     int packetID = await PacketsController.addPacket(barcode);

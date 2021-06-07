@@ -25,4 +25,15 @@ class DispatchesDao extends DatabaseAccessor<Database>
   Future<int> deleteDispatch(Dispatch dispatch) {
     return delete(dispatches).delete(dispatch);
   }
+
+  Future<Dispatch> getDispatchByID(int id) async {
+    final dispatchList =
+        await (select(dispatches)..where((o) => o.id.equals(id))).get();
+
+    if (dispatchList.isEmpty) {
+      throw RecordNotFoundException();
+    } else {
+      return dispatchList.first;
+    }
+  }
 }
