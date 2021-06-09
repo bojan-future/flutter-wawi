@@ -31,7 +31,9 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
   }
 
   /// deletes delivery from the database
-  void deleteDeliveryImage(DeliveryImagesCompanion deliveryImage) {
-    delete(deliveryImages).delete(deliveryImage);
+  void deleteDeliveryImage(String strImagePath) async {
+    await (delete(deliveryImages)
+          ..where((d) => d.filePath.equals(strImagePath)))
+        .go();
   }
 }

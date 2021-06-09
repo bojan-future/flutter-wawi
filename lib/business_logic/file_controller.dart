@@ -37,14 +37,10 @@ class FileController {
   }
 
   /// add inventory
-  Future<int> deleteDeliveryImage(String filePath) async {
-    var deliveryImage =
-        await database.deliveryImagesDao.getDeliveryImage(filePath);
-    print(deliveryImage.delivery);
-    database.deliveryImagesDao.deleteDeliveryImage(
-        DeliveryImagesCompanion(delivery: Value(deliveryImage.delivery)));
+  Future<int> deleteDeliveryImage(String ImagePath, int deliveryID) async {
+    database.deliveryImagesDao.deleteDeliveryImage(ImagePath);
 
-    var delivery = await database.deliveriesDao.getDelivery(deliveryImage.id);
+    var delivery = await database.deliveriesDao.getDelivery(deliveryID);
     return await database.deliveriesDao.decrementPictureCounter(delivery);
   }
 }
