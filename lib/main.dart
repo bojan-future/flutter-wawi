@@ -1,16 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kuda_lager/business_logic/auth_controller.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
+import 'business_logic/auth_controller.dart';
 import 'business_logic/delivery_controller.dart';
+import 'business_logic/file_controller.dart';
 import 'business_logic/inventory_controller.dart';
 import 'business_logic/packets_controller.dart';
 import 'services/scanner_controller.dart';
 import 'test_helpers/scannercontroller_mock.dart';
 import 'ui_widgets/drawer.dart';
 import 'ui_widgets/homepage_buttons.dart';
+import 'views/deliveries_for_images_view.dart';
 import 'views/delivery_view.dart';
 import 'views/login_view.dart';
 
@@ -31,12 +33,16 @@ void main() {
       Provider<InventoryController>(
         create: (context) => InventoryController(),
       ),
+      Provider<FileController>(
+        create: (context) => FileController(),
+      ),
       Provider<ScannerController>(
         // create: (context) => ScannerControllerImplDataWedge()
         // use this implementation in Emulator
         // Barcode Lengths: 34 / 44 / 36 / 20
         create: (context) => ScannerControllerImplMock([
           '9999912345',
+          '1234567890123456789012345678901234',
           '1234567890123456789012345678901234',
           '1234567890123456789012345678901234',
           '12345678901234567890123456789012345678901234',
@@ -92,14 +98,33 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              TextButtonWidget(
-                icon: Mdi.dolly,
-                buttonLabel: "Anlieferung",
-                bottomSheetText: "",
-                title: "Anlieferung",
-                col: Colors.blue[300]!,
-                child: DeliveryView(),
-                onScanBottomSheet: null,
+              Expanded(
+                child: Row(
+                  children: [
+                    TextButtonWidget(
+                      icon: Mdi.dolly,
+                      buttonLabel: "Anlieferung",
+                      bottomSheetText: "",
+                      title: "Anlieferung",
+                      col: Colors.blue[300]!,
+                      child: DeliveryView(),
+                      onScanBottomSheet: null,
+                    ),
+                    SizedBox(width: 10),
+                    Container(
+                      width: 90,
+                      child: TextButtonWidget(
+                        icon: Mdi.camera,
+                        buttonLabel: "Foto",
+                        bottomSheetText: "",
+                        title: "Fotos",
+                        col: Colors.red[400]!,
+                        child: DeliveriesForImagesView(),
+                        onScanBottomSheet: null,
+                      ),
+                    )
+                  ],
+                ),
               ),
               SizedBox(height: 10),
               TextButtonWidget(
@@ -138,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
               SizedBox(height: 10),
-              Flexible(
+              Expanded(
                 child: Row(
                   children: [
                     TextButtonWidget(

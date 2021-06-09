@@ -1,7 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:provider/provider.dart';
-
+import 'package:intl/intl.dart';
 import '../database/database.dart';
 import 'auth_controller.dart';
 import 'packets_controller.dart';
@@ -15,6 +17,7 @@ class DeliveryController {
   late AuthController authController;
   late dynamic userID;
 
+  /// Delivery Controller
   DeliveryController(this._context) {
     authController = Provider.of<AuthController>(_context, listen: false);
     userID = authController.getUserId();
@@ -22,8 +25,12 @@ class DeliveryController {
 
   /// add delivery
   Future<int> addDelivery() async {
-    return database.deliveriesDao
-        .createDelivery(DeliveriesCompanion(user: Value(userID)));
+    var now = DateTime.now();
+    var formattedDate = DateFormat('dd.MM.yyyy / kk:mm').format(now);
+    return database.deliveriesDao.createDelivery(DeliveriesCompanion(
+        user: Value(userID),
+        date: Value(formattedDate),
+        pictureCount: Value(0)));
   }
 
   /// add delivery position together with an associated packet
@@ -39,5 +46,24 @@ class DeliveryController {
   Future<DeliveryPosition> getDeliveryPosition(int deliveryPositionID) async {
     return database.deliveryPositionsDao
         .getDeliveryPositionByID(deliveryPositionID);
+  }
+
+  /// get delivery position
+  Future<List<Delivery>> getLast10Deliveries() async {
+    return database.deliveriesDao.getLast10Deliveries();
+  }
+
+  /// increment picture count delivery
+  Future<int> incrementPictureCounter(int deliveryID) async {
+    var delivery = await database.deliveriesDao.getDelivery(deliveryID);
+
+    return database.deliveriesDao.incrementPictureCounter(delivery);
+  }
+
+  /// decrement picture count delivery
+  Future<int> decrementPictureCounter(int deliveryID) async {
+    var delivery = await database.deliveriesDao.getDelivery(deliveryID);
+
+    return database.deliveriesDao.decrementPictureCounter(delivery);
   }
 }

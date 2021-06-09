@@ -6,13 +6,21 @@ part 'deliveries_dao.g.dart';
 @UseDao(tables: [Deliveries])
 
 /// delivery functionality extension for database
-class DeliveriesDao extends DatabaseAccessor<Database> with _$DeliveriesDaoMixin {
+class DeliveriesDao extends DatabaseAccessor<Database>
+    with _$DeliveriesDaoMixin {
   ///
   DeliveriesDao(Database db) : super(db);
 
   /// inserts given delivery into database
   Future<int> createDelivery(DeliveriesCompanion delivery) {
     return into(deliveries).insert(delivery);
+  }
+
+  /// inserts given delivery into database
+  Future<Delivery> getDelivery(int deliveryID) {
+    final delivery =
+        (select(deliveries)..where((p) => p.id.equals(deliveryID))).getSingle();
+    return delivery;
   }
 
   /// updates delivery in the database
@@ -23,5 +31,35 @@ class DeliveriesDao extends DatabaseAccessor<Database> with _$DeliveriesDaoMixin
   /// deletes delivery from the database
   Future<int> deleteDelivery(Delivery delivery) {
     return delete(deliveries).delete(delivery);
+  }
+
+  /// retrieves last 10 deliveries
+  Future<List<Delivery>> getLast10Deliveries() async {
+    var countExp = deliveries.id.count();
+    final query = selectOnly(deliveries)..addColumns([countExp]);
+    var rowCount = await query.map((row) => row.read(countExp)).getSingle();
+    rowCount -= 10;
+    final deliveryList = await (select(deliveries)
+          ..where((d) => d.id.isBiggerThanValue(rowCount)))
+        .get();
+    return deliveryList;
+  }
+
+  /// increment picture count
+  Future<int> incrementPictureCounter(Delivery delivery) {
+    return (update(deliveries)..where((t) => t.id.equals(delivery.id))).write(
+      DeliveriesCompanion(
+        pictureCount: Value((delivery.pictureCount) + 1),
+      ),
+    );
+  }
+
+  /// decrement picture count
+  Future<int> decrementPictureCounter(Delivery delivery) {
+    return (update(deliveries)..where((t) => t.id.equals(delivery.id))).write(
+      DeliveriesCompanion(
+        pictureCount: Value((delivery.pictureCount) - 1),
+      ),
+    );
   }
 }

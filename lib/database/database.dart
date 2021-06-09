@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:kuda_lager/database/users_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 import 'deliveries_dao.dart';
+import 'deliveryimages_dao.dart';
 import 'deliverypositions_dao.dart';
 import 'inventories_dao.dart';
 import 'inventorypositions_dao.dart';
@@ -10,6 +10,7 @@ import 'orders_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
 import 'products_dao.dart';
+import 'users_dao.dart';
 
 part 'database.exception.dart';
 part 'database.g.dart';
@@ -120,6 +121,12 @@ class Deliveries extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
+  /// creation date
+  TextColumn get date => text()();
+
+  /// picture count
+  IntColumn get pictureCount => integer()();
+
   /// foreign key -> user
   IntColumn get user => integer().customConstraint('REFERENCES users(id)')();
 }
@@ -140,6 +147,21 @@ class DeliveryPositions extends Table {
       integer().customConstraint('REFERENCES packets(id)')();
 }
 
+@DataClassName('DeliveryImage')
+
+/// images for deliveries
+class DeliveryImages extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// file path
+  TextColumn get filePath => text()();
+
+  /// foreign key -> production order
+  IntColumn get delivery =>
+      integer().customConstraint('REFERENCES deliveries(id)')();
+}
+
 @DataClassName('Inventory')
 
 /// represents an inventory, has many positions
@@ -156,7 +178,7 @@ class InventoryPositions extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// foreign key -> inventory
-  IntColumn get inventory  =>
+  IntColumn get inventory =>
       integer().customConstraint('REFERENCES inventories(id)')();
 
   /// foreign key -> packets
@@ -242,6 +264,7 @@ class DatabaseFactory {
   ProductionResults,
   Deliveries,
   DeliveryPositions,
+  DeliveryImages,
   Inventories,
   InventoryPositions,
 ], daos: [
@@ -252,6 +275,7 @@ class DatabaseFactory {
   ProductionDao,
   DeliveriesDao,
   DeliveryPositionsDao,
+  DeliveryImagesDao,
   InventoriesDao,
   InventoryPositionsDao,
 ])
@@ -299,11 +323,8 @@ class Database extends _$Database {
               gtin3: 123,
               gtin4: 123,
               gtin5: 123));
-          await into(users).insert(User(
-            barcode: '9999912345',
-            id: 1,
-            userNr: '12345'
-            ));
+          await into(users)
+              .insert(User(barcode: '9999912345', id: 1, userNr: '12345'));
         }
       },
     );
