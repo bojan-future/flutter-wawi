@@ -96,19 +96,35 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
         onPressed: () async {
           await _initializeControllerFuture;
           final cameras = await availableCameras();
+          print(cameraID);
           if (cameraID == 0) {
             _controller = CameraController(
               cameras[1],
               ResolutionPreset.veryHigh,
             );
             cameraID = 1;
-          } else {
+          } else if (cameraID == 1) {
+            if (cameras.length == 3) {
+              _controller = CameraController(
+                cameras[2],
+                ResolutionPreset.veryHigh,
+              );
+              cameraID = 2;
+            } else {
+              _controller = CameraController(
+                cameras[0],
+                ResolutionPreset.veryHigh,
+              );
+              cameraID = 0;
+            }
+          } else if (cameraID == 2) {
             _controller = CameraController(
               cameras[0],
               ResolutionPreset.veryHigh,
             );
             cameraID = 0;
           }
+
           setState(() {
             _initializeControllerFuture = _controller.initialize();
           });
