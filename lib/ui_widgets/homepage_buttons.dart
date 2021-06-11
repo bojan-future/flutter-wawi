@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kuda_lager/business_logic/scanBottomSheetResult.dart';
 
 import '../ui_widgets/scan_popup.dart';
 
@@ -10,8 +11,9 @@ class TextButtonWidget extends StatelessWidget {
   final String? bottomSheetText;
   final String title;
   final Color col;
-  final Widget child;
-  final Future<bool> Function(String)? onScanBottomSheet;
+  final Widget? child;
+  final Widget Function(int)? builder;
+  final Future<ScanBottomSheetResult> Function(String)? onScanBottomSheet;
 
   const TextButtonWidget(
       {required this.icon,
@@ -19,7 +21,8 @@ class TextButtonWidget extends StatelessWidget {
       required this.bottomSheetText,
       required this.title,
       required this.col,
-      required this.child,
+      this.child,
+      this.builder,
       required this.onScanBottomSheet});
 
   @override
@@ -45,7 +48,7 @@ class TextButtonWidget extends StatelessWidget {
           if (bottomSheetText == null || onScanBottomSheet == null) {
             Navigator.push(
               context,
-              buildCupertinoPageRoute(),
+              buildCupertinoPageRoute(0), //Create page without id
             );
           } else {
             scanPopup(
@@ -53,15 +56,17 @@ class TextButtonWidget extends StatelessWidget {
                 title: title,
                 popupColor: col,
                 scanCallback: (barcode) async {
-                  var openListDialog = await onScanBottomSheet!(barcode);
-                  print(openListDialog);
-                  if (openListDialog == true) {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      buildCupertinoPageRoute(),
-                    );
-                  }
+                  onScanBottomSheet!(barcode).then((scanResult) {
+                    print(scanResult.success);
+                    if (scanResult.success == true) {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        buildCupertinoPageRoute(
+                            scanResult.parentID), //Create page with scanned id
+                      );
+                    }
+                  });
                 },
                 context: context);
           }
@@ -71,10 +76,14 @@ class TextButtonWidget extends StatelessWidget {
   }
 
   /// iOS transition to child widget
-  CupertinoPageRoute buildCupertinoPageRoute() {
+  CupertinoPageRoute buildCupertinoPageRoute(int parentID) {
     return CupertinoPageRoute(
       builder: (context) {
-        return child;
+        if (builder != null) {
+          return builder!(parentID);
+        } else {
+          return child!;
+        }
       },
     );
   }

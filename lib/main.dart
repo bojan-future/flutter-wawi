@@ -1,20 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kuda_lager/ui_widgets/alert_warnings.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
 import 'business_logic/delivery_controller.dart';
 import 'business_logic/dispatch_controller.dart';
-import 'business_logic/globals.dart';
 import 'business_logic/order_controller.dart';
 import 'business_logic/packets_controller.dart';
+import 'business_logic/scanBottomSheetResult.dart';
 import 'services/scanner_controller.dart';
 import 'test_helpers/scannercontroller_mock.dart';
-import 'ui_widgets/alert_warnings.dart';
 import 'ui_widgets/drawer.dart';
 import 'ui_widgets/homepage_buttons.dart';
 import 'views/delivery_view.dart';
 import 'views/dispatch_view.dart';
+import 'business_logic/scanner.exception.dart';
 
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
@@ -113,25 +114,23 @@ class _MyHomePageState extends State<MyHomePage> {
                       bottomSheetText: "Auftrag Scannen",
                       title: "Auslieferung",
                       col: Colors.amber[300]!,
-                      child: DispatchView(orderID: GlobalVariables.gOrderID),
+                      builder: (parentId) {
+                        return DispatchView(orderID: parentId);
+                      },
                       onScanBottomSheet: (barcode) async {
-                        var orderController = Provider.of<OrderController>(
-                            context,
-                            listen: false);
-                        var orderID =
-                            await orderController.getOrderByBarcode(barcode);
-
-                        if (orderID > 0) {
-                          GlobalVariables.gOrderID = orderID;
-                          return Future<bool>.value(true);
-                        } else {
-                          setState(() {
-                            buildAlertInvalidBarcode(context,
-                                    "Der gescannte Auftrag konnte nicht gefunden werden!")
-                                .show();
-                          });
-                          return Future<bool>.value(false);
-                        }
+                        final dispatchController = new DispatchController();
+                        ScanBottomSheetResult result =
+                            new ScanBottomSheetResult(false, 0);
+                        dispatchController
+                            .onScanBarcode(barcode, context)
+                            .then((value) => result = value)
+                            .catchError((error, stackTrace) {
+                          buildAlertInvalidBarcode(context,
+                                  "Der gescannte Auftrag konnte nicht gefunden werden!")
+                              .show();
+                          //return result;
+                        });
+                        return result;
                       },
                     ),
                     SizedBox(height: 10),
@@ -149,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         body: Center(child: Text('Coming soon...')),
                       ),
                       onScanBottomSheet: (barcode) async {
-                        return barcode.isNotEmpty;
+                        return ScanBottomSheetResult(barcode.isNotEmpty, 0);
                       },
                     ),
                     SizedBox(height: 10),
@@ -169,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             body: Center(child: Text('Coming soon...')),
                           ),
                           onScanBottomSheet: (barcode) async {
-                            return barcode.isNotEmpty;
+                            return ScanBottomSheetResult(barcode.isNotEmpty, 0);
                           },
                         ),
                         SizedBox(width: 10),
@@ -187,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             body: Center(child: Text('Coming soon...')),
                           ),
                           onScanBottomSheet: (barcode) async {
-                            return barcode.isNotEmpty;
+                            return ScanBottomSheetResult(barcode.isNotEmpty, 0);
                           },
                         ),
                       ],

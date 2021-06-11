@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kuda_lager/business_logic/globals.dart';
 import 'package:provider/provider.dart';
 
 import '../business_logic/dispatch_controller.dart';
@@ -30,7 +29,7 @@ class _DispatchViewState extends State<DispatchView> {
     super.initState();
     var dispatchController =
         Provider.of<DispatchController>(context, listen: false);
-    dispatchController.addDispatch(GlobalVariables.gOrderID).then((dispatchId) {
+    dispatchController.addDispatch(widget.orderID).then((dispatchId) {
       actualDispatchId = dispatchId;
     });
   }
