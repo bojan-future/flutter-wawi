@@ -119,18 +119,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       onScanBottomSheet: (barcode) async {
                         final dispatchController = new DispatchController();
-                        ScanBottomSheetResult result =
-                            new ScanBottomSheetResult(false, 0);
-                        dispatchController
+
+                        return dispatchController
                             .onScanBarcode(barcode, context)
-                            .then((value) => result = value)
                             .catchError((error, stackTrace) {
                           buildAlertInvalidBarcode(context,
                                   "Der gescannte Auftrag konnte nicht gefunden werden!")
                               .show();
-                          //return result;
+                          return ScanBottomSheetResult(false, 0);
                         });
-                        return result;
                       },
                     ),
                     SizedBox(height: 10),
