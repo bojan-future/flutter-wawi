@@ -52,7 +52,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
         child: Row(
           children: [
             Flexible(
-                flex: 6,
+                flex: 5,
                 child: FutureBuilder<void>(
                   future: _initializeControllerFuture,
                   builder: (context, snapshot) {
@@ -96,7 +96,6 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
         onPressed: () async {
           await _initializeControllerFuture;
           final cameras = await availableCameras();
-          print(cameraID);
           if (cameraID == 0) {
             _controller = CameraController(
               cameras[1],

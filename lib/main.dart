@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
@@ -18,41 +19,46 @@ import 'views/login_view.dart';
 
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
+  WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(MultiProvider(
-    providers: [
-      Provider<AuthController>(
-        create: (context) => AuthControllerImplDatabase(),
-      ),
-      Provider<PacketsController>(
-        create: (context) => PacketsController(),
-      ),
-      Provider<DeliveryController>(
-        create: (context) => DeliveryController(context),
-      ),
-      Provider<InventoryController>(
-        create: (context) => InventoryController(),
-      ),
-      Provider<FileController>(
-        create: (context) => FileController(),
-      ),
-      Provider<ScannerController>(
-        // create: (context) => ScannerControllerImplDataWedge()
-        // use this implementation in Emulator
-        // Barcode Lengths: 34 / 44 / 36 / 20
-        create: (context) => ScannerControllerImplMock([
-          '9999912345',
-          '1234567890123456789012345678901234',
-          '1234567890123456789012345678901234',
-          '1234567890123456789012345678901234',
-          '12345678901234567890123456789012345678901234',
-          '123456789012345678901234567890123456',
-          '12345678901234567890'
-        ]),
-      )
-    ],
-    child: MyApp(),
-  ));
+  /// blocks rotation; sets orientation to: portrait
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MultiProvider(
+      providers: [
+        Provider<AuthController>(
+          create: (context) => AuthControllerImplDatabase(),
+        ),
+        Provider<PacketsController>(
+          create: (context) => PacketsController(),
+        ),
+        Provider<DeliveryController>(
+          create: (context) => DeliveryController(context),
+        ),
+        Provider<InventoryController>(
+          create: (context) => InventoryController(),
+        ),
+        Provider<FileController>(
+          create: (context) => FileController(),
+        ),
+        Provider<ScannerController>(
+          // create: (context) => ScannerControllerImplDataWedge()
+          // use this implementation in Emulator
+          // Barcode Lengths: 34 / 44 / 36 / 20
+          create: (context) => ScannerControllerImplMock([
+            '9999912345',
+            '1234567890123456789012345678901234',
+            '1234567890123456789012345678901234',
+            '1234567890123456789012345678901234',
+            '12345678901234567890123456789012345678901234',
+            '123456789012345678901234567890123456',
+            '12345678901234567890'
+          ]),
+        )
+      ],
+      child: MyApp(),
+    ));
+  });
 }
 
 /// Top App Widget
@@ -98,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Expanded(
+              Flexible(
                 child: Row(
                   children: [
                     TextButtonWidget(
