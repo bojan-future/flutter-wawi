@@ -30,4 +30,17 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
   Future<Packet> getPacketWithId(int id) {
     return (select(packets)..where((p) => p.id.equals(id))).getSingle();
   }
+
+  /// returns a packet that has the requested barcode
+  Future<Packet> getPacketByBarcode(String barcode) {
+    return (select(packets)..where((p) => p.barcode.equals(barcode)))
+        .getSingleOrNull()
+        .then((value) {
+      if (value == null) {
+        throw RecordNotFoundException();
+      } else {
+        return value;
+      }
+    });
+  }
 }

@@ -1,18 +1,33 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kuda_lager/business_logic/scanBottomSheetResult.dart';
+import '../business_logic/scan_bottom_sheet_result.dart';
 
 import '../ui_widgets/scan_popup.dart';
 
 /// Widget representing the buttons on the homepage
 class TextButtonWidget extends StatelessWidget {
+  /// icon that is displayed on the button
   final IconData? icon;
+
+  /// text that is displayed on the button
   final String buttonLabel;
+
+  /// text that is displayed on the bottomSheet for scanning
   final String? bottomSheetText;
+
+  /// title of the page that is being opened with this button
   final String title;
+
+  /// color of the button
   final Color col;
+
+  /// next page can directly be coded and shown here instead of a seperate view
   final Widget? child;
+
+  /// view of the next page
   final Widget Function(int)? builder;
+
+  /// defines what happens if something was scanned in the bottom sheet
   final Future<ScanBottomSheetResult> Function(String)? onScanBottomSheet;
 
   const TextButtonWidget(

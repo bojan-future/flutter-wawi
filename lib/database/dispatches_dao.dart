@@ -26,6 +26,7 @@ class DispatchesDao extends DatabaseAccessor<Database>
     return delete(dispatches).delete(dispatch);
   }
 
+  /// returns the dispatch that has the requested id.
   Future<Dispatch> getDispatchByID(int id) async {
     final dispatchList =
         await (select(dispatches)..where((o) => o.id.equals(id))).get();

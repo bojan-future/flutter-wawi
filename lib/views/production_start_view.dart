@@ -1,64 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:kuda_lager/ui_widgets/alert_warnings.dart';
 import 'package:provider/provider.dart';
 
-import '../business_logic/dispatch_controller.dart';
 import '../business_logic/packets_controller.dart';
+import '../business_logic/production_start_controller.dart';
 import '../database/database.dart';
-import '../ui_widgets/alert_warnings.dart';
 import '../ui_widgets/scanlistview.dart';
 
-/// Widget representing Dispatch Screen
-class DispatchView extends StatefulWidget {
-  DispatchView({
+/// Widget representing ProductionStart Screen
+class ProductionStartView extends StatefulWidget {
+  ProductionStartView({
     Key? key,
-    required this.orderID,
+    required this.productionID,
   }) : super(key: key);
 
-  final int orderID;
+  final int productionID;
 
   @override
-  _DispatchViewState createState() => _DispatchViewState();
+  _ProductionStartViewState createState() => _ProductionStartViewState();
 }
 
-class _DispatchViewState extends State<DispatchView> {
-  int actualDispatchId = 0;
+class _ProductionStartViewState extends State<ProductionStartView> {
   List<Packet> scanViewList = [];
 
   @override
   void initState() {
     super.initState();
-    var dispatchController =
-        Provider.of<DispatchController>(context, listen: false);
-    dispatchController.addDispatch(widget.orderID).then((dispatchId) {
-      actualDispatchId = dispatchId;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return ScanListView(
-      title: 'Auslieferung',
-      color: Colors.amber[300]!,
+      title: 'Produktion-Start',
+      color: Colors.lightGreen[300]!,
       onScan: (barcode) async {
         var packet;
-        var dispatchController =
-            Provider.of<DispatchController>(context, listen: false);
+        var productionstartController =
+            Provider.of<ProductionController>(context, listen: false);
         var packetsController =
             Provider.of<PacketsController>(context, listen: false);
 
-        dispatchController
-            .addDispatchPosition(barcode, actualDispatchId, packetsController)
-            .then((dispatchPositionID) async {
-          var dispatchPosition =
-              await dispatchController.getDispatchPosition(dispatchPositionID);
+        productionstartController
+            .addProductionMaterial(
+                barcode, widget.productionID, packetsController)
+            .then((value) async {
+          var productionMaterial =
+              await productionstartController.getProductionMaterial(value);
 
-          var packetID = dispatchPosition.packet;
+          var packetID = productionMaterial.packet;
 
           packet = await packetsController.getPacketWithId(packetID);
           setState(() {
             scanViewList.add(packet);
           });
-        }).catchError((e) {
+        }).catchError((error) {
           setState(() {
             buildAlertInvalidBarcode(
                     context, "Der gescannte Barcode ist ungültig!")

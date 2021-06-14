@@ -8,6 +8,7 @@ import 'dispatchpositions_dao.dart';
 import 'orders_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
+import 'production_material_dao.dart';
 import 'products_dao.dart';
 
 part 'database.exception.dart';
@@ -161,6 +162,9 @@ class ProductionOrders extends Table {
 
   /// production order number
   TextColumn get productionOrderNr => text()();
+
+  /// production order barcode
+  TextColumn get productionOrderBarcode => text()();
 }
 
 @DataClassName('ProductionMaterial')
@@ -171,7 +175,13 @@ class ProductionMaterials extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// foreign key -> production order
-  IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
+  IntColumn get prodOrder =>
+      integer().customConstraint('REFERENCES production_orders(id)')();
+
+  /// Material Packet
+  /// foreign key -> packets
+  IntColumn get packet =>
+      integer().customConstraint('REFERENCES packets(id)')();
 }
 
 @DataClassName('ProductionResult')
@@ -182,7 +192,13 @@ class ProductionResults extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// foreign key -> production order
-  IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
+  IntColumn get prodOrder =>
+      integer().customConstraint('REFERENCES production_orders(id)')();
+
+  /// Resulting Packet
+  /// foreign key -> packets
+  IntColumn get packet =>
+      integer().customConstraint('REFERENCES packets(id)')();
 }
 
 /// High level production model
@@ -233,6 +249,7 @@ class DatabaseFactory {
   ProductsDao,
   OrdersDao,
   ProductionDao,
+  ProductionMaterialsDao,
   DeliveriesDao,
   DeliveryPositionsDao,
   DispatchesDao,
@@ -283,10 +300,87 @@ class Database extends _$Database {
               gtin4: 123,
               gtin5: 123));
 
-          await into(orders).insert(Order(
+          await into(products).insert(Product(
+              id: 3,
+              productNr: "852741963",
+              productName: "Tripan farblos Kal. 120",
+              gtin1: 456789012345,
+              gtin2: 123,
+              gtin3: 123,
+              gtin4: 123,
+              gtin5: 123));
+
+          await into(products).insert(Product(
+              id: 4,
+              productNr: "963741852",
+              productName: "Tripan farblos Kal. 130",
+              gtin1: 456789012345,
+              gtin2: 123,
+              gtin3: 123,
+              gtin4: 123,
+              gtin5: 123));
+
+          await into(products).insert(Product(
+              id: 5,
+              productNr: "147852369",
+              productName: "Tripan farblos Kal. 140",
+              gtin1: 456789012345,
+              gtin2: 123,
+              gtin3: 123,
+              gtin4: 123,
+              gtin5: 123));
+
+          await into(orders)
+              .insert(Order(id: 1, orderNr: "1234", orderBarcode: "987654321"));
+
+          await into(orders)
+              .insert(Order(id: 2, orderNr: "4321", orderBarcode: "369258147"));
+
+          await into(productionOrders).insert(ProductionOrder(
               id: 1,
-              orderNr: "1234",
-              orderBarcode: "123456789012345678901234567890123456"));
+              productionOrderNr: "987654",
+              productionOrderBarcode: "147258369"));
+
+          await into(productionOrders).insert(ProductionOrder(
+              id: 2,
+              productionOrderNr: "32145",
+              productionOrderBarcode: "258147369"));
+
+          await into(packets).insert(Packet(
+              id: 1,
+              barcode: "1111222233334444555566667777888899",
+              lot: "",
+              quantity: 50,
+              product: 1,
+              productName: "Faser NAT-35 Meatcling Kal. 80",
+              productNr: "123456789"));
+
+          await into(packets).insert(Packet(
+              id: 2,
+              barcode: "9999888877776666555544443333222211",
+              lot: "",
+              quantity: 50,
+              product: 1,
+              productName: "Faser NAT-35 Meatcling Kal. 81",
+              productNr: "123456789"));
+
+          await into(packets).insert(Packet(
+              id: 3,
+              barcode: "9999666633338888555522227777444411",
+              lot: "",
+              quantity: 50,
+              product: 1,
+              productName: "Faser NAT-35 Meatcling Kal. 82",
+              productNr: "123456789"));
+
+          await into(packets).insert(Packet(
+              id: 4,
+              barcode: "2222555588883333666699997777444411",
+              lot: "",
+              quantity: 50,
+              product: 1,
+              productName: "Faser NAT-35 Meatcling Kal. 83",
+              productNr: "123456789"));
         }
       },
     );

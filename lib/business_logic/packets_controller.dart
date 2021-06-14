@@ -4,6 +4,7 @@ import '../database/database.dart';
 
 /// Business Logic for Packets
 class PacketsController {
+  /// Database instance
   final database = DatabaseFactory.getDatabaseInstance();
 
   /// add packet and extract all info from the barcode
@@ -15,7 +16,7 @@ class PacketsController {
     var gtin;
     var product;
     var correctBarcode = false;
-   
+
     if (barcode.length == 44) {
       correctBarcode = true;
       gtin = barcode.substring(3, 15);
@@ -46,19 +47,24 @@ class PacketsController {
       assert(quantity is double);
 
       return database.packetsDao.createPacket(PacketsCompanion(
-        barcode: Value(barcode),
-        lot: Value(lot),
-        quantity: Value(quantity),
-        product: Value(product.id),
-        productNr: Value(product.productNr),
-        productName: Value(product.productName)
-      ));
+          barcode: Value(barcode),
+          lot: Value(lot),
+          quantity: Value(quantity),
+          product: Value(product.id),
+          productNr: Value(product.productNr),
+          productName: Value(product.productName)));
     } else {
       return -1;
     }
   }
 
+  /// returns a packet that has the requested id.
   Future<Packet> getPacketWithId(int id) {
     return (database.packetsDao.getPacketWithId(id));
+  }
+
+  /// returns a packet that has the requested barcode.
+  Future<Packet> getPacketByBarcode(String barcode) {
+    return (database.packetsDao.getPacketByBarcode(barcode));
   }
 }

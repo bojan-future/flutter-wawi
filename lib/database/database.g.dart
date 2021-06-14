@@ -1346,7 +1346,13 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
 
   /// production order number
   final String productionOrderNr;
-  ProductionOrder({required this.id, required this.productionOrderNr});
+
+  /// production order barcode
+  final String productionOrderBarcode;
+  ProductionOrder(
+      {required this.id,
+      required this.productionOrderNr,
+      required this.productionOrderBarcode});
   factory ProductionOrder.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
@@ -1357,6 +1363,8 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       productionOrderNr: stringType.mapFromDatabaseResponse(
           data['${effectivePrefix}production_order_nr'])!,
+      productionOrderBarcode: stringType.mapFromDatabaseResponse(
+          data['${effectivePrefix}production_order_barcode'])!,
     );
   }
   @override
@@ -1364,6 +1372,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['production_order_nr'] = Variable<String>(productionOrderNr);
+    map['production_order_barcode'] = Variable<String>(productionOrderBarcode);
     return map;
   }
 
@@ -1371,6 +1380,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
     return ProductionOrdersCompanion(
       id: Value(id),
       productionOrderNr: Value(productionOrderNr),
+      productionOrderBarcode: Value(productionOrderBarcode),
     );
   }
 
@@ -1380,6 +1390,8 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
     return ProductionOrder(
       id: serializer.fromJson<int>(json['id']),
       productionOrderNr: serializer.fromJson<String>(json['productionOrderNr']),
+      productionOrderBarcode:
+          serializer.fromJson<String>(json['productionOrderBarcode']),
     );
   }
   @override
@@ -1388,59 +1400,80 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'productionOrderNr': serializer.toJson<String>(productionOrderNr),
+      'productionOrderBarcode':
+          serializer.toJson<String>(productionOrderBarcode),
     };
   }
 
-  ProductionOrder copyWith({int? id, String? productionOrderNr}) =>
+  ProductionOrder copyWith(
+          {int? id,
+          String? productionOrderNr,
+          String? productionOrderBarcode}) =>
       ProductionOrder(
         id: id ?? this.id,
         productionOrderNr: productionOrderNr ?? this.productionOrderNr,
+        productionOrderBarcode:
+            productionOrderBarcode ?? this.productionOrderBarcode,
       );
   @override
   String toString() {
     return (StringBuffer('ProductionOrder(')
           ..write('id: $id, ')
-          ..write('productionOrderNr: $productionOrderNr')
+          ..write('productionOrderNr: $productionOrderNr, ')
+          ..write('productionOrderBarcode: $productionOrderBarcode')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, productionOrderNr.hashCode));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(productionOrderNr.hashCode, productionOrderBarcode.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is ProductionOrder &&
           other.id == this.id &&
-          other.productionOrderNr == this.productionOrderNr);
+          other.productionOrderNr == this.productionOrderNr &&
+          other.productionOrderBarcode == this.productionOrderBarcode);
 }
 
 class ProductionOrdersCompanion extends UpdateCompanion<ProductionOrder> {
   final Value<int> id;
   final Value<String> productionOrderNr;
+  final Value<String> productionOrderBarcode;
   const ProductionOrdersCompanion({
     this.id = const Value.absent(),
     this.productionOrderNr = const Value.absent(),
+    this.productionOrderBarcode = const Value.absent(),
   });
   ProductionOrdersCompanion.insert({
     this.id = const Value.absent(),
     required String productionOrderNr,
-  }) : productionOrderNr = Value(productionOrderNr);
+    required String productionOrderBarcode,
+  })   : productionOrderNr = Value(productionOrderNr),
+        productionOrderBarcode = Value(productionOrderBarcode);
   static Insertable<ProductionOrder> custom({
     Expression<int>? id,
     Expression<String>? productionOrderNr,
+    Expression<String>? productionOrderBarcode,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (productionOrderNr != null) 'production_order_nr': productionOrderNr,
+      if (productionOrderBarcode != null)
+        'production_order_barcode': productionOrderBarcode,
     });
   }
 
   ProductionOrdersCompanion copyWith(
-      {Value<int>? id, Value<String>? productionOrderNr}) {
+      {Value<int>? id,
+      Value<String>? productionOrderNr,
+      Value<String>? productionOrderBarcode}) {
     return ProductionOrdersCompanion(
       id: id ?? this.id,
       productionOrderNr: productionOrderNr ?? this.productionOrderNr,
+      productionOrderBarcode:
+          productionOrderBarcode ?? this.productionOrderBarcode,
     );
   }
 
@@ -1453,6 +1486,10 @@ class ProductionOrdersCompanion extends UpdateCompanion<ProductionOrder> {
     if (productionOrderNr.present) {
       map['production_order_nr'] = Variable<String>(productionOrderNr.value);
     }
+    if (productionOrderBarcode.present) {
+      map['production_order_barcode'] =
+          Variable<String>(productionOrderBarcode.value);
+    }
     return map;
   }
 
@@ -1460,7 +1497,8 @@ class ProductionOrdersCompanion extends UpdateCompanion<ProductionOrder> {
   String toString() {
     return (StringBuffer('ProductionOrdersCompanion(')
           ..write('id: $id, ')
-          ..write('productionOrderNr: $productionOrderNr')
+          ..write('productionOrderNr: $productionOrderNr, ')
+          ..write('productionOrderBarcode: $productionOrderBarcode')
           ..write(')'))
         .toString();
   }
@@ -1492,8 +1530,22 @@ class $ProductionOrdersTable extends ProductionOrders
     );
   }
 
+  final VerificationMeta _productionOrderBarcodeMeta =
+      const VerificationMeta('productionOrderBarcode');
   @override
-  List<GeneratedColumn> get $columns => [id, productionOrderNr];
+  late final GeneratedTextColumn productionOrderBarcode =
+      _constructProductionOrderBarcode();
+  GeneratedTextColumn _constructProductionOrderBarcode() {
+    return GeneratedTextColumn(
+      'production_order_barcode',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, productionOrderNr, productionOrderBarcode];
   @override
   $ProductionOrdersTable get asDslTable => this;
   @override
@@ -1515,6 +1567,14 @@ class $ProductionOrdersTable extends ProductionOrders
               data['production_order_nr']!, _productionOrderNrMeta));
     } else if (isInserting) {
       context.missing(_productionOrderNrMeta);
+    }
+    if (data.containsKey('production_order_barcode')) {
+      context.handle(
+          _productionOrderBarcodeMeta,
+          productionOrderBarcode.isAcceptableOrUnknown(
+              data['production_order_barcode']!, _productionOrderBarcodeMeta));
+    } else if (isInserting) {
+      context.missing(_productionOrderBarcodeMeta);
     }
     return context;
   }
@@ -1539,8 +1599,13 @@ class ProductionMaterial extends DataClass
   final int id;
 
   /// foreign key -> production order
-  final int order;
-  ProductionMaterial({required this.id, required this.order});
+  final int prodOrder;
+
+  /// Material Packet
+  /// foreign key -> packets
+  final int packet;
+  ProductionMaterial(
+      {required this.id, required this.prodOrder, required this.packet});
   factory ProductionMaterial.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
@@ -1548,21 +1613,26 @@ class ProductionMaterial extends DataClass
     final intType = db.typeSystem.forDartType<int>();
     return ProductionMaterial(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order'])!,
+      prodOrder: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}prod_order'])!,
+      packet:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['order'] = Variable<int>(order);
+    map['prod_order'] = Variable<int>(prodOrder);
+    map['packet'] = Variable<int>(packet);
     return map;
   }
 
   ProductionMaterialsCompanion toCompanion(bool nullToAbsent) {
     return ProductionMaterialsCompanion(
       id: Value(id),
-      order: Value(order),
+      prodOrder: Value(prodOrder),
+      packet: Value(packet),
     );
   }
 
@@ -1571,7 +1641,8 @@ class ProductionMaterial extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ProductionMaterial(
       id: serializer.fromJson<int>(json['id']),
-      order: serializer.fromJson<int>(json['order']),
+      prodOrder: serializer.fromJson<int>(json['prodOrder']),
+      packet: serializer.fromJson<int>(json['packet']),
     );
   }
   @override
@@ -1579,58 +1650,72 @@ class ProductionMaterial extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'order': serializer.toJson<int>(order),
+      'prodOrder': serializer.toJson<int>(prodOrder),
+      'packet': serializer.toJson<int>(packet),
     };
   }
 
-  ProductionMaterial copyWith({int? id, int? order}) => ProductionMaterial(
+  ProductionMaterial copyWith({int? id, int? prodOrder, int? packet}) =>
+      ProductionMaterial(
         id: id ?? this.id,
-        order: order ?? this.order,
+        prodOrder: prodOrder ?? this.prodOrder,
+        packet: packet ?? this.packet,
       );
   @override
   String toString() {
     return (StringBuffer('ProductionMaterial(')
           ..write('id: $id, ')
-          ..write('order: $order')
+          ..write('prodOrder: $prodOrder, ')
+          ..write('packet: $packet')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, order.hashCode));
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(prodOrder.hashCode, packet.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is ProductionMaterial &&
           other.id == this.id &&
-          other.order == this.order);
+          other.prodOrder == this.prodOrder &&
+          other.packet == this.packet);
 }
 
 class ProductionMaterialsCompanion extends UpdateCompanion<ProductionMaterial> {
   final Value<int> id;
-  final Value<int> order;
+  final Value<int> prodOrder;
+  final Value<int> packet;
   const ProductionMaterialsCompanion({
     this.id = const Value.absent(),
-    this.order = const Value.absent(),
+    this.prodOrder = const Value.absent(),
+    this.packet = const Value.absent(),
   });
   ProductionMaterialsCompanion.insert({
     this.id = const Value.absent(),
-    required int order,
-  }) : order = Value(order);
+    required int prodOrder,
+    required int packet,
+  })   : prodOrder = Value(prodOrder),
+        packet = Value(packet);
   static Insertable<ProductionMaterial> custom({
     Expression<int>? id,
-    Expression<int>? order,
+    Expression<int>? prodOrder,
+    Expression<int>? packet,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (order != null) 'order': order,
+      if (prodOrder != null) 'prod_order': prodOrder,
+      if (packet != null) 'packet': packet,
     });
   }
 
-  ProductionMaterialsCompanion copyWith({Value<int>? id, Value<int>? order}) {
+  ProductionMaterialsCompanion copyWith(
+      {Value<int>? id, Value<int>? prodOrder, Value<int>? packet}) {
     return ProductionMaterialsCompanion(
       id: id ?? this.id,
-      order: order ?? this.order,
+      prodOrder: prodOrder ?? this.prodOrder,
+      packet: packet ?? this.packet,
     );
   }
 
@@ -1640,8 +1725,11 @@ class ProductionMaterialsCompanion extends UpdateCompanion<ProductionMaterial> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (order.present) {
-      map['order'] = Variable<int>(order.value);
+    if (prodOrder.present) {
+      map['prod_order'] = Variable<int>(prodOrder.value);
+    }
+    if (packet.present) {
+      map['packet'] = Variable<int>(packet.value);
     }
     return map;
   }
@@ -1650,7 +1738,8 @@ class ProductionMaterialsCompanion extends UpdateCompanion<ProductionMaterial> {
   String toString() {
     return (StringBuffer('ProductionMaterialsCompanion(')
           ..write('id: $id, ')
-          ..write('order: $order')
+          ..write('prodOrder: $prodOrder, ')
+          ..write('packet: $packet')
           ..write(')'))
         .toString();
   }
@@ -1669,16 +1758,24 @@ class $ProductionMaterialsTable extends ProductionMaterials
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
-  final VerificationMeta _orderMeta = const VerificationMeta('order');
+  final VerificationMeta _prodOrderMeta = const VerificationMeta('prodOrder');
   @override
-  late final GeneratedIntColumn order = _constructOrder();
-  GeneratedIntColumn _constructOrder() {
-    return GeneratedIntColumn('order', $tableName, false,
-        $customConstraints: 'REFERENCES orders(id)');
+  late final GeneratedIntColumn prodOrder = _constructProdOrder();
+  GeneratedIntColumn _constructProdOrder() {
+    return GeneratedIntColumn('prod_order', $tableName, false,
+        $customConstraints: 'REFERENCES production_orders(id)');
+  }
+
+  final VerificationMeta _packetMeta = const VerificationMeta('packet');
+  @override
+  late final GeneratedIntColumn packet = _constructPacket();
+  GeneratedIntColumn _constructPacket() {
+    return GeneratedIntColumn('packet', $tableName, false,
+        $customConstraints: 'REFERENCES packets(id)');
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, order];
+  List<GeneratedColumn> get $columns => [id, prodOrder, packet];
   @override
   $ProductionMaterialsTable get asDslTable => this;
   @override
@@ -1693,11 +1790,17 @@ class $ProductionMaterialsTable extends ProductionMaterials
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('order')) {
-      context.handle(
-          _orderMeta, order.isAcceptableOrUnknown(data['order']!, _orderMeta));
+    if (data.containsKey('prod_order')) {
+      context.handle(_prodOrderMeta,
+          prodOrder.isAcceptableOrUnknown(data['prod_order']!, _prodOrderMeta));
     } else if (isInserting) {
-      context.missing(_orderMeta);
+      context.missing(_prodOrderMeta);
+    }
+    if (data.containsKey('packet')) {
+      context.handle(_packetMeta,
+          packet.isAcceptableOrUnknown(data['packet']!, _packetMeta));
+    } else if (isInserting) {
+      context.missing(_packetMeta);
     }
     return context;
   }
@@ -1722,8 +1825,13 @@ class ProductionResult extends DataClass
   final int id;
 
   /// foreign key -> production order
-  final int order;
-  ProductionResult({required this.id, required this.order});
+  final int prodOrder;
+
+  /// Resulting Packet
+  /// foreign key -> packets
+  final int packet;
+  ProductionResult(
+      {required this.id, required this.prodOrder, required this.packet});
   factory ProductionResult.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
@@ -1731,21 +1839,26 @@ class ProductionResult extends DataClass
     final intType = db.typeSystem.forDartType<int>();
     return ProductionResult(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order'])!,
+      prodOrder: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}prod_order'])!,
+      packet:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['order'] = Variable<int>(order);
+    map['prod_order'] = Variable<int>(prodOrder);
+    map['packet'] = Variable<int>(packet);
     return map;
   }
 
   ProductionResultsCompanion toCompanion(bool nullToAbsent) {
     return ProductionResultsCompanion(
       id: Value(id),
-      order: Value(order),
+      prodOrder: Value(prodOrder),
+      packet: Value(packet),
     );
   }
 
@@ -1754,7 +1867,8 @@ class ProductionResult extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ProductionResult(
       id: serializer.fromJson<int>(json['id']),
-      order: serializer.fromJson<int>(json['order']),
+      prodOrder: serializer.fromJson<int>(json['prodOrder']),
+      packet: serializer.fromJson<int>(json['packet']),
     );
   }
   @override
@@ -1762,58 +1876,72 @@ class ProductionResult extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'order': serializer.toJson<int>(order),
+      'prodOrder': serializer.toJson<int>(prodOrder),
+      'packet': serializer.toJson<int>(packet),
     };
   }
 
-  ProductionResult copyWith({int? id, int? order}) => ProductionResult(
+  ProductionResult copyWith({int? id, int? prodOrder, int? packet}) =>
+      ProductionResult(
         id: id ?? this.id,
-        order: order ?? this.order,
+        prodOrder: prodOrder ?? this.prodOrder,
+        packet: packet ?? this.packet,
       );
   @override
   String toString() {
     return (StringBuffer('ProductionResult(')
           ..write('id: $id, ')
-          ..write('order: $order')
+          ..write('prodOrder: $prodOrder, ')
+          ..write('packet: $packet')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, order.hashCode));
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(prodOrder.hashCode, packet.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is ProductionResult &&
           other.id == this.id &&
-          other.order == this.order);
+          other.prodOrder == this.prodOrder &&
+          other.packet == this.packet);
 }
 
 class ProductionResultsCompanion extends UpdateCompanion<ProductionResult> {
   final Value<int> id;
-  final Value<int> order;
+  final Value<int> prodOrder;
+  final Value<int> packet;
   const ProductionResultsCompanion({
     this.id = const Value.absent(),
-    this.order = const Value.absent(),
+    this.prodOrder = const Value.absent(),
+    this.packet = const Value.absent(),
   });
   ProductionResultsCompanion.insert({
     this.id = const Value.absent(),
-    required int order,
-  }) : order = Value(order);
+    required int prodOrder,
+    required int packet,
+  })   : prodOrder = Value(prodOrder),
+        packet = Value(packet);
   static Insertable<ProductionResult> custom({
     Expression<int>? id,
-    Expression<int>? order,
+    Expression<int>? prodOrder,
+    Expression<int>? packet,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (order != null) 'order': order,
+      if (prodOrder != null) 'prod_order': prodOrder,
+      if (packet != null) 'packet': packet,
     });
   }
 
-  ProductionResultsCompanion copyWith({Value<int>? id, Value<int>? order}) {
+  ProductionResultsCompanion copyWith(
+      {Value<int>? id, Value<int>? prodOrder, Value<int>? packet}) {
     return ProductionResultsCompanion(
       id: id ?? this.id,
-      order: order ?? this.order,
+      prodOrder: prodOrder ?? this.prodOrder,
+      packet: packet ?? this.packet,
     );
   }
 
@@ -1823,8 +1951,11 @@ class ProductionResultsCompanion extends UpdateCompanion<ProductionResult> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (order.present) {
-      map['order'] = Variable<int>(order.value);
+    if (prodOrder.present) {
+      map['prod_order'] = Variable<int>(prodOrder.value);
+    }
+    if (packet.present) {
+      map['packet'] = Variable<int>(packet.value);
     }
     return map;
   }
@@ -1833,7 +1964,8 @@ class ProductionResultsCompanion extends UpdateCompanion<ProductionResult> {
   String toString() {
     return (StringBuffer('ProductionResultsCompanion(')
           ..write('id: $id, ')
-          ..write('order: $order')
+          ..write('prodOrder: $prodOrder, ')
+          ..write('packet: $packet')
           ..write(')'))
         .toString();
   }
@@ -1852,16 +1984,24 @@ class $ProductionResultsTable extends ProductionResults
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
-  final VerificationMeta _orderMeta = const VerificationMeta('order');
+  final VerificationMeta _prodOrderMeta = const VerificationMeta('prodOrder');
   @override
-  late final GeneratedIntColumn order = _constructOrder();
-  GeneratedIntColumn _constructOrder() {
-    return GeneratedIntColumn('order', $tableName, false,
-        $customConstraints: 'REFERENCES orders(id)');
+  late final GeneratedIntColumn prodOrder = _constructProdOrder();
+  GeneratedIntColumn _constructProdOrder() {
+    return GeneratedIntColumn('prod_order', $tableName, false,
+        $customConstraints: 'REFERENCES production_orders(id)');
+  }
+
+  final VerificationMeta _packetMeta = const VerificationMeta('packet');
+  @override
+  late final GeneratedIntColumn packet = _constructPacket();
+  GeneratedIntColumn _constructPacket() {
+    return GeneratedIntColumn('packet', $tableName, false,
+        $customConstraints: 'REFERENCES packets(id)');
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, order];
+  List<GeneratedColumn> get $columns => [id, prodOrder, packet];
   @override
   $ProductionResultsTable get asDslTable => this;
   @override
@@ -1876,11 +2016,17 @@ class $ProductionResultsTable extends ProductionResults
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('order')) {
-      context.handle(
-          _orderMeta, order.isAcceptableOrUnknown(data['order']!, _orderMeta));
+    if (data.containsKey('prod_order')) {
+      context.handle(_prodOrderMeta,
+          prodOrder.isAcceptableOrUnknown(data['prod_order']!, _prodOrderMeta));
     } else if (isInserting) {
-      context.missing(_orderMeta);
+      context.missing(_prodOrderMeta);
+    }
+    if (data.containsKey('packet')) {
+      context.handle(_packetMeta,
+          packet.isAcceptableOrUnknown(data['packet']!, _packetMeta));
+    } else if (isInserting) {
+      context.missing(_packetMeta);
     }
     return context;
   }
@@ -2692,6 +2838,8 @@ abstract class _$Database extends GeneratedDatabase {
   late final ProductsDao productsDao = ProductsDao(this as Database);
   late final OrdersDao ordersDao = OrdersDao(this as Database);
   late final ProductionDao productionDao = ProductionDao(this as Database);
+  late final ProductionMaterialsDao productionMaterialsDao =
+      ProductionMaterialsDao(this as Database);
   late final DeliveriesDao deliveriesDao = DeliveriesDao(this as Database);
   late final DeliveryPositionsDao deliveryPositionsDao =
       DeliveryPositionsDao(this as Database);

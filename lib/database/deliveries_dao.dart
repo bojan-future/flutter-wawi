@@ -6,7 +6,8 @@ part 'deliveries_dao.g.dart';
 @UseDao(tables: [Deliveries])
 
 /// packets functionality extension for database
-class DeliveriesDao extends DatabaseAccessor<Database> with _$DeliveriesDaoMixin {
+class DeliveriesDao extends DatabaseAccessor<Database>
+    with _$DeliveriesDaoMixin {
   ///
   DeliveriesDao(Database db) : super(db);
 
