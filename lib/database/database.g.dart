@@ -2840,6 +2840,8 @@ abstract class _$Database extends GeneratedDatabase {
   late final ProductionDao productionDao = ProductionDao(this as Database);
   late final ProductionMaterialsDao productionMaterialsDao =
       ProductionMaterialsDao(this as Database);
+  late final ProductionResultsDao productionResultsDao =
+      ProductionResultsDao(this as Database);
   late final DeliveriesDao deliveriesDao = DeliveriesDao(this as Database);
   late final DeliveryPositionsDao deliveryPositionsDao =
       DeliveryPositionsDao(this as Database);

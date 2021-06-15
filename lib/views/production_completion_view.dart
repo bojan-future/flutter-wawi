@@ -7,9 +7,10 @@ import '../database/database.dart';
 import '../ui_widgets/alert_warnings.dart';
 import '../ui_widgets/scanlistview.dart';
 
-/// Widget representing ProductionStart Screen
-class ProductionStartView extends StatefulWidget {
-  ProductionStartView({
+/// Widget representing ProductionCompletion Screen
+class ProductionCompletionView extends StatefulWidget {
+  /// Production completion view
+  ProductionCompletionView({
     Key? key,
     required this.productionID,
   }) : super(key: key);
@@ -18,10 +19,11 @@ class ProductionStartView extends StatefulWidget {
   final int productionID;
 
   @override
-  _ProductionStartViewState createState() => _ProductionStartViewState();
+  _ProductionCompletionViewState createState() =>
+      _ProductionCompletionViewState();
 }
 
-class _ProductionStartViewState extends State<ProductionStartView> {
+class _ProductionCompletionViewState extends State<ProductionCompletionView> {
   List<Packet> scanViewList = [];
 
   @override
@@ -32,21 +34,21 @@ class _ProductionStartViewState extends State<ProductionStartView> {
   @override
   Widget build(BuildContext context) {
     return ScanListView(
-      title: 'Produktion-Start',
-      color: Colors.lightGreen[300]!,
+      title: 'Produktion-Abschluss',
+      color: Colors.teal[300]!,
       onScan: (barcode) async {
         var packet;
-        var productionstartController =
+        var productionController =
             Provider.of<ProductionController>(context, listen: false);
         var packetsController =
             Provider.of<PacketsController>(context, listen: false);
 
-        productionstartController
-            .addProductionMaterial(
+        productionController
+            .addProductionResult(
                 barcode, widget.productionID, packetsController)
             .then((value) async {
           var productionMaterial =
-              await productionstartController.getProductionMaterial(value);
+              await productionController.getProductionResult(value);
 
           var packetID = productionMaterial.packet;
 

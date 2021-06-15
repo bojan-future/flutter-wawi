@@ -9,6 +9,7 @@ import 'orders_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
 import 'production_material_dao.dart';
+import 'production_result_dao.dart';
 import 'products_dao.dart';
 
 part 'database.exception.dart';
@@ -201,22 +202,6 @@ class ProductionResults extends Table {
       integer().customConstraint('REFERENCES packets(id)')();
 }
 
-/// High level production model
-/// including production order, materials and results
-class ProductionModel {
-  /// production order
-  final ProductionOrder prodOrder;
-
-  /// materials (input)
-  final List<ProductionMaterial> materials;
-
-  /// results (output)
-  final List<ProductionResult> results;
-
-  ///
-  ProductionModel(this.prodOrder, this.materials, this.results);
-}
-
 // ignore: avoid_classes_with_only_static_members
 /// use DatabaseFactory to get database instance
 class DatabaseFactory {
@@ -250,6 +235,7 @@ class DatabaseFactory {
   OrdersDao,
   ProductionDao,
   ProductionMaterialsDao,
+  ProductionResultsDao,
   DeliveriesDao,
   DeliveryPositionsDao,
   DispatchesDao,

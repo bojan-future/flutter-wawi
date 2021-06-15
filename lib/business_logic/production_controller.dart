@@ -14,7 +14,8 @@ class ProductionController {
     return database.productionDao.getProductionByBarcode(barcode);
   }
 
-  /// add production position together with an associated packet
+  // ignore: lines_longer_than_80_chars
+  /// add production position together with an associated packet (Production Start)
   Future<int> addProductionMaterial(String barcode, int productionID,
       PacketsController packetsController) async {
     return packetsController.getPacketByBarcode(barcode).then((packet) {
@@ -24,11 +25,28 @@ class ProductionController {
     });
   }
 
+  // ignore: lines_longer_than_80_chars
+  /// add production position together with an associated packet (Production Completion)
+  Future<int> addProductionResult(String barcode, int productionID,
+      PacketsController packetsController) async {
+    return packetsController.getPacketByBarcode(barcode).then((packet) {
+      return database.productionResultsDao.createProductionResult(
+          ProductionResultsCompanion(
+              packet: Value(packet.id), prodOrder: Value(productionID)));
+    });
+  }
+
   /// returns a production material that has the requested id.
   Future<ProductionMaterial> getProductionMaterial(
       int productionMaterialID) async {
     return database.productionMaterialsDao
         .getProductionMaterialByID(productionMaterialID);
+  }
+
+  /// returns a production result that has the requested id.
+  Future<ProductionResult> getProductionResult(int productionResultID) async {
+    return database.productionResultsDao
+        .getProductionResultByID(productionResultID);
   }
 
   /// checks if the scanned barcode can be found in the production order table.

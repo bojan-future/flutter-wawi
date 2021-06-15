@@ -7,7 +7,7 @@ import 'business_logic/delivery_controller.dart';
 import 'business_logic/dispatch_controller.dart';
 import 'business_logic/order_controller.dart';
 import 'business_logic/packets_controller.dart';
-import 'business_logic/production_start_controller.dart';
+import 'business_logic/production_controller.dart';
 import 'business_logic/scan_bottom_sheet_result.dart';
 import 'services/scanner_controller.dart';
 import 'ui_widgets/alert_warnings.dart';
@@ -15,6 +15,7 @@ import 'ui_widgets/drawer.dart';
 import 'ui_widgets/homepage_buttons.dart';
 import 'views/delivery_view.dart';
 import 'views/dispatch_view.dart';
+import 'views/production_completion_view.dart';
 import 'views/production_start_view.dart';
 
 void main() {
@@ -199,15 +200,25 @@ class _MyHomePageState extends State<MyHomePage> {
                           bottomSheetText: "Produktionsauftrag Scannen",
                           title: "Produktion-Abschluss",
                           col: Colors.teal[300]!,
-                          child: Scaffold(
-                            appBar: AppBar(
-                              backgroundColor: Colors.amber[300]!,
-                              title: Text('Produktion-Abschluss'),
-                            ),
-                            body: Center(child: Text('Coming soon...')),
-                          ),
+                          builder: (parentId) {
+                            return ProductionCompletionView(
+                                productionID: parentId);
+                          },
                           onScanBottomSheet: (barcode) async {
-                            return ScanBottomSheetResult(barcode.isNotEmpty, 0);
+                            var productionController =
+                                Provider.of<ProductionController>(context,
+                                    listen: false);
+
+                            return productionController
+                                .onScanProdBarcode(barcode)
+                                .catchError((error, stackTrace) {
+                              buildAlertInvalidBarcode(
+                                      context,
+                                      // ignore: lines_longer_than_80_chars
+                                      "Der gescannte Produktionsauftrag konnte nicht gefunden werden!")
+                                  .show();
+                              return ScanBottomSheetResult(false, 0);
+                            });
                           },
                         ),
                       ],
