@@ -49,7 +49,7 @@ class _DeliveryViewState extends State<DeliveryView> {
 
           packet = await packetsController.getPacketWithId(packetID);
           setState(() {
-            scanViewList.add(packet);
+            scanViewList.insert(0, packet);
           });
         } on InvalidBarcodeException {
           setState(() {

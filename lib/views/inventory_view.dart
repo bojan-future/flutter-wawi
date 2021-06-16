@@ -49,7 +49,7 @@ class _InventoryViewState extends State<InventoryView> {
 
           packet = await packetsController.getPacketWithId(packetID);
           setState(() {
-            scanViewList.add(packet);
+            scanViewList.insert(0, packet);
           });
         } on InvalidBarcodeException {
           setState(() {

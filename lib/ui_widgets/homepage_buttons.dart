@@ -56,15 +56,13 @@ class TextButtonWidget extends StatelessWidget {
                 scanCallback: (barcode) {
                   var openListDialog = onScanBottomSheet!(barcode);
                   if (openListDialog) {
-                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       buildCupertinoPageRoute(),
                     );
                   }
                 },
-                context: context
-                );
+                context: context);
           }
         },
       ),

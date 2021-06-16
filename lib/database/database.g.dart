@@ -106,7 +106,7 @@ class UsersCompanion extends UpdateCompanion<User> {
     this.id = const Value.absent(),
     required String barcode,
     required String userNr,
-  })   : barcode = Value(barcode),
+  })  : barcode = Value(barcode),
         userNr = Value(userNr);
   static Insertable<User> custom({
     Expression<int>? id,
@@ -891,7 +891,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     required int gtin3,
     required int gtin4,
     required int gtin5,
-  })   : productNr = Value(productNr),
+  })  : productNr = Value(productNr),
         productName = Value(productName),
         gtin1 = Value(gtin1),
         gtin2 = Value(gtin2),
@@ -1253,7 +1253,7 @@ class OrdersCompanion extends UpdateCompanion<Order> {
     this.id = const Value.absent(),
     required String orderNr,
     required int user,
-  })   : orderNr = Value(orderNr),
+  })  : orderNr = Value(orderNr),
         user = Value(user);
   static Insertable<Order> custom({
     Expression<int>? id,
@@ -2123,15 +2123,29 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   /// primary key
   final int id;
 
+  /// creation date
+  final String date;
+
+  /// picture count
+  final int pictureCount;
+
   /// foreign key -> user
   final int user;
-  Delivery({required this.id, required this.user});
+  Delivery(
+      {required this.id,
+      required this.date,
+      required this.pictureCount,
+      required this.user});
   factory Delivery.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
     return Delivery(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      date: stringType.mapFromDatabaseResponse(data['${effectivePrefix}date'])!,
+      pictureCount: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}picture_count'])!,
       user: intType.mapFromDatabaseResponse(data['${effectivePrefix}user'])!,
     );
   }
@@ -2139,6 +2153,8 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['date'] = Variable<String>(date);
+    map['picture_count'] = Variable<int>(pictureCount);
     map['user'] = Variable<int>(user);
     return map;
   }
@@ -2146,6 +2162,8 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   DeliveriesCompanion toCompanion(bool nullToAbsent) {
     return DeliveriesCompanion(
       id: Value(id),
+      date: Value(date),
+      pictureCount: Value(pictureCount),
       user: Value(user),
     );
   }
@@ -2155,6 +2173,8 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Delivery(
       id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<String>(json['date']),
+      pictureCount: serializer.fromJson<int>(json['pictureCount']),
       user: serializer.fromJson<int>(json['user']),
     );
   }
@@ -2163,55 +2183,85 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<String>(date),
+      'pictureCount': serializer.toJson<int>(pictureCount),
       'user': serializer.toJson<int>(user),
     };
   }
 
-  Delivery copyWith({int? id, int? user}) => Delivery(
+  Delivery copyWith({int? id, String? date, int? pictureCount, int? user}) =>
+      Delivery(
         id: id ?? this.id,
+        date: date ?? this.date,
+        pictureCount: pictureCount ?? this.pictureCount,
         user: user ?? this.user,
       );
   @override
   String toString() {
     return (StringBuffer('Delivery(')
           ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('pictureCount: $pictureCount, ')
           ..write('user: $user')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, user.hashCode));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(date.hashCode, $mrjc(pictureCount.hashCode, user.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is Delivery && other.id == this.id && other.user == this.user);
+      (other is Delivery &&
+          other.id == this.id &&
+          other.date == this.date &&
+          other.pictureCount == this.pictureCount &&
+          other.user == this.user);
 }
 
 class DeliveriesCompanion extends UpdateCompanion<Delivery> {
   final Value<int> id;
+  final Value<String> date;
+  final Value<int> pictureCount;
   final Value<int> user;
   const DeliveriesCompanion({
     this.id = const Value.absent(),
+    this.date = const Value.absent(),
+    this.pictureCount = const Value.absent(),
     this.user = const Value.absent(),
   });
   DeliveriesCompanion.insert({
     this.id = const Value.absent(),
+    required String date,
+    required int pictureCount,
     required int user,
-  }) : user = Value(user);
+  })  : date = Value(date),
+        pictureCount = Value(pictureCount),
+        user = Value(user);
   static Insertable<Delivery> custom({
     Expression<int>? id,
+    Expression<String>? date,
+    Expression<int>? pictureCount,
     Expression<int>? user,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (date != null) 'date': date,
+      if (pictureCount != null) 'picture_count': pictureCount,
       if (user != null) 'user': user,
     });
   }
 
-  DeliveriesCompanion copyWith({Value<int>? id, Value<int>? user}) {
+  DeliveriesCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? date,
+      Value<int>? pictureCount,
+      Value<int>? user}) {
     return DeliveriesCompanion(
       id: id ?? this.id,
+      date: date ?? this.date,
+      pictureCount: pictureCount ?? this.pictureCount,
       user: user ?? this.user,
     );
   }
@@ -2221,6 +2271,12 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<String>(date.value);
+    }
+    if (pictureCount.present) {
+      map['picture_count'] = Variable<int>(pictureCount.value);
     }
     if (user.present) {
       map['user'] = Variable<int>(user.value);
@@ -2232,6 +2288,8 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
   String toString() {
     return (StringBuffer('DeliveriesCompanion(')
           ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('pictureCount: $pictureCount, ')
           ..write('user: $user')
           ..write(')'))
         .toString();
@@ -2251,6 +2309,29 @@ class $DeliveriesTable extends Deliveries
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
+  final VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedTextColumn date = _constructDate();
+  GeneratedTextColumn _constructDate() {
+    return GeneratedTextColumn(
+      'date',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _pictureCountMeta =
+      const VerificationMeta('pictureCount');
+  @override
+  late final GeneratedIntColumn pictureCount = _constructPictureCount();
+  GeneratedIntColumn _constructPictureCount() {
+    return GeneratedIntColumn(
+      'picture_count',
+      $tableName,
+      false,
+    );
+  }
+
   final VerificationMeta _userMeta = const VerificationMeta('user');
   @override
   late final GeneratedIntColumn user = _constructUser();
@@ -2260,7 +2341,7 @@ class $DeliveriesTable extends Deliveries
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, user];
+  List<GeneratedColumn> get $columns => [id, date, pictureCount, user];
   @override
   $DeliveriesTable get asDslTable => this;
   @override
@@ -2274,6 +2355,20 @@ class $DeliveriesTable extends Deliveries
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('picture_count')) {
+      context.handle(
+          _pictureCountMeta,
+          pictureCount.isAcceptableOrUnknown(
+              data['picture_count']!, _pictureCountMeta));
+    } else if (isInserting) {
+      context.missing(_pictureCountMeta);
     }
     if (data.containsKey('user')) {
       context.handle(
@@ -2400,7 +2495,7 @@ class DeliveryPositionsCompanion extends UpdateCompanion<DeliveryPosition> {
     this.id = const Value.absent(),
     required int delivery,
     required int packet,
-  })   : delivery = Value(delivery),
+  })  : delivery = Value(delivery),
         packet = Value(packet);
   static Insertable<DeliveryPosition> custom({
     Expression<int>? id,
@@ -2520,6 +2615,234 @@ class $DeliveryPositionsTable extends DeliveryPositions
   @override
   $DeliveryPositionsTable createAlias(String alias) {
     return $DeliveryPositionsTable(_db, alias);
+  }
+}
+
+class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
+  /// primary key
+  final int id;
+
+  /// file path
+  final String filePath;
+
+  /// foreign key -> production order
+  final int delivery;
+  DeliveryImage(
+      {required this.id, required this.filePath, required this.delivery});
+  factory DeliveryImage.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return DeliveryImage(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      filePath: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}file_path'])!,
+      delivery:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}delivery'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['file_path'] = Variable<String>(filePath);
+    map['delivery'] = Variable<int>(delivery);
+    return map;
+  }
+
+  DeliveryImagesCompanion toCompanion(bool nullToAbsent) {
+    return DeliveryImagesCompanion(
+      id: Value(id),
+      filePath: Value(filePath),
+      delivery: Value(delivery),
+    );
+  }
+
+  factory DeliveryImage.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return DeliveryImage(
+      id: serializer.fromJson<int>(json['id']),
+      filePath: serializer.fromJson<String>(json['filePath']),
+      delivery: serializer.fromJson<int>(json['delivery']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'filePath': serializer.toJson<String>(filePath),
+      'delivery': serializer.toJson<int>(delivery),
+    };
+  }
+
+  DeliveryImage copyWith({int? id, String? filePath, int? delivery}) =>
+      DeliveryImage(
+        id: id ?? this.id,
+        filePath: filePath ?? this.filePath,
+        delivery: delivery ?? this.delivery,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('DeliveryImage(')
+          ..write('id: $id, ')
+          ..write('filePath: $filePath, ')
+          ..write('delivery: $delivery')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(filePath.hashCode, delivery.hashCode)));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is DeliveryImage &&
+          other.id == this.id &&
+          other.filePath == this.filePath &&
+          other.delivery == this.delivery);
+}
+
+class DeliveryImagesCompanion extends UpdateCompanion<DeliveryImage> {
+  final Value<int> id;
+  final Value<String> filePath;
+  final Value<int> delivery;
+  const DeliveryImagesCompanion({
+    this.id = const Value.absent(),
+    this.filePath = const Value.absent(),
+    this.delivery = const Value.absent(),
+  });
+  DeliveryImagesCompanion.insert({
+    this.id = const Value.absent(),
+    required String filePath,
+    required int delivery,
+  })  : filePath = Value(filePath),
+        delivery = Value(delivery);
+  static Insertable<DeliveryImage> custom({
+    Expression<int>? id,
+    Expression<String>? filePath,
+    Expression<int>? delivery,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (filePath != null) 'file_path': filePath,
+      if (delivery != null) 'delivery': delivery,
+    });
+  }
+
+  DeliveryImagesCompanion copyWith(
+      {Value<int>? id, Value<String>? filePath, Value<int>? delivery}) {
+    return DeliveryImagesCompanion(
+      id: id ?? this.id,
+      filePath: filePath ?? this.filePath,
+      delivery: delivery ?? this.delivery,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (filePath.present) {
+      map['file_path'] = Variable<String>(filePath.value);
+    }
+    if (delivery.present) {
+      map['delivery'] = Variable<int>(delivery.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DeliveryImagesCompanion(')
+          ..write('id: $id, ')
+          ..write('filePath: $filePath, ')
+          ..write('delivery: $delivery')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DeliveryImagesTable extends DeliveryImages
+    with TableInfo<$DeliveryImagesTable, DeliveryImage> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $DeliveryImagesTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedIntColumn id = _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _filePathMeta = const VerificationMeta('filePath');
+  @override
+  late final GeneratedTextColumn filePath = _constructFilePath();
+  GeneratedTextColumn _constructFilePath() {
+    return GeneratedTextColumn(
+      'file_path',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _deliveryMeta = const VerificationMeta('delivery');
+  @override
+  late final GeneratedIntColumn delivery = _constructDelivery();
+  GeneratedIntColumn _constructDelivery() {
+    return GeneratedIntColumn('delivery', $tableName, false,
+        $customConstraints: 'REFERENCES deliveries(id)');
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, filePath, delivery];
+  @override
+  $DeliveryImagesTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'delivery_images';
+  @override
+  final String actualTableName = 'delivery_images';
+  @override
+  VerificationContext validateIntegrity(Insertable<DeliveryImage> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('file_path')) {
+      context.handle(_filePathMeta,
+          filePath.isAcceptableOrUnknown(data['file_path']!, _filePathMeta));
+    } else if (isInserting) {
+      context.missing(_filePathMeta);
+    }
+    if (data.containsKey('delivery')) {
+      context.handle(_deliveryMeta,
+          delivery.isAcceptableOrUnknown(data['delivery']!, _deliveryMeta));
+    } else if (isInserting) {
+      context.missing(_deliveryMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DeliveryImage map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return DeliveryImage.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $DeliveryImagesTable createAlias(String alias) {
+    return $DeliveryImagesTable(_db, alias);
   }
 }
 
@@ -2785,7 +3108,7 @@ class InventoryPositionsCompanion extends UpdateCompanion<InventoryPosition> {
     required int inventory,
     required int packet,
     required double quantity,
-  })   : inventory = Value(inventory),
+  })  : inventory = Value(inventory),
         packet = Value(packet),
         quantity = Value(quantity);
   static Insertable<InventoryPosition> custom({
@@ -2952,6 +3275,7 @@ abstract class _$Database extends GeneratedDatabase {
   late final $DeliveriesTable deliveries = $DeliveriesTable(this);
   late final $DeliveryPositionsTable deliveryPositions =
       $DeliveryPositionsTable(this);
+  late final $DeliveryImagesTable deliveryImages = $DeliveryImagesTable(this);
   late final $InventoriesTable inventories = $InventoriesTable(this);
   late final $InventoryPositionsTable inventoryPositions =
       $InventoryPositionsTable(this);
@@ -2963,6 +3287,8 @@ abstract class _$Database extends GeneratedDatabase {
   late final DeliveriesDao deliveriesDao = DeliveriesDao(this as Database);
   late final DeliveryPositionsDao deliveryPositionsDao =
       DeliveryPositionsDao(this as Database);
+  late final DeliveryImagesDao deliveryImagesDao =
+      DeliveryImagesDao(this as Database);
   late final InventoriesDao inventoriesDao = InventoriesDao(this as Database);
   late final InventoryPositionsDao inventoryPositionsDao =
       InventoryPositionsDao(this as Database);
@@ -2980,6 +3306,7 @@ abstract class _$Database extends GeneratedDatabase {
         productionResults,
         deliveries,
         deliveryPositions,
+        deliveryImages,
         inventories,
         inventoryPositions
       ];
