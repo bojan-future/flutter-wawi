@@ -1,4 +1,5 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import '../database/database.dart';
 import 'business.exception.dart';
@@ -48,6 +49,7 @@ class PacketsController {
       assert(quantity is double);
 
       return database.packetsDao.createPacket(PacketsCompanion(
+          uuid: Value(Uuid().v4()),
           barcode: Value(barcode),
           lot: Value(lot),
           quantity: Value(quantity),

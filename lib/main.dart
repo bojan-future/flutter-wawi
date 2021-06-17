@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kuda_lager/services/synchro_controller.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +30,7 @@ void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
   WidgetsFlutterBinding.ensureInitialized();
 
+  SynchroController().synchronize();
   /// blocks rotation; sets orientation to: portrait
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {

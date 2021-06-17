@@ -1,4 +1,5 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import '../database/database.dart';
 import 'packets_controller.dart';
@@ -28,6 +29,7 @@ class InventoryController {
     var packetID = packet.id;
     return database.inventoryPositionsDao.createInventoryPosition(
         InventoryPositionsCompanion(
+            uuid: Value(Uuid().v4()),
             packet: Value(packetID),
             inventory: Value(inventoryID),
             quantity: Value(packetQuantity)));

@@ -37,7 +37,16 @@ dependencies:
   moor_flutter: ^4.0.0
 
   rflutter_alert: ^2.0.2
+<<<<<<< HEAD
   intl: ^0.17.0
+=======
+
+
+  #synchro_controller dependencies
+  http: ^0.13.3
+  uuid: ^3.0.4
+
+>>>>>>> 9afb17a (Download Product finished)
 dev_dependencies:
   flutter_test:
     sdk: flutter

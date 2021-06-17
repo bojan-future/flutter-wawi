@@ -33,4 +33,15 @@ class UsersDao extends DatabaseAccessor<Database> with _$UsersDaoMixin {
       return usersList.first;
     }
   }
+
+  ///parses synchronization json object and returns UsersCompanion for insert
+  static UsersCompanion companionFromSyncJson(
+      Map<String, dynamic> json, String uuid) {
+    return UsersCompanion(
+      uuid: Value(uuid),
+      userNr: Value(json['userNr']),
+      barcode: Value(json['barcode']),
+      //todo: other fields
+    );
+  }
 }
