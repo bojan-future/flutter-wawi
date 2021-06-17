@@ -44,22 +44,4 @@ class DeliveriesDao extends DatabaseAccessor<Database>
         .get();
     return deliveryList;
   }
-
-  /// increment picture count
-  Future<int> incrementPictureCounter(Delivery delivery) {
-    return (update(deliveries)..where((t) => t.id.equals(delivery.id))).write(
-      DeliveriesCompanion(
-        pictureCount: Value((delivery.pictureCount) + 1),
-      ),
-    );
-  }
-
-  /// decrement picture count
-  Future<int> decrementPictureCounter(Delivery delivery) {
-    return (update(deliveries)..where((t) => t.id.equals(delivery.id))).write(
-      DeliveriesCompanion(
-        pictureCount: Value((delivery.pictureCount) - 1),
-      ),
-    );
-  }
 }

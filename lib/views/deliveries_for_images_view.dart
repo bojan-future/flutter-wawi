@@ -43,8 +43,6 @@ class _DeliveriesForImagesViewState extends State<DeliveriesForImagesView> {
           child: ListTile(
             title:
                 Text("Anlieferung vom ${actualDeliveryViewList[index].date}\n"),
-            subtitle:
-                Text("Fotos: ${actualDeliveryViewList[index].pictureCount}"),
             onTap: () {
               Navigator.push(
                   context,
