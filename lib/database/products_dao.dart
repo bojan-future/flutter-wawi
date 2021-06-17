@@ -25,6 +25,18 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
     return delete(products).delete(product);
   }
 
+  /// retrieves product with given id
+  Future<Product> getProductById(int productId) {
+    return (select(products)..where((p) => p.id.equals(productId)))
+        .getSingleOrNull()
+        .then((value) {
+      if (value == null) {
+        return Future.error(RecordNotFoundException());
+      }
+      return value;
+    });
+  }
+
   /// retrieves product with given product number
   Future<Product> getProductByNumber(String productNumber) async {
     final productList = await (select(products)
