@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:http/http.dart' as http;
 import 'package:kuda_lager/business_logic/packets_controller.dart';
+import 'package:kuda_lager/database/orders_dao.dart';
+import 'package:kuda_lager/database/production_dao.dart';
 import 'package:kuda_lager/database/products_dao.dart';
 import 'package:kuda_lager/main.dart';
 import '../database/database.dart';
@@ -52,12 +54,17 @@ class SynchroController {
         database.productsDao.createProduct(
             ProductsDao.companionFromSyncJson(sync.data, sync.uuid));
         break;
+      case SyncType.order:
+        database.ordersDao
+            .createOrder(OrdersDao.companionFromSyncJson(sync.data, sync.uuid));
+        break;
+      case SyncType.production:
+        database.productionDao.createProduction(
+            ProductionDao.companionFromSyncJson(sync.data, sync.uuid));
+        break;
       //todo: other tables
       default:
     }
-
-    //todo: resolve unresolved links
-    //idee: fehlende datensätze anlegen (wir haben ja die uuids), mit dummy-daten
   }
 }
 

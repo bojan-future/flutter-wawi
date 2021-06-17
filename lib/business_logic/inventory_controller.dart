@@ -11,7 +11,8 @@ class InventoryController {
 
   /// add inventory
   Future<int> addInventory() async {
-    return database.inventoriesDao.createInventory(InventoriesCompanion());
+    return database.inventoriesDao
+        .createInventory(InventoriesCompanion(uuid: Value(Uuid().v4())));
   }
 
   /// add inventory position together with an associated packet

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
+
 import 'package:intl/intl.dart';
 import '../database/database.dart';
 import 'auth_controller.dart';
@@ -35,9 +37,12 @@ class DeliveryController {
   Future<int> addDeliveryPosition(String barcode, int deliveryID) async {
     var packetID = await PacketsController().addPacket(barcode);
 
-    return database.deliveryPositionsDao.createDeliveryPosition(
-        DeliveryPositionsCompanion(
-            packet: Value(packetID), delivery: Value(deliveryID)));
+    return database.deliveryPositionsDao
+        .createDeliveryPosition(DeliveryPositionsCompanion(
+      uuid: Value(Uuid().v4()),
+      packet: Value(packetID),
+      delivery: Value(deliveryID),
+    ));
   }
 
   /// get delivery position
