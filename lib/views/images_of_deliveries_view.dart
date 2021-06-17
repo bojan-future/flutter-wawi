@@ -78,9 +78,9 @@ Future<void> buildShowDialog(
                   var fileController =
                       Provider.of<FileController>(context, listen: false);
 
-                  fileController.deleteDeliveryImage(
-                      actualimageList[index].filePath,
-                      actualimageList[index].delivery);
+                  fileController
+                      .deleteDeliveryImage(actualimageList[index].filePath);
+
                   Navigator.pop(context);
                 }),
             TextButton(

@@ -37,10 +37,7 @@ class FileController {
   }
 
   /// add inventory
-  Future<int> deleteDeliveryImage(String ImagePath, int deliveryID) async {
-    database.deliveryImagesDao.deleteDeliveryImage(ImagePath);
-
-    var delivery = await database.deliveriesDao.getDelivery(deliveryID);
-    return await database.deliveriesDao.decrementPictureCounter(delivery);
+  void deleteDeliveryImage(String imagePath) async {
+    database.deliveryImagesDao.deleteDeliveryImage(imagePath);
   }
 }

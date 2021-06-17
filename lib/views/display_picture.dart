@@ -67,14 +67,9 @@ class DisplayPictureScreen extends StatelessWidget {
                       onPressed: () async {
                         var fileController =
                             Provider.of<FileController>(context, listen: false);
-                        var deliveryController =
-                            Provider.of<DeliveryController>(context,
-                                listen: false);
 
                         await fileController.createDeliveryImage(
                             imagePath, deliveryID);
-                        await deliveryController
-                            .incrementPictureCounter(deliveryID);
 
                         Navigator.pop(context);
                         Navigator.pop(context);

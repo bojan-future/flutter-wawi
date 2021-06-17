@@ -50,18 +50,4 @@ class DeliveryController {
   Future<List<Delivery>> getLast10Deliveries() async {
     return database.deliveriesDao.getLast10Deliveries();
   }
-
-  /// increment picture count delivery
-  Future<int> incrementPictureCounter(int deliveryID) async {
-    var delivery = await database.deliveriesDao.getDelivery(deliveryID);
-
-    return database.deliveriesDao.incrementPictureCounter(delivery);
-  }
-
-  /// decrement picture count delivery
-  Future<int> decrementPictureCounter(int deliveryID) async {
-    var delivery = await database.deliveriesDao.getDelivery(deliveryID);
-
-    return database.deliveriesDao.decrementPictureCounter(delivery);
-  }
 }
