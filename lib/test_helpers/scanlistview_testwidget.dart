@@ -5,7 +5,17 @@ import '../ui_widgets/scanlistview.dart';
 class ScanListViewTestWidgetWrap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ScanListViewTestWidget();
+    return MaterialApp(
+      title: 'Test',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Test'),
+        ),
+        body: Center(
+          child: ScanListViewTestWidget(),
+        ),
+      ),
+    );
   }
 }
 

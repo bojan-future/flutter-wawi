@@ -46,6 +46,10 @@ class _ScanListViewState extends State<ScanListView> {
       appBar: AppBar(
         backgroundColor: widget.color,
         title: Text(widget.title),
+        backwardsCompatibility: false,
+        titleTextStyle: TextStyle(
+            color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+        foregroundColor: Colors.black,
       ),
       body: Column(
         children: [
@@ -54,7 +58,6 @@ class _ScanListViewState extends State<ScanListView> {
             onTapDown: (tapDownDetails) {
               //startScan();
               scanner.startScan();
-              setState(() {});
             },
             onTapUp: (tapUpDetails) {
               scanner.stopScan();

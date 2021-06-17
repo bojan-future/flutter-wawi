@@ -5,7 +5,7 @@ import 'business.exception.dart';
 
 /// Business Logic for Packets
 class PacketsController {
-  /// retrieve database
+  /// Database instance
   final database = DatabaseFactory.getDatabaseInstance();
 
   /// add packet and extract all info from the barcode
@@ -59,13 +59,13 @@ class PacketsController {
     }
   }
 
-  /// retrieve packet with ID
+  /// returns a packet that has the requested id.
   Future<Packet> getPacketWithId(int id) {
     return (database.packetsDao.getPacketWithId(id));
   }
 
-  /// retrieve packet with barcode
-  Future<Packet> getPacketWithBarcode(String barcode) {
-    return (database.packetsDao.getPacketWithBarcode(barcode));
+  /// returns a packet that has the requested barcode.
+  Future<Packet> getPacketByBarcode(String barcode) {
+    return (database.packetsDao.getPacketByBarcode(barcode));
   }
 }

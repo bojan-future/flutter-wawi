@@ -4,11 +4,15 @@ import 'package:moor_flutter/moor_flutter.dart';
 import 'deliveries_dao.dart';
 import 'deliveryimages_dao.dart';
 import 'deliverypositions_dao.dart';
+import 'dispatches_dao.dart';
+import 'dispatchpositions_dao.dart';
 import 'inventories_dao.dart';
 import 'inventorypositions_dao.dart';
 import 'orders_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
+import 'production_material_dao.dart';
+import 'production_result_dao.dart';
 import 'products_dao.dart';
 import 'users_dao.dart';
 
@@ -99,8 +103,12 @@ class Orders extends Table {
   /// order number
   TextColumn get orderNr => text()();
 
+  /// order barcode
+  TextColumn get orderBarcode => text()();
+
   /// foreign key -> user
-  IntColumn get user => integer().customConstraint('REFERENCES users(id)')();
+  IntColumn get user =>
+      integer().nullable().customConstraint('NULLABLE REFERENCES users(id)')();
 }
 
 @DataClassName('OrderPosition')
@@ -141,6 +149,34 @@ class DeliveryPositions extends Table {
   /// foreign key -> delivery
   IntColumn get delivery =>
       integer().customConstraint('REFERENCES deliveries(id)')();
+
+  /// foreign key -> packets
+  IntColumn get packet =>
+      integer().customConstraint('REFERENCES packets(id)')();
+}
+
+@DataClassName('Dispatch')
+
+/// represents a dispatch, has many positions
+class Dispatches extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// foreign key -> order
+  IntColumn get orderID =>
+      integer().customConstraint('REFERENCES orders(id)')();
+}
+
+@DataClassName('DispatchPosition')
+
+/// one position in a dispatch
+class DispatchPositions extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// foreign key -> dispatch
+  IntColumn get dispatch =>
+      integer().customConstraint('REFERENCES dispatches(id)')();
 
   /// foreign key -> packets
   IntColumn get packet =>
@@ -198,6 +234,9 @@ class ProductionOrders extends Table {
 
   /// production order number
   TextColumn get productionOrderNr => text()();
+
+  /// production order barcode
+  TextColumn get productionOrderBarcode => text()();
 }
 
 @DataClassName('ProductionMaterial')
@@ -208,7 +247,13 @@ class ProductionMaterials extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// foreign key -> production order
-  IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
+  IntColumn get prodOrder =>
+      integer().customConstraint('REFERENCES production_orders(id)')();
+
+  /// Material Packet
+  /// foreign key -> packets
+  IntColumn get packet =>
+      integer().customConstraint('REFERENCES packets(id)')();
 }
 
 @DataClassName('ProductionResult')
@@ -219,23 +264,13 @@ class ProductionResults extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// foreign key -> production order
-  IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
-}
+  IntColumn get prodOrder =>
+      integer().customConstraint('REFERENCES production_orders(id)')();
 
-/// High level production model
-/// including production order, materials and results
-class ProductionModel {
-  /// production order
-  final ProductionOrder prodOrder;
-
-  /// materials (input)
-  final List<ProductionMaterial> materials;
-
-  /// results (output)
-  final List<ProductionResult> results;
-
-  ///
-  ProductionModel(this.prodOrder, this.materials, this.results);
+  /// Resulting Packet
+  /// foreign key -> packets
+  IntColumn get packet =>
+      integer().customConstraint('REFERENCES packets(id)')();
 }
 
 // ignore: avoid_classes_with_only_static_members
@@ -264,6 +299,8 @@ class DatabaseFactory {
   ProductionResults,
   Deliveries,
   DeliveryPositions,
+  Dispatches,
+  DispatchPositions,
   DeliveryImages,
   Inventories,
   InventoryPositions,
@@ -273,8 +310,12 @@ class DatabaseFactory {
   ProductsDao,
   OrdersDao,
   ProductionDao,
+  ProductionMaterialsDao,
+  ProductionResultsDao,
   DeliveriesDao,
   DeliveryPositionsDao,
+  DispatchesDao,
+  DispatchPositionsDao,
   DeliveryImagesDao,
   InventoriesDao,
   InventoryPositionsDao,
@@ -296,7 +337,7 @@ class Database extends _$Database {
       },
       onUpgrade: (m, from, to) async {},
       beforeOpen: (details) async {
-        if (details.wasCreated) {
+        if (details.wasCreated || kDebugMode) {
           if (kDebugMode) {
             final m = createMigrator(); // changed to this
             for (final table in allTables) {
@@ -323,6 +364,88 @@ class Database extends _$Database {
               gtin3: 123,
               gtin4: 123,
               gtin5: 123));
+
+          await into(products).insert(Product(
+              id: 3,
+              productNr: "852741963",
+              productName: "Tripan farblos Kal. 120",
+              gtin1: 456789012345,
+              gtin2: 123,
+              gtin3: 123,
+              gtin4: 123,
+              gtin5: 123));
+
+          await into(products).insert(Product(
+              id: 4,
+              productNr: "963741852",
+              productName: "Tripan farblos Kal. 130",
+              gtin1: 456789012345,
+              gtin2: 123,
+              gtin3: 123,
+              gtin4: 123,
+              gtin5: 123));
+
+          await into(products).insert(Product(
+              id: 5,
+              productNr: "147852369",
+              productName: "Tripan farblos Kal. 140",
+              gtin1: 456789012345,
+              gtin2: 123,
+              gtin3: 123,
+              gtin4: 123,
+              gtin5: 123));
+
+          await into(orders)
+              .insert(Order(id: 1, orderNr: "1234", orderBarcode: "987654321"));
+
+          await into(orders)
+              .insert(Order(id: 2, orderNr: "4321", orderBarcode: "369258147"));
+
+          await into(productionOrders).insert(ProductionOrder(
+              id: 1,
+              productionOrderNr: "987654",
+              productionOrderBarcode: "147258369"));
+
+          await into(productionOrders).insert(ProductionOrder(
+              id: 2,
+              productionOrderNr: "32145",
+              productionOrderBarcode: "258147369"));
+
+          await into(packets).insert(Packet(
+              id: 1,
+              barcode: "1111222233334444555566667777888899",
+              lot: "",
+              quantity: 50,
+              product: 1,
+              productName: "Faser NAT-35 Meatcling Kal. 80",
+              productNr: "123456789"));
+
+          await into(packets).insert(Packet(
+              id: 2,
+              barcode: "9999888877776666555544443333222211",
+              lot: "",
+              quantity: 50,
+              product: 1,
+              productName: "Faser NAT-35 Meatcling Kal. 81",
+              productNr: "123456789"));
+
+          await into(packets).insert(Packet(
+              id: 3,
+              barcode: "9999666633338888555522227777444411",
+              lot: "",
+              quantity: 50,
+              product: 1,
+              productName: "Faser NAT-35 Meatcling Kal. 82",
+              productNr: "123456789"));
+
+          await into(packets).insert(Packet(
+              id: 4,
+              barcode: "2222555588883333666699997777444411",
+              lot: "",
+              quantity: 50,
+              product: 1,
+              productName: "Faser NAT-35 Meatcling Kal. 83",
+              productNr: "123456789"));
           await into(users)
               .insert(User(barcode: '9999912345', id: 1, userNr: '12345'));
         }

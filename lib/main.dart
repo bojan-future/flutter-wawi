@@ -6,16 +6,24 @@ import 'package:provider/provider.dart';
 
 import 'business_logic/auth_controller.dart';
 import 'business_logic/delivery_controller.dart';
+import 'business_logic/dispatch_controller.dart';
 import 'business_logic/file_controller.dart';
 import 'business_logic/inventory_controller.dart';
+import 'business_logic/order_controller.dart';
 import 'business_logic/packets_controller.dart';
+import 'business_logic/production_controller.dart';
+import 'business_logic/scan_bottom_sheet_result.dart';
 import 'services/scanner_controller.dart';
 import 'test_helpers/scannercontroller_mock.dart';
+import 'ui_widgets/alert_warnings.dart';
 import 'ui_widgets/drawer.dart';
 import 'ui_widgets/homepage_buttons.dart';
 import 'views/deliveries_for_images_view.dart';
 import 'views/delivery_view.dart';
+import 'views/dispatch_view.dart';
 import 'views/login_view.dart';
+import 'views/production_completion_view.dart';
+import 'views/production_start_view.dart';
 
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
@@ -35,6 +43,15 @@ void main() {
         Provider<DeliveryController>(
           create: (context) => DeliveryController(context),
         ),
+        Provider<DispatchController>(
+          create: (context) => DispatchController(),
+        ),
+        Provider<OrderController>(
+          create: (context) => OrderController(),
+        ),
+        Provider<ProductionController>(
+          create: (context) => ProductionController(),
+        ),
         Provider<InventoryController>(
           create: (context) => InventoryController(),
         ),
@@ -42,16 +59,17 @@ void main() {
           create: (context) => FileController(),
         ),
         Provider<ScannerController>(
-          // create: (context) => ScannerControllerImplDataWedge()
+          //create: (context) => ScannerControllerImplDataWedge()
           // use this implementation in Emulator
           // Barcode Lengths: 34 / 44 / 36 / 20
           create: (context) => ScannerControllerImplMock([
             '9999912345',
-            '1234567890123456789012345678901234',
-            '1234567890123456789012345678901234',
-            '1234567890123456789012345678901234',
+            '987654321',
+            '1111222233334444555566667777888899',
+            '9999888877776666555544443333222211',
+            '9999666633338888555522227777444411',
             '12345678901234567890123456789012345678901234',
-            '123456789012345678901234567890123456',
+            '2222555588883333666699997777444411',
             '12345678901234567890'
           ]),
         )
@@ -81,6 +99,7 @@ class MyApp extends StatelessWidget {
 
 /// Home screen
 class MyHomePage extends StatefulWidget {
+  ///
   static const routeName = '/homepage';
 
   ///
@@ -96,6 +115,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Kuda Lager"),
+        backwardsCompatibility: false,
+        titleTextStyle: TextStyle(
+            color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+        foregroundColor: Colors.black,
       ),
       drawer: DrawerWidget(),
       body: Center(
@@ -139,15 +162,27 @@ class _MyHomePageState extends State<MyHomePage> {
                 bottomSheetText: "Auftrag Scannen",
                 title: "Auslieferung",
                 col: Colors.amber[300]!,
-                child: Scaffold(
-                  appBar: AppBar(
-                    backgroundColor: Colors.amber[300]!,
-                    title: Text('Auslieferung'),
-                  ),
-                  body: Center(child: Text('Coming soon...')),
-                ),
-                onScanBottomSheet: (barcode) {
-                  return barcode.isNotEmpty;
+                builder: (parentId) {
+                  return DispatchView(orderID: parentId);
+                },
+                onScanBottomSheet: (barcode) async {
+                  var dispatchController =
+                      Provider.of<DispatchController>(context, listen: false);
+
+                  var orderController =
+                      Provider.of<OrderController>(context, listen: false);
+
+                  return dispatchController
+                      .onScanBarcode(barcode, orderController)
+                      .catchError((error, stackTrace) {
+                    buildAlert(
+                            context,
+                            "Achtung!",
+                            // ignore: lines_longer_than_80_chars
+                            "Der gescannte Auftrag konnte nicht gefunden werden!")
+                        .show();
+                    return ScanBottomSheetResult(false, 0);
+                  });
                 },
               ),
               SizedBox(height: 10),
@@ -164,8 +199,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   body: Center(child: Text('Coming soon...')),
                 ),
-                onScanBottomSheet: (barcode) {
-                  return barcode.isNotEmpty;
+                onScanBottomSheet: (barcode) async {
+                  return ScanBottomSheetResult(barcode.isNotEmpty, 0);
                 },
               ),
               SizedBox(height: 10),
@@ -178,15 +213,25 @@ class _MyHomePageState extends State<MyHomePage> {
                       bottomSheetText: "Produktionsauftrag Scannen",
                       title: "Produktion-Start",
                       col: Colors.lightGreen[300]!,
-                      child: Scaffold(
-                        appBar: AppBar(
-                          backgroundColor: Colors.amber[300]!,
-                          title: Text('Produktion-Start'),
-                        ),
-                        body: Center(child: Text('Coming soon...')),
-                      ),
-                      onScanBottomSheet: (barcode) {
-                        return barcode.isNotEmpty;
+                      builder: (parentId) {
+                        return ProductionStartView(productionID: parentId);
+                      },
+                      onScanBottomSheet: (barcode) async {
+                        var productionController =
+                            Provider.of<ProductionController>(context,
+                                listen: false);
+
+                        return productionController
+                            .onScanProdBarcode(barcode)
+                            .catchError((error, stackTrace) {
+                          buildAlert(
+                                  context,
+                                  "Achtung!",
+                                  // ignore: lines_longer_than_80_chars
+                                  "Der gescannte Produktionsauftrag konnte nicht gefunden werden!")
+                              .show();
+                          return ScanBottomSheetResult(false, 0);
+                        });
                       },
                     ),
                     SizedBox(width: 10),
@@ -196,15 +241,25 @@ class _MyHomePageState extends State<MyHomePage> {
                       bottomSheetText: "Produktionsauftrag Scannen",
                       title: "Produktion-Abschluss",
                       col: Colors.teal[300]!,
-                      child: Scaffold(
-                        appBar: AppBar(
-                          backgroundColor: Colors.amber[300]!,
-                          title: Text('Produktion-Abschluss'),
-                        ),
-                        body: Center(child: Text('Coming soon...')),
-                      ),
-                      onScanBottomSheet: (barcode) {
-                        return barcode.isNotEmpty;
+                      builder: (parentId) {
+                        return ProductionCompletionView(productionID: parentId);
+                      },
+                      onScanBottomSheet: (barcode) async {
+                        var productionController =
+                            Provider.of<ProductionController>(context,
+                                listen: false);
+
+                        return productionController
+                            .onScanProdBarcode(barcode)
+                            .catchError((error, stackTrace) {
+                          buildAlert(
+                                  context,
+                                  "Achtung!",
+                                  // ignore: lines_longer_than_80_chars
+                                  "Der gescannte Produktionsauftrag konnte nicht gefunden werden!")
+                              .show();
+                          return ScanBottomSheetResult(false, 0);
+                        });
                       },
                     ),
                   ],

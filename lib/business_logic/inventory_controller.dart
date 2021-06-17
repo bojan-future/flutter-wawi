@@ -17,7 +17,7 @@ class InventoryController {
   Future<int> addInventoryPosition(String barcode, int inventoryID) async {
     Packet packet;
     try {
-      packet = await PacketsController().getPacketWithBarcode(barcode);
+      packet = await PacketsController().getPacketByBarcode(barcode);
       // ignore: avoid_catching_errors
     } on StateError {
       var packetID = await PacketsController().addPacket(barcode);

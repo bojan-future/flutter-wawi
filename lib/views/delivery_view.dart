@@ -42,15 +42,24 @@ class _DeliveryViewState extends State<DeliveryView> {
         try {
           var deliveryPositionID = await deliveryController.addDeliveryPosition(
               barcode, actualDeliveryId);
-          var deliveryPosition =
-              await deliveryController.getDeliveryPosition(deliveryPositionID);
 
-          var packetID = deliveryPosition.packet;
+          if (deliveryPositionID == -1) {
+            setState(() {
+              buildAlert(context, "Achtung!",
+                      "Der gescannte Barcode ist ungültig!")
+                  .show();
+            });
+          } else {
+            var deliveryPosition = await deliveryController
+                .getDeliveryPosition(deliveryPositionID);
 
-          packet = await packetsController.getPacketWithId(packetID);
-          setState(() {
-            scanViewList.insert(0, packet);
-          });
+            var packetID = deliveryPosition.packet;
+
+            packet = await packetsController.getPacketWithId(packetID);
+            setState(() {
+              scanViewList.insert(0, packet);
+            });
+          }
         } on InvalidBarcodeException {
           setState(() {
             buildAlert(
