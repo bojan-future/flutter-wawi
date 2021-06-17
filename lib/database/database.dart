@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:kuda_lager/database/users_dao.dart';
+import 'package:kuda_lager/services/synchro_controller.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import 'deliveries_dao.dart';
 import 'deliverypositions_dao.dart';
@@ -10,15 +12,26 @@ import 'orders_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
 import 'products_dao.dart';
+import 'systemvariables_dao.dart';
 
 part 'database.exception.dart';
 part 'database.g.dart';
+
+@DataClassName('SystemVariable')
+class SystemVariables extends Table {
+  TextColumn get name => text()();
+
+  TextColumn get value => text()();
+}
 
 /// represents a user
 @DataClassName('User')
 class Users extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
+
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// barcode
   TextColumn get barcode => text()();
@@ -32,6 +45,9 @@ class Users extends Table {
 class Packets extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
+
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// barcode
   TextColumn get barcode => text()();
@@ -66,6 +82,9 @@ class Products extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
+
   /// product number
   TextColumn get productNr => text()();
 
@@ -95,6 +114,9 @@ class Orders extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
+
   /// order number
   TextColumn get orderNr => text()();
 
@@ -109,6 +131,9 @@ class OrderPositions extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
+
   /// foreign key -> order
   IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
 }
@@ -120,6 +145,9 @@ class Deliveries extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
+
   /// foreign key -> user
   IntColumn get user => integer().customConstraint('REFERENCES users(id)')();
 }
@@ -130,6 +158,9 @@ class Deliveries extends Table {
 class DeliveryPositions extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
+
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// foreign key -> delivery
   IntColumn get delivery =>
@@ -146,6 +177,9 @@ class DeliveryPositions extends Table {
 class Inventories extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
+
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
 }
 
 @DataClassName('InventoryPosition')
@@ -155,8 +189,11 @@ class InventoryPositions extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
+
   /// foreign key -> inventory
-  IntColumn get inventory  =>
+  IntColumn get inventory =>
       integer().customConstraint('REFERENCES inventories(id)')();
 
   /// foreign key -> packets
@@ -174,6 +211,9 @@ class ProductionOrders extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
+
   /// production order number
   TextColumn get productionOrderNr => text()();
 }
@@ -185,6 +225,9 @@ class ProductionMaterials extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
+
   /// foreign key -> production order
   IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
 }
@@ -195,6 +238,9 @@ class ProductionMaterials extends Table {
 class ProductionResults extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
+
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// foreign key -> production order
   IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
@@ -232,6 +278,7 @@ class DatabaseFactory {
 }
 
 @UseMoor(tables: [
+  SystemVariables,
   Users,
   Packets,
   Products,
@@ -245,6 +292,7 @@ class DatabaseFactory {
   Inventories,
   InventoryPositions,
 ], daos: [
+  SystemVariablesDao,
   UsersDao,
   PacketsDao,
   ProductsDao,
@@ -272,7 +320,13 @@ class Database extends _$Database {
       },
       onUpgrade: (m, from, to) async {},
       beforeOpen: (details) async {
-        if (details.wasCreated) {
+        // fetchSync().then((syncResponse) {
+        //   print(syncResponse.success);
+        //   print(syncResponse.syncs.length);
+        // }).catchError((error) {
+        //   print(error);
+        // });
+        if (details.wasCreated || kDebugMode) {
           if (kDebugMode) {
             final m = createMigrator(); // changed to this
             for (final table in allTables) {
@@ -280,30 +334,34 @@ class Database extends _$Database {
               await m.createTable(table);
             }
           }
-          await into(products).insert(Product(
-              id: 1,
-              productNr: "123456789",
-              productName: "Faser NAT-35 Meatcling Kal. 80",
-              gtin1: 123,
-              gtin2: 123,
-              gtin3: 123,
-              gtin4: 123,
-              gtin5: 123));
+          // await into(products).insert(Product(
+          //     id: 1,
+          //     uuid: Uuid().v4(),
+          //     productNr: "123456789",
+          //     productName: "Faser NAT-35 Meatcling Kal. 80",
+          //     gtin1: 123,
+          //     gtin2: 123,
+          //     gtin3: 123,
+          //     gtin4: 123,
+          //     gtin5: 123));
 
-          await into(products).insert(Product(
-              id: 2,
-              productNr: "101010101",
-              productName: "Tripan farblos Kal. 110",
-              gtin1: 456789012345,
-              gtin2: 123,
-              gtin3: 123,
-              gtin4: 123,
-              gtin5: 123));
+          // await into(products).insert(Product(
+          //     id: 2,
+          //     uuid: Uuid().v4(),
+          //     productNr: "101010101",
+          //     productName: "Tripan farblos Kal. 110",
+          //     gtin1: 456789012345,
+          //     gtin2: 123,
+          //     gtin3: 123,
+          //     gtin4: 123,
+          //     gtin5: 123));
+
           await into(users).insert(User(
             barcode: '9999912345',
             id: 1,
-            userNr: '12345'
-            ));
+            userNr: '12345',
+            uuid: Uuid().v4(),
+          ));
         }
       },
     );

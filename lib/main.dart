@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kuda_lager/business_logic/auth_controller.dart';
+import 'package:kuda_lager/services/synchro_controller.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
 import 'business_logic/delivery_controller.dart';
 import 'business_logic/inventory_controller.dart';
 import 'business_logic/packets_controller.dart';
+import 'database/database.dart';
 import 'services/scanner_controller.dart';
 import 'test_helpers/scannercontroller_mock.dart';
 import 'ui_widgets/drawer.dart';
@@ -16,6 +18,11 @@ import 'views/login_view.dart';
 
 void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
+
+  SynchroController().synchronize();
+
+  // init database
+  var database = DatabaseFactory.getDatabaseInstance();
 
   runApp(MultiProvider(
     providers: [
@@ -79,6 +86,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

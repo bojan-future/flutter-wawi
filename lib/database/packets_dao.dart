@@ -1,3 +1,4 @@
+import 'package:kuda_lager/database/products_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'database.dart';
 
@@ -36,5 +37,22 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
         (select(packets)..where((p) => p.barcode.equals(barcode))).getSingle();
 
     return packet;
+  }
+
+  ///parses synchronization json object and returns PacketsCompanion for insert
+  static Future<PacketsCompanion> companionFromSyncJson(
+      Map<String, dynamic> json, String uuid) async {
+    var db = DatabaseFactory.getDatabaseInstance();
+    var productId = await ProductsDao(db)
+        .getProductByUuid(json['product_uuid'])
+        .then((product) => product.id, onError: (e) => 0);
+    return PacketsCompanion(
+      uuid: Value(uuid),
+      barcode: Value(json['barcode']),
+      lot: Value(json['lot']),
+      quantity: Value(json['quantity']),
+      product: Value(productId),
+      //todo: other fields
+    );
   }
 }

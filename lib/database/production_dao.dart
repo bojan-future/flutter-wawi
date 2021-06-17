@@ -12,14 +12,9 @@ class ProductionDao extends DatabaseAccessor<Database>
   ProductionDao(Database db) : super(db);
 
   /// creates a new production model without materials or results
-  Future<ProductionModel> createProduction(String productionOrderNr) async {
-    final id =
-        await into(productionOrders).insert(const ProductionOrdersCompanion());
-    final productionOrder =
-        ProductionOrder(id: id, productionOrderNr: productionOrderNr);
-
-    // production order without materials and results
-    return ProductionModel(productionOrder, [], []);
+  Future<int> createProduction(
+      ProductionOrdersCompanion productionOrder) async {
+    return into(productionOrders).insert(productionOrder);
   }
 
   /// inserts or updates production model and all its parts
@@ -62,5 +57,15 @@ class ProductionDao extends DatabaseAccessor<Database>
               mat.order.equals(production.prodOrder.id) &
               mat.id.isNotIn(materialIds)))
         .go();
+  }
+
+  ///parses synchronization json object and returns ProductionOrdersCompanion for insert
+  static ProductionOrdersCompanion companionFromSyncJson(
+      Map<String, dynamic> json, String uuid) {
+    return ProductionOrdersCompanion(
+      uuid: Value(uuid),
+      productionOrderNr: Value(json['number']),
+      //todo: other fields
+    );
   }
 }

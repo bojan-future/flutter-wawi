@@ -43,4 +43,14 @@ class OrdersDao extends DatabaseAccessor<Database> with _$OrdersDaoMixin {
       return orderList.first;
     }
   }
+
+  ///parses synchronization json object and returns OrdersCompanion for insert
+  static OrdersCompanion companionFromSyncJson(
+      Map<String, dynamic> json, String uuid) {
+    return OrdersCompanion(
+      uuid: Value(uuid),
+      orderNr: Value(json['number']),
+      //todo: other fields
+    );
+  }
 }
