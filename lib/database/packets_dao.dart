@@ -69,30 +69,4 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
       //todo: other fields
     );
   }
-
-  ///parses synchronization json object and returns PacketsCompanion for insert
-  static Future<PacketsCompanion> companionFromSyncJson(
-      Map<String, dynamic> json, String uuid) async {
-    var db = DatabaseFactory.getDatabaseInstance();
-    var product = await db.productsDao
-        .getProductByUuid(json['product_uuid'])
-        .then((product) => product, onError: (e) {
-      db.productsDao
-          .createProduct(ProductsCompanion(uuid: Value(json['product_uuid'])))
-          .then((productId) {
-        return db.productsDao.getProductById(productId);
-      });
-    });
-
-    return PacketsCompanion(
-      uuid: Value(uuid),
-      barcode: Value(json['barcode']),
-      lot: Value(json['lot']),
-      quantity: Value(json['quantity']),
-      product: Value(product.id),
-      productName: Value(product.productName),
-      productNr: Value(product.productNr),
-      //todo: other fields
-    );
-  }
 }
