@@ -415,47 +415,11 @@ class Database extends _$Database {
           //     gtin4: 123,
           //     gtin5: 123));
 
-
-          await into(products).insert(Product(
-              id: 3,
-              productNr: "852741963",
-              productName: "Tripan farblos Kal. 120",
-              gtin1: 456789012345,
-              gtin2: 123,
-              gtin3: 123,
-              gtin4: 123,
-              gtin5: 123));
-
-          await into(products).insert(Product(
-              id: 4,
-              productNr: "963741852",
-              productName: "Tripan farblos Kal. 130",
-              gtin1: 456789012345,
-              gtin2: 123,
-              gtin3: 123,
-              gtin4: 123,
-              gtin5: 123));
-
-          await into(products).insert(Product(
-              id: 5,
-              productNr: "147852369",
-              productName: "Tripan farblos Kal. 140",
-              gtin1: 456789012345,
-              gtin2: 123,
-              gtin3: 123,
-              gtin4: 123,
-              gtin5: 123));
-
-          await into(orders)
-              .insert(Order(id: 1, orderNr: "1234", orderBarcode: "987654321"));
-
-          await into(orders)
-              .insert(Order(id: 2, orderNr: "4321", orderBarcode: "369258147"));
-
-          await into(productionOrders).insert(ProductionOrder(
-              id: 1,
-            userNr: '12345',
+          await into(users).insert(User(
+            id: 1,
             uuid: Uuid().v4(),
+            barcode: "9999912345",
+            userNr: '12345',
           ));
         }
       },

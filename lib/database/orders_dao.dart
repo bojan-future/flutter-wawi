@@ -44,16 +44,6 @@ class OrdersDao extends DatabaseAccessor<Database> with _$OrdersDaoMixin {
     }
   }
 
-  ///parses synchronization json object and returns OrdersCompanion for insert
-  static OrdersCompanion companionFromSyncJson(
-      Map<String, dynamic> json, String uuid) {
-    return OrdersCompanion(
-      uuid: Value(uuid),
-      orderNr: Value(json['number']),
-      //todo: other fields
-    );
-  }
-}
   /// returns an order that has the requested barcode
   Future<int> getOrderByBarcode(String orderBarcode) async {
     final orderList = await (select(orders)
@@ -65,5 +55,15 @@ class OrdersDao extends DatabaseAccessor<Database> with _$OrdersDaoMixin {
     } else {
       return orderList.first.id;
     }
+  }
+
+  ///parses synchronization json object and returns OrdersCompanion for insert
+  static OrdersCompanion companionFromSyncJson(
+      Map<String, dynamic> json, String uuid) {
+    return OrdersCompanion(
+      uuid: Value(uuid),
+      orderNr: Value(json['number']),
+      //todo: other fields
+    );
   }
 }

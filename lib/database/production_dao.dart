@@ -29,8 +29,7 @@ class ProductionDao extends DatabaseAccessor<Database>
       return productionList.first.id;
     }
   }
-  }
-}
+
   ///parses synchronization json object and returns ProductionOrdersCompanion for insert
   static ProductionOrdersCompanion companionFromSyncJson(
       Map<String, dynamic> json, String uuid) {

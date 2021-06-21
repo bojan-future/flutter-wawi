@@ -7,16 +7,214 @@ part of 'database.dart';
 // **************************************************************************
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
+class SystemVariable extends DataClass implements Insertable<SystemVariable> {
+  final String name;
+  final String value;
+  SystemVariable({required this.name, required this.value});
+  factory SystemVariable.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final stringType = db.typeSystem.forDartType<String>();
+    return SystemVariable(
+      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name'])!,
+      value:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}value'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['name'] = Variable<String>(name);
+    map['value'] = Variable<String>(value);
+    return map;
+  }
+
+  SystemVariablesCompanion toCompanion(bool nullToAbsent) {
+    return SystemVariablesCompanion(
+      name: Value(name),
+      value: Value(value),
+    );
+  }
+
+  factory SystemVariable.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return SystemVariable(
+      name: serializer.fromJson<String>(json['name']),
+      value: serializer.fromJson<String>(json['value']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'name': serializer.toJson<String>(name),
+      'value': serializer.toJson<String>(value),
+    };
+  }
+
+  SystemVariable copyWith({String? name, String? value}) => SystemVariable(
+        name: name ?? this.name,
+        value: value ?? this.value,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('SystemVariable(')
+          ..write('name: $name, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(name.hashCode, value.hashCode));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is SystemVariable &&
+          other.name == this.name &&
+          other.value == this.value);
+}
+
+class SystemVariablesCompanion extends UpdateCompanion<SystemVariable> {
+  final Value<String> name;
+  final Value<String> value;
+  const SystemVariablesCompanion({
+    this.name = const Value.absent(),
+    this.value = const Value.absent(),
+  });
+  SystemVariablesCompanion.insert({
+    required String name,
+    required String value,
+  })  : name = Value(name),
+        value = Value(value);
+  static Insertable<SystemVariable> custom({
+    Expression<String>? name,
+    Expression<String>? value,
+  }) {
+    return RawValuesInsertable({
+      if (name != null) 'name': name,
+      if (value != null) 'value': value,
+    });
+  }
+
+  SystemVariablesCompanion copyWith(
+      {Value<String>? name, Value<String>? value}) {
+    return SystemVariablesCompanion(
+      name: name ?? this.name,
+      value: value ?? this.value,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<String>(value.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SystemVariablesCompanion(')
+          ..write('name: $name, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SystemVariablesTable extends SystemVariables
+    with TableInfo<$SystemVariablesTable, SystemVariable> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $SystemVariablesTable(this._db, [this._alias]);
+  final VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedTextColumn name = _constructName();
+  GeneratedTextColumn _constructName() {
+    return GeneratedTextColumn(
+      'name',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _valueMeta = const VerificationMeta('value');
+  @override
+  late final GeneratedTextColumn value = _constructValue();
+  GeneratedTextColumn _constructValue() {
+    return GeneratedTextColumn(
+      'value',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [name, value];
+  @override
+  $SystemVariablesTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'system_variables';
+  @override
+  final String actualTableName = 'system_variables';
+  @override
+  VerificationContext validateIntegrity(Insertable<SystemVariable> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+          _valueMeta, value.isAcceptableOrUnknown(data['value']!, _valueMeta));
+    } else if (isInserting) {
+      context.missing(_valueMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  @override
+  SystemVariable map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return SystemVariable.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $SystemVariablesTable createAlias(String alias) {
+    return $SystemVariablesTable(_db, alias);
+  }
+}
+
 class User extends DataClass implements Insertable<User> {
   /// primary key
   final int id;
+
+  /// globaly unique id used for synchronizing
+  final String uuid;
 
   /// barcode
   final String barcode;
 
   /// user number
   final String userNr;
-  User({required this.id, required this.barcode, required this.userNr});
+  User(
+      {required this.id,
+      required this.uuid,
+      required this.barcode,
+      required this.userNr});
   factory User.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -24,6 +222,7 @@ class User extends DataClass implements Insertable<User> {
     final stringType = db.typeSystem.forDartType<String>();
     return User(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       barcode: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}barcode'])!,
       userNr: stringType
@@ -34,6 +233,7 @@ class User extends DataClass implements Insertable<User> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['barcode'] = Variable<String>(barcode);
     map['user_nr'] = Variable<String>(userNr);
     return map;
@@ -42,6 +242,7 @@ class User extends DataClass implements Insertable<User> {
   UsersCompanion toCompanion(bool nullToAbsent) {
     return UsersCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       barcode: Value(barcode),
       userNr: Value(userNr),
     );
@@ -52,6 +253,7 @@ class User extends DataClass implements Insertable<User> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return User(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       barcode: serializer.fromJson<String>(json['barcode']),
       userNr: serializer.fromJson<String>(json['userNr']),
     );
@@ -61,13 +263,16 @@ class User extends DataClass implements Insertable<User> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'barcode': serializer.toJson<String>(barcode),
       'userNr': serializer.toJson<String>(userNr),
     };
   }
 
-  User copyWith({int? id, String? barcode, String? userNr}) => User(
+  User copyWith({int? id, String? uuid, String? barcode, String? userNr}) =>
+      User(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         barcode: barcode ?? this.barcode,
         userNr: userNr ?? this.userNr,
       );
@@ -75,6 +280,7 @@ class User extends DataClass implements Insertable<User> {
   String toString() {
     return (StringBuffer('User(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('barcode: $barcode, ')
           ..write('userNr: $userNr')
           ..write(')'))
@@ -82,48 +288,59 @@ class User extends DataClass implements Insertable<User> {
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(barcode.hashCode, userNr.hashCode)));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(uuid.hashCode, $mrjc(barcode.hashCode, userNr.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is User &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.barcode == this.barcode &&
           other.userNr == this.userNr);
 }
 
 class UsersCompanion extends UpdateCompanion<User> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<String> barcode;
   final Value<String> userNr;
   const UsersCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.barcode = const Value.absent(),
     this.userNr = const Value.absent(),
   });
   UsersCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required String barcode,
     required String userNr,
-  })  : barcode = Value(barcode),
+  })  : uuid = Value(uuid),
+        barcode = Value(barcode),
         userNr = Value(userNr);
   static Insertable<User> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<String>? barcode,
     Expression<String>? userNr,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (barcode != null) 'barcode': barcode,
       if (userNr != null) 'user_nr': userNr,
     });
   }
 
   UsersCompanion copyWith(
-      {Value<int>? id, Value<String>? barcode, Value<String>? userNr}) {
+      {Value<int>? id,
+      Value<String>? uuid,
+      Value<String>? barcode,
+      Value<String>? userNr}) {
     return UsersCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       barcode: barcode ?? this.barcode,
       userNr: userNr ?? this.userNr,
     );
@@ -134,6 +351,9 @@ class UsersCompanion extends UpdateCompanion<User> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (barcode.present) {
       map['barcode'] = Variable<String>(barcode.value);
@@ -148,6 +368,7 @@ class UsersCompanion extends UpdateCompanion<User> {
   String toString() {
     return (StringBuffer('UsersCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('barcode: $barcode, ')
           ..write('userNr: $userNr')
           ..write(')'))
@@ -165,6 +386,14 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
   }
 
   final VerificationMeta _barcodeMeta = const VerificationMeta('barcode');
@@ -190,7 +419,7 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, barcode, userNr];
+  List<GeneratedColumn> get $columns => [id, uuid, barcode, userNr];
   @override
   $UsersTable get asDslTable => this;
   @override
@@ -204,6 +433,12 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('barcode')) {
       context.handle(_barcodeMeta,
@@ -238,6 +473,9 @@ class Packet extends DataClass implements Insertable<Packet> {
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// barcode
   final String barcode;
 
@@ -261,6 +499,7 @@ class Packet extends DataClass implements Insertable<Packet> {
   final int? wrapping;
   Packet(
       {required this.id,
+      required this.uuid,
       required this.barcode,
       required this.lot,
       required this.quantity,
@@ -276,6 +515,7 @@ class Packet extends DataClass implements Insertable<Packet> {
     final doubleType = db.typeSystem.forDartType<double>();
     return Packet(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       barcode: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}barcode'])!,
       lot: stringType.mapFromDatabaseResponse(data['${effectivePrefix}lot'])!,
@@ -295,6 +535,7 @@ class Packet extends DataClass implements Insertable<Packet> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['barcode'] = Variable<String>(barcode);
     map['lot'] = Variable<String>(lot);
     map['quantity'] = Variable<double>(quantity);
@@ -310,6 +551,7 @@ class Packet extends DataClass implements Insertable<Packet> {
   PacketsCompanion toCompanion(bool nullToAbsent) {
     return PacketsCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       barcode: Value(barcode),
       lot: Value(lot),
       quantity: Value(quantity),
@@ -327,6 +569,7 @@ class Packet extends DataClass implements Insertable<Packet> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Packet(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       barcode: serializer.fromJson<String>(json['barcode']),
       lot: serializer.fromJson<String>(json['lot']),
       quantity: serializer.fromJson<double>(json['quantity']),
@@ -341,6 +584,7 @@ class Packet extends DataClass implements Insertable<Packet> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'barcode': serializer.toJson<String>(barcode),
       'lot': serializer.toJson<String>(lot),
       'quantity': serializer.toJson<double>(quantity),
@@ -353,6 +597,7 @@ class Packet extends DataClass implements Insertable<Packet> {
 
   Packet copyWith(
           {int? id,
+          String? uuid,
           String? barcode,
           String? lot,
           double? quantity,
@@ -362,6 +607,7 @@ class Packet extends DataClass implements Insertable<Packet> {
           int? wrapping}) =>
       Packet(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         barcode: barcode ?? this.barcode,
         lot: lot ?? this.lot,
         quantity: quantity ?? this.quantity,
@@ -374,6 +620,7 @@ class Packet extends DataClass implements Insertable<Packet> {
   String toString() {
     return (StringBuffer('Packet(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('barcode: $barcode, ')
           ..write('lot: $lot, ')
           ..write('quantity: $quantity, ')
@@ -389,20 +636,25 @@ class Packet extends DataClass implements Insertable<Packet> {
   int get hashCode => $mrjf($mrjc(
       id.hashCode,
       $mrjc(
-          barcode.hashCode,
+          uuid.hashCode,
           $mrjc(
-              lot.hashCode,
+              barcode.hashCode,
               $mrjc(
-                  quantity.hashCode,
+                  lot.hashCode,
                   $mrjc(
-                      product.hashCode,
-                      $mrjc(productName.hashCode,
-                          $mrjc(productNr.hashCode, wrapping.hashCode))))))));
+                      quantity.hashCode,
+                      $mrjc(
+                          product.hashCode,
+                          $mrjc(
+                              productName.hashCode,
+                              $mrjc(productNr.hashCode,
+                                  wrapping.hashCode)))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Packet &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.barcode == this.barcode &&
           other.lot == this.lot &&
           other.quantity == this.quantity &&
@@ -414,6 +666,7 @@ class Packet extends DataClass implements Insertable<Packet> {
 
 class PacketsCompanion extends UpdateCompanion<Packet> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<String> barcode;
   final Value<String> lot;
   final Value<double> quantity;
@@ -423,6 +676,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
   final Value<int?> wrapping;
   const PacketsCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.barcode = const Value.absent(),
     this.lot = const Value.absent(),
     this.quantity = const Value.absent(),
@@ -433,6 +687,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
   });
   PacketsCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required String barcode,
     required String lot,
     required double quantity,
@@ -440,7 +695,8 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
     required String productName,
     required String productNr,
     this.wrapping = const Value.absent(),
-  })  : barcode = Value(barcode),
+  })  : uuid = Value(uuid),
+        barcode = Value(barcode),
         lot = Value(lot),
         quantity = Value(quantity),
         product = Value(product),
@@ -448,6 +704,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
         productNr = Value(productNr);
   static Insertable<Packet> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<String>? barcode,
     Expression<String>? lot,
     Expression<double>? quantity,
@@ -458,6 +715,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (barcode != null) 'barcode': barcode,
       if (lot != null) 'lot': lot,
       if (quantity != null) 'quantity': quantity,
@@ -470,6 +728,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
 
   PacketsCompanion copyWith(
       {Value<int>? id,
+      Value<String>? uuid,
       Value<String>? barcode,
       Value<String>? lot,
       Value<double>? quantity,
@@ -479,6 +738,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
       Value<int?>? wrapping}) {
     return PacketsCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       barcode: barcode ?? this.barcode,
       lot: lot ?? this.lot,
       quantity: quantity ?? this.quantity,
@@ -494,6 +754,9 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (barcode.present) {
       map['barcode'] = Variable<String>(barcode.value);
@@ -523,6 +786,7 @@ class PacketsCompanion extends UpdateCompanion<Packet> {
   String toString() {
     return (StringBuffer('PacketsCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('barcode: $barcode, ')
           ..write('lot: $lot, ')
           ..write('quantity: $quantity, ')
@@ -545,6 +809,14 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
   }
 
   final VerificationMeta _barcodeMeta = const VerificationMeta('barcode');
@@ -620,8 +892,17 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
   }
 
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, barcode, lot, quantity, product, productName, productNr, wrapping];
+  List<GeneratedColumn> get $columns => [
+        id,
+        uuid,
+        barcode,
+        lot,
+        quantity,
+        product,
+        productName,
+        productNr,
+        wrapping
+      ];
   @override
   $PacketsTable get asDslTable => this;
   @override
@@ -635,6 +916,12 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('barcode')) {
       context.handle(_barcodeMeta,
@@ -699,6 +986,9 @@ class Product extends DataClass implements Insertable<Product> {
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// product number
   final String productNr;
 
@@ -721,6 +1011,7 @@ class Product extends DataClass implements Insertable<Product> {
   final int gtin5;
   Product(
       {required this.id,
+      required this.uuid,
       required this.productNr,
       required this.productName,
       required this.gtin1,
@@ -735,6 +1026,7 @@ class Product extends DataClass implements Insertable<Product> {
     final stringType = db.typeSystem.forDartType<String>();
     return Product(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       productNr: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}product_nr'])!,
       productName: stringType
@@ -750,6 +1042,7 @@ class Product extends DataClass implements Insertable<Product> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['product_nr'] = Variable<String>(productNr);
     map['product_name'] = Variable<String>(productName);
     map['gtin1'] = Variable<int>(gtin1);
@@ -763,6 +1056,7 @@ class Product extends DataClass implements Insertable<Product> {
   ProductsCompanion toCompanion(bool nullToAbsent) {
     return ProductsCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       productNr: Value(productNr),
       productName: Value(productName),
       gtin1: Value(gtin1),
@@ -778,6 +1072,7 @@ class Product extends DataClass implements Insertable<Product> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Product(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       productNr: serializer.fromJson<String>(json['productNr']),
       productName: serializer.fromJson<String>(json['productName']),
       gtin1: serializer.fromJson<int>(json['gtin1']),
@@ -792,6 +1087,7 @@ class Product extends DataClass implements Insertable<Product> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'productNr': serializer.toJson<String>(productNr),
       'productName': serializer.toJson<String>(productName),
       'gtin1': serializer.toJson<int>(gtin1),
@@ -804,6 +1100,7 @@ class Product extends DataClass implements Insertable<Product> {
 
   Product copyWith(
           {int? id,
+          String? uuid,
           String? productNr,
           String? productName,
           int? gtin1,
@@ -813,6 +1110,7 @@ class Product extends DataClass implements Insertable<Product> {
           int? gtin5}) =>
       Product(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         productNr: productNr ?? this.productNr,
         productName: productName ?? this.productName,
         gtin1: gtin1 ?? this.gtin1,
@@ -825,6 +1123,7 @@ class Product extends DataClass implements Insertable<Product> {
   String toString() {
     return (StringBuffer('Product(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('productNr: $productNr, ')
           ..write('productName: $productName, ')
           ..write('gtin1: $gtin1, ')
@@ -840,20 +1139,23 @@ class Product extends DataClass implements Insertable<Product> {
   int get hashCode => $mrjf($mrjc(
       id.hashCode,
       $mrjc(
-          productNr.hashCode,
+          uuid.hashCode,
           $mrjc(
-              productName.hashCode,
+              productNr.hashCode,
               $mrjc(
-                  gtin1.hashCode,
+                  productName.hashCode,
                   $mrjc(
-                      gtin2.hashCode,
-                      $mrjc(gtin3.hashCode,
-                          $mrjc(gtin4.hashCode, gtin5.hashCode))))))));
+                      gtin1.hashCode,
+                      $mrjc(
+                          gtin2.hashCode,
+                          $mrjc(gtin3.hashCode,
+                              $mrjc(gtin4.hashCode, gtin5.hashCode)))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Product &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.productNr == this.productNr &&
           other.productName == this.productName &&
           other.gtin1 == this.gtin1 &&
@@ -865,6 +1167,7 @@ class Product extends DataClass implements Insertable<Product> {
 
 class ProductsCompanion extends UpdateCompanion<Product> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<String> productNr;
   final Value<String> productName;
   final Value<int> gtin1;
@@ -874,6 +1177,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   final Value<int> gtin5;
   const ProductsCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.productNr = const Value.absent(),
     this.productName = const Value.absent(),
     this.gtin1 = const Value.absent(),
@@ -884,6 +1188,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   });
   ProductsCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required String productNr,
     required String productName,
     required int gtin1,
@@ -891,7 +1196,8 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     required int gtin3,
     required int gtin4,
     required int gtin5,
-  })  : productNr = Value(productNr),
+  })  : uuid = Value(uuid),
+        productNr = Value(productNr),
         productName = Value(productName),
         gtin1 = Value(gtin1),
         gtin2 = Value(gtin2),
@@ -900,6 +1206,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
         gtin5 = Value(gtin5);
   static Insertable<Product> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<String>? productNr,
     Expression<String>? productName,
     Expression<int>? gtin1,
@@ -910,6 +1217,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (productNr != null) 'product_nr': productNr,
       if (productName != null) 'product_name': productName,
       if (gtin1 != null) 'gtin1': gtin1,
@@ -922,6 +1230,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
 
   ProductsCompanion copyWith(
       {Value<int>? id,
+      Value<String>? uuid,
       Value<String>? productNr,
       Value<String>? productName,
       Value<int>? gtin1,
@@ -931,6 +1240,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
       Value<int>? gtin5}) {
     return ProductsCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       productNr: productNr ?? this.productNr,
       productName: productName ?? this.productName,
       gtin1: gtin1 ?? this.gtin1,
@@ -946,6 +1256,9 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (productNr.present) {
       map['product_nr'] = Variable<String>(productNr.value);
@@ -975,6 +1288,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   String toString() {
     return (StringBuffer('ProductsCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('productNr: $productNr, ')
           ..write('productName: $productName, ')
           ..write('gtin1: $gtin1, ')
@@ -997,6 +1311,14 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
   }
 
   final VerificationMeta _productNrMeta = const VerificationMeta('productNr');
@@ -1079,7 +1401,7 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, productNr, productName, gtin1, gtin2, gtin3, gtin4, gtin5];
+      [id, uuid, productNr, productName, gtin1, gtin2, gtin3, gtin4, gtin5];
   @override
   $ProductsTable get asDslTable => this;
   @override
@@ -1093,6 +1415,12 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('product_nr')) {
       context.handle(_productNrMeta,
@@ -1159,6 +1487,9 @@ class Order extends DataClass implements Insertable<Order> {
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// order number
   final String orderNr;
 
@@ -1169,6 +1500,7 @@ class Order extends DataClass implements Insertable<Order> {
   final int? user;
   Order(
       {required this.id,
+      required this.uuid,
       required this.orderNr,
       required this.orderBarcode,
       this.user});
@@ -1179,6 +1511,7 @@ class Order extends DataClass implements Insertable<Order> {
     final stringType = db.typeSystem.forDartType<String>();
     return Order(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       orderNr: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}order_nr'])!,
       orderBarcode: stringType
@@ -1190,6 +1523,7 @@ class Order extends DataClass implements Insertable<Order> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['order_nr'] = Variable<String>(orderNr);
     map['order_barcode'] = Variable<String>(orderBarcode);
     if (!nullToAbsent || user != null) {
@@ -1201,6 +1535,7 @@ class Order extends DataClass implements Insertable<Order> {
   OrdersCompanion toCompanion(bool nullToAbsent) {
     return OrdersCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       orderNr: Value(orderNr),
       orderBarcode: Value(orderBarcode),
       user: user == null && nullToAbsent ? const Value.absent() : Value(user),
@@ -1212,6 +1547,7 @@ class Order extends DataClass implements Insertable<Order> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Order(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       orderNr: serializer.fromJson<String>(json['orderNr']),
       orderBarcode: serializer.fromJson<String>(json['orderBarcode']),
       user: serializer.fromJson<int?>(json['user']),
@@ -1222,15 +1558,22 @@ class Order extends DataClass implements Insertable<Order> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'orderNr': serializer.toJson<String>(orderNr),
       'orderBarcode': serializer.toJson<String>(orderBarcode),
       'user': serializer.toJson<int?>(user),
     };
   }
 
-  Order copyWith({int? id, String? orderNr, String? orderBarcode, int? user}) =>
+  Order copyWith(
+          {int? id,
+          String? uuid,
+          String? orderNr,
+          String? orderBarcode,
+          int? user}) =>
       Order(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         orderNr: orderNr ?? this.orderNr,
         orderBarcode: orderBarcode ?? this.orderBarcode,
         user: user ?? this.user,
@@ -1239,6 +1582,7 @@ class Order extends DataClass implements Insertable<Order> {
   String toString() {
     return (StringBuffer('Order(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('orderNr: $orderNr, ')
           ..write('orderBarcode: $orderBarcode, ')
           ..write('user: $user')
@@ -1247,13 +1591,18 @@ class Order extends DataClass implements Insertable<Order> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(orderNr.hashCode, $mrjc(orderBarcode.hashCode, user.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(
+          uuid.hashCode,
+          $mrjc(
+              orderNr.hashCode, $mrjc(orderBarcode.hashCode, user.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Order &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.orderNr == this.orderNr &&
           other.orderBarcode == this.orderBarcode &&
           other.user == this.user);
@@ -1261,30 +1610,36 @@ class Order extends DataClass implements Insertable<Order> {
 
 class OrdersCompanion extends UpdateCompanion<Order> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<String> orderNr;
   final Value<String> orderBarcode;
   final Value<int?> user;
   const OrdersCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.orderNr = const Value.absent(),
     this.orderBarcode = const Value.absent(),
     this.user = const Value.absent(),
   });
   OrdersCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required String orderNr,
     required String orderBarcode,
     this.user = const Value.absent(),
-  })  : orderNr = Value(orderNr),
+  })  : uuid = Value(uuid),
+        orderNr = Value(orderNr),
         orderBarcode = Value(orderBarcode);
   static Insertable<Order> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<String>? orderNr,
     Expression<String>? orderBarcode,
     Expression<int?>? user,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (orderNr != null) 'order_nr': orderNr,
       if (orderBarcode != null) 'order_barcode': orderBarcode,
       if (user != null) 'user': user,
@@ -1293,11 +1648,13 @@ class OrdersCompanion extends UpdateCompanion<Order> {
 
   OrdersCompanion copyWith(
       {Value<int>? id,
+      Value<String>? uuid,
       Value<String>? orderNr,
       Value<String>? orderBarcode,
       Value<int?>? user}) {
     return OrdersCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       orderNr: orderNr ?? this.orderNr,
       orderBarcode: orderBarcode ?? this.orderBarcode,
       user: user ?? this.user,
@@ -1309,6 +1666,9 @@ class OrdersCompanion extends UpdateCompanion<Order> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (orderNr.present) {
       map['order_nr'] = Variable<String>(orderNr.value);
@@ -1326,6 +1686,7 @@ class OrdersCompanion extends UpdateCompanion<Order> {
   String toString() {
     return (StringBuffer('OrdersCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('orderNr: $orderNr, ')
           ..write('orderBarcode: $orderBarcode, ')
           ..write('user: $user')
@@ -1344,6 +1705,14 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
   }
 
   final VerificationMeta _orderNrMeta = const VerificationMeta('orderNr');
@@ -1378,7 +1747,7 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, orderNr, orderBarcode, user];
+  List<GeneratedColumn> get $columns => [id, uuid, orderNr, orderBarcode, user];
   @override
   $OrdersTable get asDslTable => this;
   @override
@@ -1392,6 +1761,12 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('order_nr')) {
       context.handle(_orderNrMeta,
@@ -1432,16 +1807,21 @@ class OrderPosition extends DataClass implements Insertable<OrderPosition> {
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// foreign key -> order
   final int order;
-  OrderPosition({required this.id, required this.order});
+  OrderPosition({required this.id, required this.uuid, required this.order});
   factory OrderPosition.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
     return OrderPosition(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order'])!,
     );
   }
@@ -1449,6 +1829,7 @@ class OrderPosition extends DataClass implements Insertable<OrderPosition> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['order'] = Variable<int>(order);
     return map;
   }
@@ -1456,6 +1837,7 @@ class OrderPosition extends DataClass implements Insertable<OrderPosition> {
   OrderPositionsCompanion toCompanion(bool nullToAbsent) {
     return OrderPositionsCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       order: Value(order),
     );
   }
@@ -1465,6 +1847,7 @@ class OrderPosition extends DataClass implements Insertable<OrderPosition> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return OrderPosition(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       order: serializer.fromJson<int>(json['order']),
     );
   }
@@ -1473,57 +1856,70 @@ class OrderPosition extends DataClass implements Insertable<OrderPosition> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'order': serializer.toJson<int>(order),
     };
   }
 
-  OrderPosition copyWith({int? id, int? order}) => OrderPosition(
+  OrderPosition copyWith({int? id, String? uuid, int? order}) => OrderPosition(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         order: order ?? this.order,
       );
   @override
   String toString() {
     return (StringBuffer('OrderPosition(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('order: $order')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, order.hashCode));
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(uuid.hashCode, order.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is OrderPosition &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.order == this.order);
 }
 
 class OrderPositionsCompanion extends UpdateCompanion<OrderPosition> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<int> order;
   const OrderPositionsCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.order = const Value.absent(),
   });
   OrderPositionsCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required int order,
-  }) : order = Value(order);
+  })  : uuid = Value(uuid),
+        order = Value(order);
   static Insertable<OrderPosition> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<int>? order,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (order != null) 'order': order,
     });
   }
 
-  OrderPositionsCompanion copyWith({Value<int>? id, Value<int>? order}) {
+  OrderPositionsCompanion copyWith(
+      {Value<int>? id, Value<String>? uuid, Value<int>? order}) {
     return OrderPositionsCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       order: order ?? this.order,
     );
   }
@@ -1533,6 +1929,9 @@ class OrderPositionsCompanion extends UpdateCompanion<OrderPosition> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (order.present) {
       map['order'] = Variable<int>(order.value);
@@ -1544,6 +1943,7 @@ class OrderPositionsCompanion extends UpdateCompanion<OrderPosition> {
   String toString() {
     return (StringBuffer('OrderPositionsCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('order: $order')
           ..write(')'))
         .toString();
@@ -1563,6 +1963,14 @@ class $OrderPositionsTable extends OrderPositions
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
+  }
+
   final VerificationMeta _orderMeta = const VerificationMeta('order');
   @override
   late final GeneratedIntColumn order = _constructOrder();
@@ -1572,7 +1980,7 @@ class $OrderPositionsTable extends OrderPositions
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, order];
+  List<GeneratedColumn> get $columns => [id, uuid, order];
   @override
   $OrderPositionsTable get asDslTable => this;
   @override
@@ -1586,6 +1994,12 @@ class $OrderPositionsTable extends OrderPositions
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('order')) {
       context.handle(
@@ -1614,6 +2028,9 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// production order number
   final String productionOrderNr;
 
@@ -1621,6 +2038,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
   final String productionOrderBarcode;
   ProductionOrder(
       {required this.id,
+      required this.uuid,
       required this.productionOrderNr,
       required this.productionOrderBarcode});
   factory ProductionOrder.fromData(
@@ -1631,6 +2049,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
     final stringType = db.typeSystem.forDartType<String>();
     return ProductionOrder(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       productionOrderNr: stringType.mapFromDatabaseResponse(
           data['${effectivePrefix}production_order_nr'])!,
       productionOrderBarcode: stringType.mapFromDatabaseResponse(
@@ -1641,6 +2060,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['production_order_nr'] = Variable<String>(productionOrderNr);
     map['production_order_barcode'] = Variable<String>(productionOrderBarcode);
     return map;
@@ -1649,6 +2069,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
   ProductionOrdersCompanion toCompanion(bool nullToAbsent) {
     return ProductionOrdersCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       productionOrderNr: Value(productionOrderNr),
       productionOrderBarcode: Value(productionOrderBarcode),
     );
@@ -1659,6 +2080,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ProductionOrder(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       productionOrderNr: serializer.fromJson<String>(json['productionOrderNr']),
       productionOrderBarcode:
           serializer.fromJson<String>(json['productionOrderBarcode']),
@@ -1669,6 +2091,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'productionOrderNr': serializer.toJson<String>(productionOrderNr),
       'productionOrderBarcode':
           serializer.toJson<String>(productionOrderBarcode),
@@ -1677,10 +2100,12 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
 
   ProductionOrder copyWith(
           {int? id,
+          String? uuid,
           String? productionOrderNr,
           String? productionOrderBarcode}) =>
       ProductionOrder(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         productionOrderNr: productionOrderNr ?? this.productionOrderNr,
         productionOrderBarcode:
             productionOrderBarcode ?? this.productionOrderBarcode,
@@ -1689,6 +2114,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
   String toString() {
     return (StringBuffer('ProductionOrder(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('productionOrderNr: $productionOrderNr, ')
           ..write('productionOrderBarcode: $productionOrderBarcode')
           ..write(')'))
@@ -1696,39 +2122,48 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(productionOrderNr.hashCode, productionOrderBarcode.hashCode)));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(uuid.hashCode,
+          $mrjc(productionOrderNr.hashCode, productionOrderBarcode.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is ProductionOrder &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.productionOrderNr == this.productionOrderNr &&
           other.productionOrderBarcode == this.productionOrderBarcode);
 }
 
 class ProductionOrdersCompanion extends UpdateCompanion<ProductionOrder> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<String> productionOrderNr;
   final Value<String> productionOrderBarcode;
   const ProductionOrdersCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.productionOrderNr = const Value.absent(),
     this.productionOrderBarcode = const Value.absent(),
   });
   ProductionOrdersCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required String productionOrderNr,
     required String productionOrderBarcode,
-  })  : productionOrderNr = Value(productionOrderNr),
+  })  : uuid = Value(uuid),
+        productionOrderNr = Value(productionOrderNr),
         productionOrderBarcode = Value(productionOrderBarcode);
   static Insertable<ProductionOrder> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<String>? productionOrderNr,
     Expression<String>? productionOrderBarcode,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (productionOrderNr != null) 'production_order_nr': productionOrderNr,
       if (productionOrderBarcode != null)
         'production_order_barcode': productionOrderBarcode,
@@ -1737,10 +2172,12 @@ class ProductionOrdersCompanion extends UpdateCompanion<ProductionOrder> {
 
   ProductionOrdersCompanion copyWith(
       {Value<int>? id,
+      Value<String>? uuid,
       Value<String>? productionOrderNr,
       Value<String>? productionOrderBarcode}) {
     return ProductionOrdersCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       productionOrderNr: productionOrderNr ?? this.productionOrderNr,
       productionOrderBarcode:
           productionOrderBarcode ?? this.productionOrderBarcode,
@@ -1752,6 +2189,9 @@ class ProductionOrdersCompanion extends UpdateCompanion<ProductionOrder> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (productionOrderNr.present) {
       map['production_order_nr'] = Variable<String>(productionOrderNr.value);
@@ -1767,6 +2207,7 @@ class ProductionOrdersCompanion extends UpdateCompanion<ProductionOrder> {
   String toString() {
     return (StringBuffer('ProductionOrdersCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('productionOrderNr: $productionOrderNr, ')
           ..write('productionOrderBarcode: $productionOrderBarcode')
           ..write(')'))
@@ -1785,6 +2226,14 @@ class $ProductionOrdersTable extends ProductionOrders
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
   }
 
   final VerificationMeta _productionOrderNrMeta =
@@ -1815,7 +2264,7 @@ class $ProductionOrdersTable extends ProductionOrders
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, productionOrderNr, productionOrderBarcode];
+      [id, uuid, productionOrderNr, productionOrderBarcode];
   @override
   $ProductionOrdersTable get asDslTable => this;
   @override
@@ -1829,6 +2278,12 @@ class $ProductionOrdersTable extends ProductionOrders
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('production_order_nr')) {
       context.handle(
@@ -1868,6 +2323,9 @@ class ProductionMaterial extends DataClass
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// foreign key -> production order
   final int prodOrder;
 
@@ -1875,14 +2333,19 @@ class ProductionMaterial extends DataClass
   /// foreign key -> packets
   final int packet;
   ProductionMaterial(
-      {required this.id, required this.prodOrder, required this.packet});
+      {required this.id,
+      required this.uuid,
+      required this.prodOrder,
+      required this.packet});
   factory ProductionMaterial.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
     return ProductionMaterial(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       prodOrder: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}prod_order'])!,
       packet:
@@ -1893,6 +2356,7 @@ class ProductionMaterial extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['prod_order'] = Variable<int>(prodOrder);
     map['packet'] = Variable<int>(packet);
     return map;
@@ -1901,6 +2365,7 @@ class ProductionMaterial extends DataClass
   ProductionMaterialsCompanion toCompanion(bool nullToAbsent) {
     return ProductionMaterialsCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       prodOrder: Value(prodOrder),
       packet: Value(packet),
     );
@@ -1911,6 +2376,7 @@ class ProductionMaterial extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ProductionMaterial(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       prodOrder: serializer.fromJson<int>(json['prodOrder']),
       packet: serializer.fromJson<int>(json['packet']),
     );
@@ -1920,14 +2386,17 @@ class ProductionMaterial extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'prodOrder': serializer.toJson<int>(prodOrder),
       'packet': serializer.toJson<int>(packet),
     };
   }
 
-  ProductionMaterial copyWith({int? id, int? prodOrder, int? packet}) =>
+  ProductionMaterial copyWith(
+          {int? id, String? uuid, int? prodOrder, int? packet}) =>
       ProductionMaterial(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         prodOrder: prodOrder ?? this.prodOrder,
         packet: packet ?? this.packet,
       );
@@ -1935,6 +2404,7 @@ class ProductionMaterial extends DataClass
   String toString() {
     return (StringBuffer('ProductionMaterial(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('prodOrder: $prodOrder, ')
           ..write('packet: $packet')
           ..write(')'))
@@ -1942,48 +2412,59 @@ class ProductionMaterial extends DataClass
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(prodOrder.hashCode, packet.hashCode)));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(uuid.hashCode, $mrjc(prodOrder.hashCode, packet.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is ProductionMaterial &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.prodOrder == this.prodOrder &&
           other.packet == this.packet);
 }
 
 class ProductionMaterialsCompanion extends UpdateCompanion<ProductionMaterial> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<int> prodOrder;
   final Value<int> packet;
   const ProductionMaterialsCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.prodOrder = const Value.absent(),
     this.packet = const Value.absent(),
   });
   ProductionMaterialsCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required int prodOrder,
     required int packet,
-  })  : prodOrder = Value(prodOrder),
+  })  : uuid = Value(uuid),
+        prodOrder = Value(prodOrder),
         packet = Value(packet);
   static Insertable<ProductionMaterial> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<int>? prodOrder,
     Expression<int>? packet,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (prodOrder != null) 'prod_order': prodOrder,
       if (packet != null) 'packet': packet,
     });
   }
 
   ProductionMaterialsCompanion copyWith(
-      {Value<int>? id, Value<int>? prodOrder, Value<int>? packet}) {
+      {Value<int>? id,
+      Value<String>? uuid,
+      Value<int>? prodOrder,
+      Value<int>? packet}) {
     return ProductionMaterialsCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       prodOrder: prodOrder ?? this.prodOrder,
       packet: packet ?? this.packet,
     );
@@ -1994,6 +2475,9 @@ class ProductionMaterialsCompanion extends UpdateCompanion<ProductionMaterial> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (prodOrder.present) {
       map['prod_order'] = Variable<int>(prodOrder.value);
@@ -2008,6 +2492,7 @@ class ProductionMaterialsCompanion extends UpdateCompanion<ProductionMaterial> {
   String toString() {
     return (StringBuffer('ProductionMaterialsCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('prodOrder: $prodOrder, ')
           ..write('packet: $packet')
           ..write(')'))
@@ -2028,6 +2513,14 @@ class $ProductionMaterialsTable extends ProductionMaterials
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
+  }
+
   final VerificationMeta _prodOrderMeta = const VerificationMeta('prodOrder');
   @override
   late final GeneratedIntColumn prodOrder = _constructProdOrder();
@@ -2045,7 +2538,7 @@ class $ProductionMaterialsTable extends ProductionMaterials
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, prodOrder, packet];
+  List<GeneratedColumn> get $columns => [id, uuid, prodOrder, packet];
   @override
   $ProductionMaterialsTable get asDslTable => this;
   @override
@@ -2059,6 +2552,12 @@ class $ProductionMaterialsTable extends ProductionMaterials
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('prod_order')) {
       context.handle(_prodOrderMeta,
@@ -2094,6 +2593,9 @@ class ProductionResult extends DataClass
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// foreign key -> production order
   final int prodOrder;
 
@@ -2101,14 +2603,19 @@ class ProductionResult extends DataClass
   /// foreign key -> packets
   final int packet;
   ProductionResult(
-      {required this.id, required this.prodOrder, required this.packet});
+      {required this.id,
+      required this.uuid,
+      required this.prodOrder,
+      required this.packet});
   factory ProductionResult.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
     return ProductionResult(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       prodOrder: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}prod_order'])!,
       packet:
@@ -2119,6 +2626,7 @@ class ProductionResult extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['prod_order'] = Variable<int>(prodOrder);
     map['packet'] = Variable<int>(packet);
     return map;
@@ -2127,6 +2635,7 @@ class ProductionResult extends DataClass
   ProductionResultsCompanion toCompanion(bool nullToAbsent) {
     return ProductionResultsCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       prodOrder: Value(prodOrder),
       packet: Value(packet),
     );
@@ -2137,6 +2646,7 @@ class ProductionResult extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ProductionResult(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       prodOrder: serializer.fromJson<int>(json['prodOrder']),
       packet: serializer.fromJson<int>(json['packet']),
     );
@@ -2146,14 +2656,17 @@ class ProductionResult extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'prodOrder': serializer.toJson<int>(prodOrder),
       'packet': serializer.toJson<int>(packet),
     };
   }
 
-  ProductionResult copyWith({int? id, int? prodOrder, int? packet}) =>
+  ProductionResult copyWith(
+          {int? id, String? uuid, int? prodOrder, int? packet}) =>
       ProductionResult(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         prodOrder: prodOrder ?? this.prodOrder,
         packet: packet ?? this.packet,
       );
@@ -2161,6 +2674,7 @@ class ProductionResult extends DataClass
   String toString() {
     return (StringBuffer('ProductionResult(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('prodOrder: $prodOrder, ')
           ..write('packet: $packet')
           ..write(')'))
@@ -2168,48 +2682,59 @@ class ProductionResult extends DataClass
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(prodOrder.hashCode, packet.hashCode)));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(uuid.hashCode, $mrjc(prodOrder.hashCode, packet.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is ProductionResult &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.prodOrder == this.prodOrder &&
           other.packet == this.packet);
 }
 
 class ProductionResultsCompanion extends UpdateCompanion<ProductionResult> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<int> prodOrder;
   final Value<int> packet;
   const ProductionResultsCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.prodOrder = const Value.absent(),
     this.packet = const Value.absent(),
   });
   ProductionResultsCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required int prodOrder,
     required int packet,
-  })  : prodOrder = Value(prodOrder),
+  })  : uuid = Value(uuid),
+        prodOrder = Value(prodOrder),
         packet = Value(packet);
   static Insertable<ProductionResult> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<int>? prodOrder,
     Expression<int>? packet,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (prodOrder != null) 'prod_order': prodOrder,
       if (packet != null) 'packet': packet,
     });
   }
 
   ProductionResultsCompanion copyWith(
-      {Value<int>? id, Value<int>? prodOrder, Value<int>? packet}) {
+      {Value<int>? id,
+      Value<String>? uuid,
+      Value<int>? prodOrder,
+      Value<int>? packet}) {
     return ProductionResultsCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       prodOrder: prodOrder ?? this.prodOrder,
       packet: packet ?? this.packet,
     );
@@ -2220,6 +2745,9 @@ class ProductionResultsCompanion extends UpdateCompanion<ProductionResult> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (prodOrder.present) {
       map['prod_order'] = Variable<int>(prodOrder.value);
@@ -2234,6 +2762,7 @@ class ProductionResultsCompanion extends UpdateCompanion<ProductionResult> {
   String toString() {
     return (StringBuffer('ProductionResultsCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('prodOrder: $prodOrder, ')
           ..write('packet: $packet')
           ..write(')'))
@@ -2254,6 +2783,14 @@ class $ProductionResultsTable extends ProductionResults
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
+  }
+
   final VerificationMeta _prodOrderMeta = const VerificationMeta('prodOrder');
   @override
   late final GeneratedIntColumn prodOrder = _constructProdOrder();
@@ -2271,7 +2808,7 @@ class $ProductionResultsTable extends ProductionResults
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, prodOrder, packet];
+  List<GeneratedColumn> get $columns => [id, uuid, prodOrder, packet];
   @override
   $ProductionResultsTable get asDslTable => this;
   @override
@@ -2285,6 +2822,12 @@ class $ProductionResultsTable extends ProductionResults
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('prod_order')) {
       context.handle(_prodOrderMeta,
@@ -2319,6 +2862,9 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// creation date
   final String date;
 
@@ -2329,6 +2875,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   final int user;
   Delivery(
       {required this.id,
+      required this.uuid,
       required this.date,
       required this.pictureCount,
       required this.user});
@@ -2339,6 +2886,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     final stringType = db.typeSystem.forDartType<String>();
     return Delivery(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       date: stringType.mapFromDatabaseResponse(data['${effectivePrefix}date'])!,
       pictureCount: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}picture_count'])!,
@@ -2349,6 +2897,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['date'] = Variable<String>(date);
     map['picture_count'] = Variable<int>(pictureCount);
     map['user'] = Variable<int>(user);
@@ -2358,6 +2907,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   DeliveriesCompanion toCompanion(bool nullToAbsent) {
     return DeliveriesCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       date: Value(date),
       pictureCount: Value(pictureCount),
       user: Value(user),
@@ -2369,6 +2919,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Delivery(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       date: serializer.fromJson<String>(json['date']),
       pictureCount: serializer.fromJson<int>(json['pictureCount']),
       user: serializer.fromJson<int>(json['user']),
@@ -2379,15 +2930,22 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'date': serializer.toJson<String>(date),
       'pictureCount': serializer.toJson<int>(pictureCount),
       'user': serializer.toJson<int>(user),
     };
   }
 
-  Delivery copyWith({int? id, String? date, int? pictureCount, int? user}) =>
+  Delivery copyWith(
+          {int? id,
+          String? uuid,
+          String? date,
+          int? pictureCount,
+          int? user}) =>
       Delivery(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         date: date ?? this.date,
         pictureCount: pictureCount ?? this.pictureCount,
         user: user ?? this.user,
@@ -2396,6 +2954,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   String toString() {
     return (StringBuffer('Delivery(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('date: $date, ')
           ..write('pictureCount: $pictureCount, ')
           ..write('user: $user')
@@ -2404,13 +2963,16 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(date.hashCode, $mrjc(pictureCount.hashCode, user.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(uuid.hashCode,
+          $mrjc(date.hashCode, $mrjc(pictureCount.hashCode, user.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Delivery &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.date == this.date &&
           other.pictureCount == this.pictureCount &&
           other.user == this.user);
@@ -2418,31 +2980,37 @@ class Delivery extends DataClass implements Insertable<Delivery> {
 
 class DeliveriesCompanion extends UpdateCompanion<Delivery> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<String> date;
   final Value<int> pictureCount;
   final Value<int> user;
   const DeliveriesCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.date = const Value.absent(),
     this.pictureCount = const Value.absent(),
     this.user = const Value.absent(),
   });
   DeliveriesCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required String date,
     required int pictureCount,
     required int user,
-  })  : date = Value(date),
+  })  : uuid = Value(uuid),
+        date = Value(date),
         pictureCount = Value(pictureCount),
         user = Value(user);
   static Insertable<Delivery> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<String>? date,
     Expression<int>? pictureCount,
     Expression<int>? user,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (date != null) 'date': date,
       if (pictureCount != null) 'picture_count': pictureCount,
       if (user != null) 'user': user,
@@ -2451,11 +3019,13 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
 
   DeliveriesCompanion copyWith(
       {Value<int>? id,
+      Value<String>? uuid,
       Value<String>? date,
       Value<int>? pictureCount,
       Value<int>? user}) {
     return DeliveriesCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       date: date ?? this.date,
       pictureCount: pictureCount ?? this.pictureCount,
       user: user ?? this.user,
@@ -2467,6 +3037,9 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (date.present) {
       map['date'] = Variable<String>(date.value);
@@ -2484,6 +3057,7 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
   String toString() {
     return (StringBuffer('DeliveriesCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('date: $date, ')
           ..write('pictureCount: $pictureCount, ')
           ..write('user: $user')
@@ -2503,6 +3077,14 @@ class $DeliveriesTable extends Deliveries
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
   }
 
   final VerificationMeta _dateMeta = const VerificationMeta('date');
@@ -2537,7 +3119,7 @@ class $DeliveriesTable extends Deliveries
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, date, pictureCount, user];
+  List<GeneratedColumn> get $columns => [id, uuid, date, pictureCount, user];
   @override
   $DeliveriesTable get asDslTable => this;
   @override
@@ -2551,6 +3133,12 @@ class $DeliveriesTable extends Deliveries
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('date')) {
       context.handle(
@@ -2594,20 +3182,28 @@ class DeliveryPosition extends DataClass
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// foreign key -> delivery
   final int delivery;
 
   /// foreign key -> packets
   final int packet;
   DeliveryPosition(
-      {required this.id, required this.delivery, required this.packet});
+      {required this.id,
+      required this.uuid,
+      required this.delivery,
+      required this.packet});
   factory DeliveryPosition.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
     return DeliveryPosition(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       delivery:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}delivery'])!,
       packet:
@@ -2618,6 +3214,7 @@ class DeliveryPosition extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['delivery'] = Variable<int>(delivery);
     map['packet'] = Variable<int>(packet);
     return map;
@@ -2626,6 +3223,7 @@ class DeliveryPosition extends DataClass
   DeliveryPositionsCompanion toCompanion(bool nullToAbsent) {
     return DeliveryPositionsCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       delivery: Value(delivery),
       packet: Value(packet),
     );
@@ -2636,6 +3234,7 @@ class DeliveryPosition extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DeliveryPosition(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       delivery: serializer.fromJson<int>(json['delivery']),
       packet: serializer.fromJson<int>(json['packet']),
     );
@@ -2645,14 +3244,17 @@ class DeliveryPosition extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'delivery': serializer.toJson<int>(delivery),
       'packet': serializer.toJson<int>(packet),
     };
   }
 
-  DeliveryPosition copyWith({int? id, int? delivery, int? packet}) =>
+  DeliveryPosition copyWith(
+          {int? id, String? uuid, int? delivery, int? packet}) =>
       DeliveryPosition(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         delivery: delivery ?? this.delivery,
         packet: packet ?? this.packet,
       );
@@ -2660,6 +3262,7 @@ class DeliveryPosition extends DataClass
   String toString() {
     return (StringBuffer('DeliveryPosition(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('delivery: $delivery, ')
           ..write('packet: $packet')
           ..write(')'))
@@ -2667,48 +3270,59 @@ class DeliveryPosition extends DataClass
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(delivery.hashCode, packet.hashCode)));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(uuid.hashCode, $mrjc(delivery.hashCode, packet.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is DeliveryPosition &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.delivery == this.delivery &&
           other.packet == this.packet);
 }
 
 class DeliveryPositionsCompanion extends UpdateCompanion<DeliveryPosition> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<int> delivery;
   final Value<int> packet;
   const DeliveryPositionsCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.delivery = const Value.absent(),
     this.packet = const Value.absent(),
   });
   DeliveryPositionsCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required int delivery,
     required int packet,
-  })  : delivery = Value(delivery),
+  })  : uuid = Value(uuid),
+        delivery = Value(delivery),
         packet = Value(packet);
   static Insertable<DeliveryPosition> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<int>? delivery,
     Expression<int>? packet,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (delivery != null) 'delivery': delivery,
       if (packet != null) 'packet': packet,
     });
   }
 
   DeliveryPositionsCompanion copyWith(
-      {Value<int>? id, Value<int>? delivery, Value<int>? packet}) {
+      {Value<int>? id,
+      Value<String>? uuid,
+      Value<int>? delivery,
+      Value<int>? packet}) {
     return DeliveryPositionsCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       delivery: delivery ?? this.delivery,
       packet: packet ?? this.packet,
     );
@@ -2719,6 +3333,9 @@ class DeliveryPositionsCompanion extends UpdateCompanion<DeliveryPosition> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (delivery.present) {
       map['delivery'] = Variable<int>(delivery.value);
@@ -2733,6 +3350,7 @@ class DeliveryPositionsCompanion extends UpdateCompanion<DeliveryPosition> {
   String toString() {
     return (StringBuffer('DeliveryPositionsCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('delivery: $delivery, ')
           ..write('packet: $packet')
           ..write(')'))
@@ -2753,6 +3371,14 @@ class $DeliveryPositionsTable extends DeliveryPositions
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
+  }
+
   final VerificationMeta _deliveryMeta = const VerificationMeta('delivery');
   @override
   late final GeneratedIntColumn delivery = _constructDelivery();
@@ -2770,7 +3396,7 @@ class $DeliveryPositionsTable extends DeliveryPositions
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, delivery, packet];
+  List<GeneratedColumn> get $columns => [id, uuid, delivery, packet];
   @override
   $DeliveryPositionsTable get asDslTable => this;
   @override
@@ -2784,6 +3410,12 @@ class $DeliveryPositionsTable extends DeliveryPositions
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('delivery')) {
       context.handle(_deliveryMeta,
@@ -3452,25 +4084,32 @@ class $DeliveryImagesTable extends DeliveryImages
 class Inventory extends DataClass implements Insertable<Inventory> {
   /// primary key
   final int id;
-  Inventory({required this.id});
+
+  /// globaly unique id used for synchronizing
+  final String uuid;
+  Inventory({required this.id, required this.uuid});
   factory Inventory.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
     return Inventory(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     return map;
   }
 
   InventoriesCompanion toCompanion(bool nullToAbsent) {
     return InventoriesCompanion(
       id: Value(id),
+      uuid: Value(uuid),
     );
   }
 
@@ -3479,6 +4118,7 @@ class Inventory extends DataClass implements Insertable<Inventory> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Inventory(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
     );
   }
   @override
@@ -3486,44 +4126,56 @@ class Inventory extends DataClass implements Insertable<Inventory> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
     };
   }
 
-  Inventory copyWith({int? id}) => Inventory(
+  Inventory copyWith({int? id, String? uuid}) => Inventory(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
       );
   @override
   String toString() {
-    return (StringBuffer('Inventory(')..write('id: $id')..write(')'))
+    return (StringBuffer('Inventory(')
+          ..write('id: $id, ')
+          ..write('uuid: $uuid')
+          ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf(id.hashCode);
+  int get hashCode => $mrjf($mrjc(id.hashCode, uuid.hashCode));
   @override
   bool operator ==(dynamic other) =>
-      identical(this, other) || (other is Inventory && other.id == this.id);
+      identical(this, other) ||
+      (other is Inventory && other.id == this.id && other.uuid == this.uuid);
 }
 
 class InventoriesCompanion extends UpdateCompanion<Inventory> {
   final Value<int> id;
+  final Value<String> uuid;
   const InventoriesCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
   });
   InventoriesCompanion.insert({
     this.id = const Value.absent(),
-  });
+    required String uuid,
+  }) : uuid = Value(uuid);
   static Insertable<Inventory> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
     });
   }
 
-  InventoriesCompanion copyWith({Value<int>? id}) {
+  InventoriesCompanion copyWith({Value<int>? id, Value<String>? uuid}) {
     return InventoriesCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
     );
   }
 
@@ -3533,12 +4185,18 @@ class InventoriesCompanion extends UpdateCompanion<Inventory> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
+    }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('InventoriesCompanion(')..write('id: $id')..write(')'))
+    return (StringBuffer('InventoriesCompanion(')
+          ..write('id: $id, ')
+          ..write('uuid: $uuid')
+          ..write(')'))
         .toString();
   }
 }
@@ -3556,8 +4214,16 @@ class $InventoriesTable extends Inventories
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
   @override
-  List<GeneratedColumn> get $columns => [id];
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, uuid];
   @override
   $InventoriesTable get asDslTable => this;
   @override
@@ -3571,6 +4237,12 @@ class $InventoriesTable extends Inventories
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     return context;
   }
@@ -3594,6 +4266,9 @@ class InventoryPosition extends DataClass
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// foreign key -> inventory
   final int inventory;
 
@@ -3604,6 +4279,7 @@ class InventoryPosition extends DataClass
   final double quantity;
   InventoryPosition(
       {required this.id,
+      required this.uuid,
       required this.inventory,
       required this.packet,
       required this.quantity});
@@ -3612,9 +4288,11 @@ class InventoryPosition extends DataClass
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
     final doubleType = db.typeSystem.forDartType<double>();
     return InventoryPosition(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       inventory:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}inventory'])!,
       packet:
@@ -3627,6 +4305,7 @@ class InventoryPosition extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['inventory'] = Variable<int>(inventory);
     map['packet'] = Variable<int>(packet);
     map['quantity'] = Variable<double>(quantity);
@@ -3636,6 +4315,7 @@ class InventoryPosition extends DataClass
   InventoryPositionsCompanion toCompanion(bool nullToAbsent) {
     return InventoryPositionsCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       inventory: Value(inventory),
       packet: Value(packet),
       quantity: Value(quantity),
@@ -3647,6 +4327,7 @@ class InventoryPosition extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return InventoryPosition(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       inventory: serializer.fromJson<int>(json['inventory']),
       packet: serializer.fromJson<int>(json['packet']),
       quantity: serializer.fromJson<double>(json['quantity']),
@@ -3657,6 +4338,7 @@ class InventoryPosition extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'inventory': serializer.toJson<int>(inventory),
       'packet': serializer.toJson<int>(packet),
       'quantity': serializer.toJson<double>(quantity),
@@ -3664,9 +4346,14 @@ class InventoryPosition extends DataClass
   }
 
   InventoryPosition copyWith(
-          {int? id, int? inventory, int? packet, double? quantity}) =>
+          {int? id,
+          String? uuid,
+          int? inventory,
+          int? packet,
+          double? quantity}) =>
       InventoryPosition(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         inventory: inventory ?? this.inventory,
         packet: packet ?? this.packet,
         quantity: quantity ?? this.quantity,
@@ -3675,6 +4362,7 @@ class InventoryPosition extends DataClass
   String toString() {
     return (StringBuffer('InventoryPosition(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('inventory: $inventory, ')
           ..write('packet: $packet, ')
           ..write('quantity: $quantity')
@@ -3683,13 +4371,18 @@ class InventoryPosition extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(inventory.hashCode, $mrjc(packet.hashCode, quantity.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(
+          uuid.hashCode,
+          $mrjc(
+              inventory.hashCode, $mrjc(packet.hashCode, quantity.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is InventoryPosition &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.inventory == this.inventory &&
           other.packet == this.packet &&
           other.quantity == this.quantity);
@@ -3697,31 +4390,37 @@ class InventoryPosition extends DataClass
 
 class InventoryPositionsCompanion extends UpdateCompanion<InventoryPosition> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<int> inventory;
   final Value<int> packet;
   final Value<double> quantity;
   const InventoryPositionsCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.inventory = const Value.absent(),
     this.packet = const Value.absent(),
     this.quantity = const Value.absent(),
   });
   InventoryPositionsCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required int inventory,
     required int packet,
     required double quantity,
-  })  : inventory = Value(inventory),
+  })  : uuid = Value(uuid),
+        inventory = Value(inventory),
         packet = Value(packet),
         quantity = Value(quantity);
   static Insertable<InventoryPosition> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<int>? inventory,
     Expression<int>? packet,
     Expression<double>? quantity,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (inventory != null) 'inventory': inventory,
       if (packet != null) 'packet': packet,
       if (quantity != null) 'quantity': quantity,
@@ -3730,11 +4429,13 @@ class InventoryPositionsCompanion extends UpdateCompanion<InventoryPosition> {
 
   InventoryPositionsCompanion copyWith(
       {Value<int>? id,
+      Value<String>? uuid,
       Value<int>? inventory,
       Value<int>? packet,
       Value<double>? quantity}) {
     return InventoryPositionsCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       inventory: inventory ?? this.inventory,
       packet: packet ?? this.packet,
       quantity: quantity ?? this.quantity,
@@ -3746,6 +4447,9 @@ class InventoryPositionsCompanion extends UpdateCompanion<InventoryPosition> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (inventory.present) {
       map['inventory'] = Variable<int>(inventory.value);
@@ -3763,6 +4467,7 @@ class InventoryPositionsCompanion extends UpdateCompanion<InventoryPosition> {
   String toString() {
     return (StringBuffer('InventoryPositionsCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('inventory: $inventory, ')
           ..write('packet: $packet, ')
           ..write('quantity: $quantity')
@@ -3782,6 +4487,14 @@ class $InventoryPositionsTable extends InventoryPositions
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
   }
 
   final VerificationMeta _inventoryMeta = const VerificationMeta('inventory');
@@ -3812,7 +4525,7 @@ class $InventoryPositionsTable extends InventoryPositions
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, inventory, packet, quantity];
+  List<GeneratedColumn> get $columns => [id, uuid, inventory, packet, quantity];
   @override
   $InventoryPositionsTable get asDslTable => this;
   @override
@@ -3826,6 +4539,12 @@ class $InventoryPositionsTable extends InventoryPositions
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('inventory')) {
       context.handle(_inventoryMeta,
@@ -3864,6 +4583,8 @@ class $InventoryPositionsTable extends InventoryPositions
 
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
+  late final $SystemVariablesTable systemVariables =
+      $SystemVariablesTable(this);
   late final $UsersTable users = $UsersTable(this);
   late final $PacketsTable packets = $PacketsTable(this);
   late final $ProductsTable products = $ProductsTable(this);
@@ -3885,6 +4606,8 @@ abstract class _$Database extends GeneratedDatabase {
   late final $InventoriesTable inventories = $InventoriesTable(this);
   late final $InventoryPositionsTable inventoryPositions =
       $InventoryPositionsTable(this);
+  late final SystemVariablesDao systemVariablesDao =
+      SystemVariablesDao(this as Database);
   late final UsersDao usersDao = UsersDao(this as Database);
   late final PacketsDao packetsDao = PacketsDao(this as Database);
   late final ProductsDao productsDao = ProductsDao(this as Database);
@@ -3909,6 +4632,7 @@ abstract class _$Database extends GeneratedDatabase {
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+        systemVariables,
         users,
         packets,
         products,
