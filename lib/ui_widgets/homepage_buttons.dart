@@ -74,12 +74,13 @@ class TextButtonWidget extends StatelessWidget {
                   onScanBottomSheet!(barcode).then((scanResult) {
                     print(scanResult.success);
                     if (scanResult.success == true) {
-                    Navigator.push(
-                      context,
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
                         buildCupertinoPageRoute(
                             scanResult.parentID), //Create page with scanned id
-                    );
-                  }
+                      );
+                    }
                   });
                 },
                 context: context);
