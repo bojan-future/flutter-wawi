@@ -18,13 +18,44 @@ import 'production_result_dao.dart';
 import 'products_dao.dart';
 import 'users_dao.dart';
 import 'systemvariables_dao.dart';
+import 'synchroupdates_dao.dart';
 
 part 'database.exception.dart';
 part 'database.g.dart';
 
+@DataClassName('SynchroUpdate')
+class SynchroUpdates extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
+
+  ///data type derived from the source table
+  IntColumn get type => integer()();
+
+  /// mark this record as deleted
+  BoolColumn get deleted => boolean()();
+
+  ///json containing data to be synchronized
+  TextColumn get data => text()();
+}
+
+///conversion to map needed for http request
+extension MapConversion on SynchroUpdate {
+  ///conversion to map needed for http request
+  Map<String, String> toMap() {
+    return <String, String>{
+      "uuid": uuid,
+      "type": type.toString(),
+      "data": data,
+    };
+  }
+}
+
 @DataClassName('SystemVariable')
 class SystemVariables extends Table {
-  TextColumn get name => text()();
+  TextColumn get name => text().customConstraint('UNIQUE')();
 
   TextColumn get value => text()();
 }
@@ -193,6 +224,9 @@ class Dispatches extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
+
   /// foreign key -> order
   IntColumn get orderID =>
       integer().customConstraint('REFERENCES orders(id)')();
@@ -204,6 +238,9 @@ class Dispatches extends Table {
 class DispatchPositions extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
+
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// foreign key -> dispatch
   IntColumn get dispatch =>
@@ -220,6 +257,9 @@ class DispatchPositions extends Table {
 class DeliveryImages extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
+
+  /// globaly unique id used for synchronizing
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// file path
   TextColumn get filePath => text()();
@@ -335,6 +375,7 @@ class DatabaseFactory {
 }
 
 @UseMoor(tables: [
+  SynchroUpdates,
   SystemVariables,
   Users,
   Packets,
@@ -352,6 +393,7 @@ class DatabaseFactory {
   Inventories,
   InventoryPositions,
 ], daos: [
+  SynchroUpdatesDao,
   SystemVariablesDao,
   UsersDao,
   PacketsDao,
@@ -385,7 +427,7 @@ class Database extends _$Database {
       },
       onUpgrade: (m, from, to) async {},
       beforeOpen: (details) async {
-        if (details.wasCreated || kDebugMode) {
+        if (details.wasCreated /*|| kDebugMode*/) {
           if (kDebugMode) {
             final m = createMigrator(); // changed to this
             for (final table in allTables) {

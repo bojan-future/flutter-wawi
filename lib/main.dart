@@ -30,7 +30,11 @@ void main() {
   FlutterError.onError = FlutterError.dumpErrorToConsole;
   WidgetsFlutterBinding.ensureInitialized();
 
-  SynchroController().synchronize();
+  final synchroController = SynchroController();
+  synchroController.synchronize(); //synchronize once at the start
+  //start scheduler
+  synchroController.initSchedule();
+
   /// blocks rotation; sets orientation to: portrait
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -74,7 +78,14 @@ void main() {
             '2222555588883333666699997777444411',
             '12345678901234567890'
           ]),
-        )
+        ),
+        Provider<SynchroController>(create: (context) {
+          final synchroController = SynchroController();
+          synchroController.synchronize(); //synchronize once at the start
+          //start scheduler
+          synchroController.initSchedule();
+          return synchroController;
+        })
       ],
       child: MyApp(),
     ));

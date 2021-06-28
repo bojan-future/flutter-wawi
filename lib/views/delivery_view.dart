@@ -60,6 +60,12 @@ class _DeliveryViewState extends State<DeliveryView> {
               scanViewList.insert(0, packet);
             });
           }
+        } on RecordNotFoundException {
+          setState(() {
+            buildAlert(context, "Achtung!",
+                    "Der gescannte Packet wurde nicht erkannt!")
+                .show();
+          });
         } on InvalidBarcodeException {
           setState(() {
             buildAlert(

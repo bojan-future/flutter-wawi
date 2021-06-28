@@ -1,6 +1,8 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import 'database.dart';
+import 'synchronizable.dart';
 
 part 'dispatchpositions_dao.g.dart';
 
@@ -15,20 +17,39 @@ class DispatchPositionsDao extends DatabaseAccessor<Database>
   /// inserts given dispatch into database
   Future<int> createDispatchPosition(
       DispatchPositionsCompanion dispatchPosition) {
+    if (!dispatchPosition.uuid.present) {
+      dispatchPosition = DispatchPositionsCompanion(
+        uuid: Value(Uuid().v4()),
+        dispatch: dispatchPosition.dispatch,
+        packet: dispatchPosition.packet,
+      );
+    }
     return into(dispatchPositions)
-        .insert(dispatchPosition, mode: InsertMode.replace);
+        .insert(dispatchPosition, mode: InsertMode.replace)
+        .then((value) {
+      getDispatchPositionByID(value).then(onUpdateData);
+      return value;
+    });
   }
 
   /// updates dispatch in the database
-  Future<bool> updateDispatchPosition(
-      DispatchPositionsCompanion dispatchPosition) {
-    return update(dispatchPositions).replace(dispatchPosition);
+  Future<bool> updateDispatchPosition(DispatchPosition dispatchPosition) {
+    return update(dispatchPositions).replace(dispatchPosition).then((value) {
+      if (value) {
+        onUpdateData(dispatchPosition);
+      }
+      return value;
+    });
   }
 
   /// deletes dispatch from the database
-  Future<int> deleteDispatchPosition(
-      DispatchPositionsCompanion dispatchPosition) {
-    return delete(dispatchPositions).delete(dispatchPosition);
+  Future<int> deleteDispatchPosition(DispatchPosition dispatchPosition) {
+    return delete(dispatchPositions).delete(dispatchPosition).then((value) {
+      if (value > 0) {
+        onDeleteData(dispatchPosition);
+      }
+      return value;
+    });
   }
 
   /// retrieves dispatch with giver dispatch number OR
@@ -43,5 +64,16 @@ class DispatchPositionsDao extends DatabaseAccessor<Database>
     } else {
       return dispatchPositionList.first;
     }
+  }
+
+  void onUpdateData(DispatchPosition model) {
+    addSynchroUpdate(
+        model.uuid, SyncType.dispatch_position, model.toJsonString());
+  }
+
+  void onDeleteData(DispatchPosition model) {
+    addSynchroUpdate(
+        model.uuid, SyncType.dispatch_position, model.toJsonString(),
+        deleted: true);
   }
 }

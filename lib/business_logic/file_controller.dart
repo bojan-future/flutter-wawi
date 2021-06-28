@@ -37,7 +37,7 @@ class FileController {
   }
 
   /// add inventory
-  void deleteDeliveryImage(String imagePath) async {
-    database.deliveryImagesDao.deleteDeliveryImage(imagePath);
+  void deleteDeliveryImage(DeliveryImage deliveryImage) async {
+    database.deliveryImagesDao.deleteDeliveryImage(deliveryImage);
   }
 }

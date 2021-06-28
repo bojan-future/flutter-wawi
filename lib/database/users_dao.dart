@@ -1,4 +1,5 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:uuid/uuid.dart';
 import 'database.dart';
 
 part 'users_dao.g.dart';
@@ -9,6 +10,11 @@ part 'users_dao.g.dart';
 class UsersDao extends DatabaseAccessor<Database> with _$UsersDaoMixin {
   ///
   UsersDao(Database db) : super(db);
+
+  /// inserts user into database
+  Future<int> createUser(UsersCompanion user) {
+    return into(users).insert(user, mode: InsertMode.replace);
+  }
 
   /// retrieves user with given user number
   Future<User> getUserByNumber(String userNr) async {

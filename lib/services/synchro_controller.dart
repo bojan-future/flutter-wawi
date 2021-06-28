@@ -1,27 +1,40 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cron/cron.dart';
 import 'package:http/http.dart' as http;
-import 'package:kuda_lager/business_logic/packets_controller.dart';
-import 'package:kuda_lager/database/orders_dao.dart';
-import 'package:kuda_lager/database/production_dao.dart';
-import 'package:kuda_lager/database/products_dao.dart';
-import 'package:kuda_lager/main.dart';
+
 import '../database/database.dart';
+import '../database/orders_dao.dart';
+import '../database/production_dao.dart';
+import '../database/products_dao.dart';
+import '../database/synchronizable.dart';
 
 class SynchroController {
-  Database database;
+  final Database _database;
+  final Cron _cron;
+  bool _sync_in_progress = false;
 
   ///default constructor
-  SynchroController() : database = DatabaseFactory.getDatabaseInstance() {}
+  SynchroController()
+      : _database = DatabaseFactory.getDatabaseInstance(),
+        _cron = Cron();
 
-  Future<void> synchronize() async {
-    _syncDown();
-
-    //todo: syncUp
+  void initSchedule() {
+    _cron.schedule(Schedule.parse('*/3 * * * *'), synchronize);
   }
 
-  Future<SyncResponse> _fetchSync(lastid) async {
+  /// synchronize local database with the server
+  Future<void> synchronize() async {
+    if (_sync_in_progress) return;
+    _sync_in_progress = true;
+    _syncDown();
+
+    _syncUp();
+    _sync_in_progress = false;
+  }
+
+  Future<SyncResponse> _fetchSync(int lastid) async {
     final response = await http.get(Uri.parse(
         "http://ffsync-test.futurefactory-software.com/syncs?lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid"));
 
@@ -34,9 +47,54 @@ class SynchroController {
     }
   }
 
+  bool _isResponseOk(http.Response response) =>
+      (response.statusCode >= 200 && response.statusCode <= 299);
+
+  Future<bool> _uploadSync(SynchroUpdate synchroUpdate) async {
+    var body = synchroUpdate.toMap();
+
+    //todo: add lic, source and userid to the body
+    body['lic'] = 'AAAA-AAAA-AAAA-AAAA';
+    body['source'] = 'kuda-lager-app';
+    body['userid'] = 'bojan';
+
+    var url = Uri.parse(
+        "http://ffsync-test.futurefactory-software.com/syncs/${synchroUpdate.uuid}");
+
+    if (synchroUpdate.deleted == false) {
+      return http
+          .put(url, body: body)
+          .then(_isResponseOk, onError: (e) => false);
+    } else //deleted == true
+    {
+      return http
+          .delete(url, body: body)
+          .then(_isResponseOk, onError: (e) => false);
+    }
+  }
+
+  void _syncUp() async {
+    var doTry = true;
+    while (doTry) {
+      doTry = await _database.synchroUpdatesDao.getNext().then(
+          (synchroUpdate) async {
+        var success = await _uploadSync(synchroUpdate);
+        if (success) {
+          _database.synchroUpdatesDao.remove(synchroUpdate.id);
+        }
+        return true; //try next one
+      }, onError: (e) {
+        //on database error -> stop
+        // simplified version
+        // - assuming only error is if there are no synchroUpdates left
+        return false;
+      });
+    }
+  }
+
   void _syncDown() async {
     var lastid =
-        int.tryParse(await database.systemVariablesDao.get('lastid')) ?? 0;
+        int.tryParse(await _database.systemVariablesDao.get('lastid')) ?? 0;
     var syncResponse = await _fetchSync(lastid);
     var highestid = lastid;
     if (syncResponse.success) {
@@ -45,36 +103,30 @@ class SynchroController {
         highestid = max(highestid, sync.id ?? 0);
       }
     }
-    database.systemVariablesDao.set('lastid', highestid.toString());
+    _database.systemVariablesDao.set('lastid', highestid.toString());
   }
 
   void _updateDatabase(Sync sync) {
     switch (sync.type) {
       case SyncType.product:
-        database.productsDao.createProduct(
+        _database.productsDao.createProduct(
             ProductsDao.companionFromSyncJson(sync.data, sync.uuid));
         break;
       case SyncType.order:
-        database.ordersDao
+        _database.ordersDao
             .createOrder(OrdersDao.companionFromSyncJson(sync.data, sync.uuid));
         break;
       case SyncType.production:
-        database.productionDao.createProduction(
+        _database.productionDao.createProduction(
             ProductionDao.companionFromSyncJson(sync.data, sync.uuid));
         break;
       //todo: other tables
       default:
     }
-  }
-}
 
-///enum-like class for type mapping
-class SyncType {
-  static const int product = 90;
-  static const int order = 152;
-  static const int dispatch = 154;
-  static const int production = 170;
-  static const int delivery = 187;
+    /// remove synchro entry for this record to prevent uploading older version
+    _database.synchroUpdatesDao.removeByUuid(sync.uuid);
+  }
 }
 
 class SyncResponse {

@@ -7,6 +7,323 @@ part of 'database.dart';
 // **************************************************************************
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
+class SynchroUpdate extends DataClass implements Insertable<SynchroUpdate> {
+  /// primary key
+  final int id;
+
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
+  ///data type derived from the source table
+  final int type;
+
+  /// mark this record as deleted
+  final bool deleted;
+
+  ///json containing data to be synchronized
+  final String data;
+  SynchroUpdate(
+      {required this.id,
+      required this.uuid,
+      required this.type,
+      required this.deleted,
+      required this.data});
+  factory SynchroUpdate.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    final boolType = db.typeSystem.forDartType<bool>();
+    return SynchroUpdate(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      type: intType.mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
+      deleted:
+          boolType.mapFromDatabaseResponse(data['${effectivePrefix}deleted'])!,
+      data: stringType.mapFromDatabaseResponse(data['${effectivePrefix}data'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
+    map['type'] = Variable<int>(type);
+    map['deleted'] = Variable<bool>(deleted);
+    map['data'] = Variable<String>(data);
+    return map;
+  }
+
+  SynchroUpdatesCompanion toCompanion(bool nullToAbsent) {
+    return SynchroUpdatesCompanion(
+      id: Value(id),
+      uuid: Value(uuid),
+      type: Value(type),
+      deleted: Value(deleted),
+      data: Value(data),
+    );
+  }
+
+  factory SynchroUpdate.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return SynchroUpdate(
+      id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
+      type: serializer.fromJson<int>(json['type']),
+      deleted: serializer.fromJson<bool>(json['deleted']),
+      data: serializer.fromJson<String>(json['data']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
+      'type': serializer.toJson<int>(type),
+      'deleted': serializer.toJson<bool>(deleted),
+      'data': serializer.toJson<String>(data),
+    };
+  }
+
+  SynchroUpdate copyWith(
+          {int? id, String? uuid, int? type, bool? deleted, String? data}) =>
+      SynchroUpdate(
+        id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
+        type: type ?? this.type,
+        deleted: deleted ?? this.deleted,
+        data: data ?? this.data,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('SynchroUpdate(')
+          ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
+          ..write('type: $type, ')
+          ..write('deleted: $deleted, ')
+          ..write('data: $data')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(uuid.hashCode,
+          $mrjc(type.hashCode, $mrjc(deleted.hashCode, data.hashCode)))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is SynchroUpdate &&
+          other.id == this.id &&
+          other.uuid == this.uuid &&
+          other.type == this.type &&
+          other.deleted == this.deleted &&
+          other.data == this.data);
+}
+
+class SynchroUpdatesCompanion extends UpdateCompanion<SynchroUpdate> {
+  final Value<int> id;
+  final Value<String> uuid;
+  final Value<int> type;
+  final Value<bool> deleted;
+  final Value<String> data;
+  const SynchroUpdatesCompanion({
+    this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
+    this.type = const Value.absent(),
+    this.deleted = const Value.absent(),
+    this.data = const Value.absent(),
+  });
+  SynchroUpdatesCompanion.insert({
+    this.id = const Value.absent(),
+    required String uuid,
+    required int type,
+    required bool deleted,
+    required String data,
+  })  : uuid = Value(uuid),
+        type = Value(type),
+        deleted = Value(deleted),
+        data = Value(data);
+  static Insertable<SynchroUpdate> custom({
+    Expression<int>? id,
+    Expression<String>? uuid,
+    Expression<int>? type,
+    Expression<bool>? deleted,
+    Expression<String>? data,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
+      if (type != null) 'type': type,
+      if (deleted != null) 'deleted': deleted,
+      if (data != null) 'data': data,
+    });
+  }
+
+  SynchroUpdatesCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? uuid,
+      Value<int>? type,
+      Value<bool>? deleted,
+      Value<String>? data}) {
+    return SynchroUpdatesCompanion(
+      id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
+      type: type ?? this.type,
+      deleted: deleted ?? this.deleted,
+      data: data ?? this.data,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<int>(type.value);
+    }
+    if (deleted.present) {
+      map['deleted'] = Variable<bool>(deleted.value);
+    }
+    if (data.present) {
+      map['data'] = Variable<String>(data.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SynchroUpdatesCompanion(')
+          ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
+          ..write('type: $type, ')
+          ..write('deleted: $deleted, ')
+          ..write('data: $data')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SynchroUpdatesTable extends SynchroUpdates
+    with TableInfo<$SynchroUpdatesTable, SynchroUpdate> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $SynchroUpdatesTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedIntColumn id = _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
+  }
+
+  final VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedIntColumn type = _constructType();
+  GeneratedIntColumn _constructType() {
+    return GeneratedIntColumn(
+      'type',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _deletedMeta = const VerificationMeta('deleted');
+  @override
+  late final GeneratedBoolColumn deleted = _constructDeleted();
+  GeneratedBoolColumn _constructDeleted() {
+    return GeneratedBoolColumn(
+      'deleted',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _dataMeta = const VerificationMeta('data');
+  @override
+  late final GeneratedTextColumn data = _constructData();
+  GeneratedTextColumn _constructData() {
+    return GeneratedTextColumn(
+      'data',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, uuid, type, deleted, data];
+  @override
+  $SynchroUpdatesTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'synchro_updates';
+  @override
+  final String actualTableName = 'synchro_updates';
+  @override
+  VerificationContext validateIntegrity(Insertable<SynchroUpdate> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('deleted')) {
+      context.handle(_deletedMeta,
+          deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta));
+    } else if (isInserting) {
+      context.missing(_deletedMeta);
+    }
+    if (data.containsKey('data')) {
+      context.handle(
+          _dataMeta, this.data.isAcceptableOrUnknown(data['data']!, _dataMeta));
+    } else if (isInserting) {
+      context.missing(_dataMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SynchroUpdate map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return SynchroUpdate.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $SynchroUpdatesTable createAlias(String alias) {
+    return $SynchroUpdatesTable(_db, alias);
+  }
+}
+
 class SystemVariable extends DataClass implements Insertable<SystemVariable> {
   final String name;
   final String value;
@@ -138,11 +455,8 @@ class $SystemVariablesTable extends SystemVariables
   @override
   late final GeneratedTextColumn name = _constructName();
   GeneratedTextColumn _constructName() {
-    return GeneratedTextColumn(
-      'name',
-      $tableName,
-      false,
-    );
+    return GeneratedTextColumn('name', $tableName, false,
+        $customConstraints: 'UNIQUE');
   }
 
   final VerificationMeta _valueMeta = const VerificationMeta('value');
@@ -3450,15 +3764,20 @@ class Dispatch extends DataClass implements Insertable<Dispatch> {
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// foreign key -> order
   final int orderID;
-  Dispatch({required this.id, required this.orderID});
+  Dispatch({required this.id, required this.uuid, required this.orderID});
   factory Dispatch.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
     return Dispatch(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       orderID:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}order_i_d'])!,
     );
@@ -3467,6 +3786,7 @@ class Dispatch extends DataClass implements Insertable<Dispatch> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['order_i_d'] = Variable<int>(orderID);
     return map;
   }
@@ -3474,6 +3794,7 @@ class Dispatch extends DataClass implements Insertable<Dispatch> {
   DispatchesCompanion toCompanion(bool nullToAbsent) {
     return DispatchesCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       orderID: Value(orderID),
     );
   }
@@ -3483,6 +3804,7 @@ class Dispatch extends DataClass implements Insertable<Dispatch> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Dispatch(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       orderID: serializer.fromJson<int>(json['orderID']),
     );
   }
@@ -3491,57 +3813,70 @@ class Dispatch extends DataClass implements Insertable<Dispatch> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'orderID': serializer.toJson<int>(orderID),
     };
   }
 
-  Dispatch copyWith({int? id, int? orderID}) => Dispatch(
+  Dispatch copyWith({int? id, String? uuid, int? orderID}) => Dispatch(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         orderID: orderID ?? this.orderID,
       );
   @override
   String toString() {
     return (StringBuffer('Dispatch(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('orderID: $orderID')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, orderID.hashCode));
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(uuid.hashCode, orderID.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Dispatch &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.orderID == this.orderID);
 }
 
 class DispatchesCompanion extends UpdateCompanion<Dispatch> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<int> orderID;
   const DispatchesCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.orderID = const Value.absent(),
   });
   DispatchesCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required int orderID,
-  }) : orderID = Value(orderID);
+  })  : uuid = Value(uuid),
+        orderID = Value(orderID);
   static Insertable<Dispatch> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<int>? orderID,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (orderID != null) 'order_i_d': orderID,
     });
   }
 
-  DispatchesCompanion copyWith({Value<int>? id, Value<int>? orderID}) {
+  DispatchesCompanion copyWith(
+      {Value<int>? id, Value<String>? uuid, Value<int>? orderID}) {
     return DispatchesCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       orderID: orderID ?? this.orderID,
     );
   }
@@ -3551,6 +3886,9 @@ class DispatchesCompanion extends UpdateCompanion<Dispatch> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (orderID.present) {
       map['order_i_d'] = Variable<int>(orderID.value);
@@ -3562,6 +3900,7 @@ class DispatchesCompanion extends UpdateCompanion<Dispatch> {
   String toString() {
     return (StringBuffer('DispatchesCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('orderID: $orderID')
           ..write(')'))
         .toString();
@@ -3581,6 +3920,14 @@ class $DispatchesTable extends Dispatches
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
+  }
+
   final VerificationMeta _orderIDMeta = const VerificationMeta('orderID');
   @override
   late final GeneratedIntColumn orderID = _constructOrderID();
@@ -3590,7 +3937,7 @@ class $DispatchesTable extends Dispatches
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, orderID];
+  List<GeneratedColumn> get $columns => [id, uuid, orderID];
   @override
   $DispatchesTable get asDslTable => this;
   @override
@@ -3604,6 +3951,12 @@ class $DispatchesTable extends Dispatches
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('order_i_d')) {
       context.handle(_orderIDMeta,
@@ -3633,20 +3986,28 @@ class DispatchPosition extends DataClass
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// foreign key -> dispatch
   final int dispatch;
 
   /// foreign key -> packets
   final int packet;
   DispatchPosition(
-      {required this.id, required this.dispatch, required this.packet});
+      {required this.id,
+      required this.uuid,
+      required this.dispatch,
+      required this.packet});
   factory DispatchPosition.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
     return DispatchPosition(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       dispatch:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}dispatch'])!,
       packet:
@@ -3657,6 +4018,7 @@ class DispatchPosition extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['dispatch'] = Variable<int>(dispatch);
     map['packet'] = Variable<int>(packet);
     return map;
@@ -3665,6 +4027,7 @@ class DispatchPosition extends DataClass
   DispatchPositionsCompanion toCompanion(bool nullToAbsent) {
     return DispatchPositionsCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       dispatch: Value(dispatch),
       packet: Value(packet),
     );
@@ -3675,6 +4038,7 @@ class DispatchPosition extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DispatchPosition(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       dispatch: serializer.fromJson<int>(json['dispatch']),
       packet: serializer.fromJson<int>(json['packet']),
     );
@@ -3684,14 +4048,17 @@ class DispatchPosition extends DataClass
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'dispatch': serializer.toJson<int>(dispatch),
       'packet': serializer.toJson<int>(packet),
     };
   }
 
-  DispatchPosition copyWith({int? id, int? dispatch, int? packet}) =>
+  DispatchPosition copyWith(
+          {int? id, String? uuid, int? dispatch, int? packet}) =>
       DispatchPosition(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         dispatch: dispatch ?? this.dispatch,
         packet: packet ?? this.packet,
       );
@@ -3699,6 +4066,7 @@ class DispatchPosition extends DataClass
   String toString() {
     return (StringBuffer('DispatchPosition(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('dispatch: $dispatch, ')
           ..write('packet: $packet')
           ..write(')'))
@@ -3706,48 +4074,59 @@ class DispatchPosition extends DataClass
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(dispatch.hashCode, packet.hashCode)));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(uuid.hashCode, $mrjc(dispatch.hashCode, packet.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is DispatchPosition &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.dispatch == this.dispatch &&
           other.packet == this.packet);
 }
 
 class DispatchPositionsCompanion extends UpdateCompanion<DispatchPosition> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<int> dispatch;
   final Value<int> packet;
   const DispatchPositionsCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.dispatch = const Value.absent(),
     this.packet = const Value.absent(),
   });
   DispatchPositionsCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required int dispatch,
     required int packet,
-  })  : dispatch = Value(dispatch),
+  })  : uuid = Value(uuid),
+        dispatch = Value(dispatch),
         packet = Value(packet);
   static Insertable<DispatchPosition> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<int>? dispatch,
     Expression<int>? packet,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (dispatch != null) 'dispatch': dispatch,
       if (packet != null) 'packet': packet,
     });
   }
 
   DispatchPositionsCompanion copyWith(
-      {Value<int>? id, Value<int>? dispatch, Value<int>? packet}) {
+      {Value<int>? id,
+      Value<String>? uuid,
+      Value<int>? dispatch,
+      Value<int>? packet}) {
     return DispatchPositionsCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       dispatch: dispatch ?? this.dispatch,
       packet: packet ?? this.packet,
     );
@@ -3758,6 +4137,9 @@ class DispatchPositionsCompanion extends UpdateCompanion<DispatchPosition> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (dispatch.present) {
       map['dispatch'] = Variable<int>(dispatch.value);
@@ -3772,6 +4154,7 @@ class DispatchPositionsCompanion extends UpdateCompanion<DispatchPosition> {
   String toString() {
     return (StringBuffer('DispatchPositionsCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('dispatch: $dispatch, ')
           ..write('packet: $packet')
           ..write(')'))
@@ -3792,6 +4175,14 @@ class $DispatchPositionsTable extends DispatchPositions
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
+  }
+
   final VerificationMeta _dispatchMeta = const VerificationMeta('dispatch');
   @override
   late final GeneratedIntColumn dispatch = _constructDispatch();
@@ -3809,7 +4200,7 @@ class $DispatchPositionsTable extends DispatchPositions
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, dispatch, packet];
+  List<GeneratedColumn> get $columns => [id, uuid, dispatch, packet];
   @override
   $DispatchPositionsTable get asDslTable => this;
   @override
@@ -3823,6 +4214,12 @@ class $DispatchPositionsTable extends DispatchPositions
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('dispatch')) {
       context.handle(_dispatchMeta,
@@ -3857,13 +4254,19 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
   /// primary key
   final int id;
 
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
   /// file path
   final String filePath;
 
   /// foreign key -> production order
   final int delivery;
   DeliveryImage(
-      {required this.id, required this.filePath, required this.delivery});
+      {required this.id,
+      required this.uuid,
+      required this.filePath,
+      required this.delivery});
   factory DeliveryImage.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
@@ -3872,6 +4275,7 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
     final stringType = db.typeSystem.forDartType<String>();
     return DeliveryImage(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       filePath: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}file_path'])!,
       delivery:
@@ -3882,6 +4286,7 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
     map['file_path'] = Variable<String>(filePath);
     map['delivery'] = Variable<int>(delivery);
     return map;
@@ -3890,6 +4295,7 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
   DeliveryImagesCompanion toCompanion(bool nullToAbsent) {
     return DeliveryImagesCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       filePath: Value(filePath),
       delivery: Value(delivery),
     );
@@ -3900,6 +4306,7 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DeliveryImage(
       id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
       filePath: serializer.fromJson<String>(json['filePath']),
       delivery: serializer.fromJson<int>(json['delivery']),
     );
@@ -3909,14 +4316,17 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
       'filePath': serializer.toJson<String>(filePath),
       'delivery': serializer.toJson<int>(delivery),
     };
   }
 
-  DeliveryImage copyWith({int? id, String? filePath, int? delivery}) =>
+  DeliveryImage copyWith(
+          {int? id, String? uuid, String? filePath, int? delivery}) =>
       DeliveryImage(
         id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
         filePath: filePath ?? this.filePath,
         delivery: delivery ?? this.delivery,
       );
@@ -3924,6 +4334,7 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
   String toString() {
     return (StringBuffer('DeliveryImage(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('filePath: $filePath, ')
           ..write('delivery: $delivery')
           ..write(')'))
@@ -3931,48 +4342,59 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(filePath.hashCode, delivery.hashCode)));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(uuid.hashCode, $mrjc(filePath.hashCode, delivery.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is DeliveryImage &&
           other.id == this.id &&
+          other.uuid == this.uuid &&
           other.filePath == this.filePath &&
           other.delivery == this.delivery);
 }
 
 class DeliveryImagesCompanion extends UpdateCompanion<DeliveryImage> {
   final Value<int> id;
+  final Value<String> uuid;
   final Value<String> filePath;
   final Value<int> delivery;
   const DeliveryImagesCompanion({
     this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
     this.filePath = const Value.absent(),
     this.delivery = const Value.absent(),
   });
   DeliveryImagesCompanion.insert({
     this.id = const Value.absent(),
+    required String uuid,
     required String filePath,
     required int delivery,
-  })  : filePath = Value(filePath),
+  })  : uuid = Value(uuid),
+        filePath = Value(filePath),
         delivery = Value(delivery);
   static Insertable<DeliveryImage> custom({
     Expression<int>? id,
+    Expression<String>? uuid,
     Expression<String>? filePath,
     Expression<int>? delivery,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
       if (filePath != null) 'file_path': filePath,
       if (delivery != null) 'delivery': delivery,
     });
   }
 
   DeliveryImagesCompanion copyWith(
-      {Value<int>? id, Value<String>? filePath, Value<int>? delivery}) {
+      {Value<int>? id,
+      Value<String>? uuid,
+      Value<String>? filePath,
+      Value<int>? delivery}) {
     return DeliveryImagesCompanion(
       id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
       filePath: filePath ?? this.filePath,
       delivery: delivery ?? this.delivery,
     );
@@ -3983,6 +4405,9 @@ class DeliveryImagesCompanion extends UpdateCompanion<DeliveryImage> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     if (filePath.present) {
       map['file_path'] = Variable<String>(filePath.value);
@@ -3997,6 +4422,7 @@ class DeliveryImagesCompanion extends UpdateCompanion<DeliveryImage> {
   String toString() {
     return (StringBuffer('DeliveryImagesCompanion(')
           ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
           ..write('filePath: $filePath, ')
           ..write('delivery: $delivery')
           ..write(')'))
@@ -4015,6 +4441,14 @@ class $DeliveryImagesTable extends DeliveryImages
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
   }
 
   final VerificationMeta _filePathMeta = const VerificationMeta('filePath');
@@ -4037,7 +4471,7 @@ class $DeliveryImagesTable extends DeliveryImages
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, filePath, delivery];
+  List<GeneratedColumn> get $columns => [id, uuid, filePath, delivery];
   @override
   $DeliveryImagesTable get asDslTable => this;
   @override
@@ -4051,6 +4485,12 @@ class $DeliveryImagesTable extends DeliveryImages
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
     }
     if (data.containsKey('file_path')) {
       context.handle(_filePathMeta,
@@ -4583,6 +5023,7 @@ class $InventoryPositionsTable extends InventoryPositions
 
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
+  late final $SynchroUpdatesTable synchroUpdates = $SynchroUpdatesTable(this);
   late final $SystemVariablesTable systemVariables =
       $SystemVariablesTable(this);
   late final $UsersTable users = $UsersTable(this);
@@ -4606,6 +5047,8 @@ abstract class _$Database extends GeneratedDatabase {
   late final $InventoriesTable inventories = $InventoriesTable(this);
   late final $InventoryPositionsTable inventoryPositions =
       $InventoryPositionsTable(this);
+  late final SynchroUpdatesDao synchroUpdatesDao =
+      SynchroUpdatesDao(this as Database);
   late final SystemVariablesDao systemVariablesDao =
       SystemVariablesDao(this as Database);
   late final UsersDao usersDao = UsersDao(this as Database);
@@ -4632,6 +5075,7 @@ abstract class _$Database extends GeneratedDatabase {
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+        synchroUpdates,
         systemVariables,
         users,
         packets,

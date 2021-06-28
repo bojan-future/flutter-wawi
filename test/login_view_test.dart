@@ -25,7 +25,7 @@ void main() {
 
   /// test for successful login with barcode
   testWidgets('LoginView Barcode Successful', (tester) async {
-    await pumpWidgetLoginView(tester, '12345');
+    await pumpWidgetLoginView(tester, '9999912345');
 
     await tester.tap(find.byIcon(Mdi.barcodeScan));
     await tester.pump();

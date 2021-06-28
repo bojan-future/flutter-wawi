@@ -3,6 +3,7 @@ import 'package:test/test.dart';
 import 'package:moor/ffi.dart';
 
 import 'package:kuda_lager/database/database.dart';
+import 'package:uuid/uuid.dart';
 
 void main() {
   Database? database;
@@ -18,6 +19,7 @@ void main() {
     final testBarcode = '013843323999643110006035103314112210121012';
 
     await database!.productsDao.createProduct(ProductsCompanion(
+        uuid: Value(Uuid().v4()),
         productName: Value('Test Product'),
         productNr: Value('500067502'),
         gtin1: Value(0),
@@ -29,6 +31,7 @@ void main() {
         await database!.productsDao.getProductByNumber('500067502');
 
     final id = await database!.packetsDao.createPacket(PacketsCompanion(
+      uuid: Value(Uuid().v4()),
       barcode: Value(testBarcode),
       lot: Value('20230122'),
       quantity: Value(600),
@@ -50,5 +53,12 @@ void main() {
 
     expect(dispatch.id, id);
     expect(dispatch.orderID, 1);
+  });
+
+  test('ignore synchroUpdates delete errors', () async {
+    final id =
+        await database!.synchroUpdatesDao.remove(9999999); //non existing id
+
+    expect(id, 0);
   });
 }

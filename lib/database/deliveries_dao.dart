@@ -1,5 +1,7 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:uuid/uuid.dart';
 import 'database.dart';
+import 'synchronizable.dart';
 
 part 'deliveries_dao.g.dart';
 
@@ -13,7 +15,18 @@ class DeliveriesDao extends DatabaseAccessor<Database>
 
   /// inserts given delivery into database
   Future<int> createDelivery(DeliveriesCompanion delivery) {
-    return into(deliveries).insert(delivery);
+    if (!delivery.uuid.present) {
+      delivery = DeliveriesCompanion(
+          uuid: Value(Uuid().v4()),
+          date: delivery.date,
+          pictureCount: delivery.pictureCount,
+          user: delivery.user);
+    }
+    return into(deliveries).insert(delivery).then((value) {
+      getDelivery(value).then(onUpdateData);
+
+      return value;
+    });
   }
 
   /// inserts given delivery into database
@@ -25,23 +38,39 @@ class DeliveriesDao extends DatabaseAccessor<Database>
 
   /// updates delivery in the database
   Future<bool> updateDelivery(Delivery delivery) {
-    return update(deliveries).replace(delivery);
+    return update(deliveries).replace(delivery).then((value) {
+      if (value) {
+        onUpdateData(delivery);
+      }
+      return value;
+    });
   }
 
   /// deletes delivery from the database
   Future<int> deleteDelivery(Delivery delivery) {
-    return delete(deliveries).delete(delivery);
+    return delete(deliveries).delete(delivery).then((value) {
+      if (value > 0) {
+        onDeleteData(delivery);
+      }
+      return value;
+    });
   }
 
   /// retrieves last 10 deliveries
   Future<List<Delivery>> getLast10Deliveries() async {
-    var countExp = deliveries.id.count();
-    final query = selectOnly(deliveries)..addColumns([countExp]);
-    var rowCount = await query.map((row) => row.read(countExp)).getSingle();
-    rowCount -= 10;
     final deliveryList = await (select(deliveries)
-          ..where((d) => d.id.isBiggerThanValue(rowCount)))
+          ..orderBy([(deliveries) => OrderingTerm.desc(deliveries.id)])
+          ..limit(10))
         .get();
     return deliveryList;
+  }
+
+  void onUpdateData(Delivery model) {
+    addSynchroUpdate(model.uuid, SyncType.delivery, model.toJsonString());
+  }
+
+  void onDeleteData(Delivery model) {
+    addSynchroUpdate(model.uuid, SyncType.delivery, model.toJsonString(),
+        deleted: true);
   }
 }

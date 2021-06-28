@@ -1,5 +1,7 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:uuid/uuid.dart';
 import 'database.dart';
+import 'synchronizable.dart';
 
 part 'dispatches_dao.g.dart';
 
@@ -13,17 +15,36 @@ class DispatchesDao extends DatabaseAccessor<Database>
 
   /// inserts given dispatch into database
   Future<int> createDispatch(DispatchesCompanion dispatch) {
-    return into(dispatches).insert(dispatch);
+    if (!dispatch.uuid.present) {
+      dispatch = DispatchesCompanion(
+        uuid: Value(Uuid().v4()),
+        orderID: dispatch.orderID,
+      );
+    }
+    return into(dispatches).insert(dispatch).then((value) {
+      getDispatchByID(value).then(onUpdateData);
+      return value;
+    });
   }
 
   /// updates dispatch in the database
   Future<bool> updateDispatch(Dispatch dispatch) {
-    return update(dispatches).replace(dispatch);
+    return update(dispatches).replace(dispatch).then((value) {
+      if (value) {
+        onUpdateData(dispatch);
+      }
+      return value;
+    });
   }
 
   /// deletes dispatch from the database
   Future<int> deleteDispatch(Dispatch dispatch) {
-    return delete(dispatches).delete(dispatch);
+    return delete(dispatches).delete(dispatch).then((value) {
+      if (value > 0) {
+        onDeleteData(dispatch);
+      }
+      return value;
+    });
   }
 
   /// returns the dispatch that has the requested id.
@@ -36,5 +57,14 @@ class DispatchesDao extends DatabaseAccessor<Database>
     } else {
       return dispatchList.first;
     }
+  }
+
+  void onUpdateData(Dispatch model) {
+    addSynchroUpdate(model.uuid, SyncType.dispatch, model.toJsonString());
+  }
+
+  void onDeleteData(Dispatch model) {
+    addSynchroUpdate(model.uuid, SyncType.dispatch, model.toJsonString(),
+        deleted: true);
   }
 }

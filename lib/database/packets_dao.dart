@@ -1,5 +1,7 @@
 import 'package:kuda_lager/database/products_dao.dart';
+import 'package:kuda_lager/database/synchronizable.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:uuid/uuid.dart';
 import 'database.dart';
 
 part 'packets_dao.g.dart';
@@ -13,17 +15,42 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
 
   /// inserts given packet into database
   Future<int> createPacket(PacketsCompanion packet) {
-    return into(packets).insert(packet, mode: InsertMode.replace);
+    if (!packet.uuid.present) {
+      packet = PacketsCompanion(
+        uuid: Value(Uuid().v4()),
+        barcode: packet.barcode,
+        product: packet.product,
+        lot: packet.lot,
+        productName: packet.productName,
+        productNr: packet.productNr,
+        quantity: packet.quantity,
+        wrapping: packet.wrapping,
+      );
+    }
+    return into(packets).insert(packet, mode: InsertMode.replace).then((value) {
+      getPacketWithId(value).then(onUpdateData);
+      return value;
+    });
   }
 
   /// updates packet in the database
   Future<bool> updatePacket(Packet packet) {
-    return update(packets).replace(packet);
+    return update(packets).replace(packet).then((success) {
+      if (success) {
+        onUpdateData(packet);
+      }
+      return success;
+    });
   }
 
   /// deletes packet from the database
   Future<int> deletePacket(Packet packet) {
-    return delete(packets).delete(packet);
+    return delete(packets).delete(packet).then((id) {
+      if (id > 0) {
+        onDeleteData(packet);
+      }
+      return id;
+    });
   }
 
   /// watcher for packet with given id
@@ -68,5 +95,14 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
       productNr: Value(product.productNr),
       //todo: other fields
     );
+  }
+
+  void onUpdateData(Packet model) {
+    addSynchroUpdate(model.uuid, SyncType.packet, model.toJsonString());
+  }
+
+  void onDeleteData(Packet model) {
+    addSynchroUpdate(model.uuid, SyncType.packet, model.toJsonString(),
+        deleted: true);
   }
 }

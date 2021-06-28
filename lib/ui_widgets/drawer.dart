@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kuda_lager/database/database.dart';
 import 'package:mdi/mdi.dart';
+import 'package:moor_db_viewer/moor_db_viewer.dart';
 
 import '../views/inventory_view.dart';
 import '../views/login_view.dart';
@@ -45,6 +47,15 @@ class DrawerWidget extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.settings),
             title: Text('Einstellungen'),
+          ),
+          ListTile(
+            leading: Icon(Mdi.buffer),
+            title: Text('Database Viewer'),
+            onTap: () {
+              var db = DatabaseFactory.getDatabaseInstance();
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => MoorDbViewer(db)));
+            },
           ),
           ListTile(
             leading: Icon(Icons.logout),

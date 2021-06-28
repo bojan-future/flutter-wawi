@@ -1,6 +1,8 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import 'database.dart';
+import 'synchronizable.dart';
 
 part 'production_material_dao.g.dart';
 
@@ -15,20 +17,42 @@ class ProductionMaterialsDao extends DatabaseAccessor<Database>
   /// inserts given dispatch into database
   Future<int> createProductionMaterial(
       ProductionMaterialsCompanion productionMaterial) {
+    if (!productionMaterial.uuid.present) {
+      productionMaterial = ProductionMaterialsCompanion(
+        uuid: Value(Uuid().v4()),
+        prodOrder: productionMaterial.prodOrder,
+        packet: productionMaterial.packet,
+      );
+    }
     return into(productionMaterials)
-        .insert(productionMaterial, mode: InsertMode.replace);
+        .insert(productionMaterial, mode: InsertMode.replace)
+        .then((value) {
+      getProductionMaterialByID(value).then(onUpdateData);
+      return value;
+    });
+    ;
   }
 
   /// updates dispatch in the database
-  Future<bool> updateProductionMaterial(
-      ProductionMaterialsCompanion productionMaterial) {
-    return update(productionMaterials).replace(productionMaterial);
+  Future<bool> updateProductionMaterial(ProductionMaterial productionMaterial) {
+    return update(productionMaterials)
+        .replace(productionMaterial)
+        .then((value) {
+      if (value) {
+        onUpdateData(productionMaterial);
+      }
+      return value;
+    });
   }
 
   /// deletes dispatch from the database
-  Future<int> deleteProductionMaterial(
-      ProductionMaterialsCompanion productionMaterial) {
-    return delete(productionMaterials).delete(productionMaterial);
+  Future<int> deleteProductionMaterial(ProductionMaterial productionMaterial) {
+    return delete(productionMaterials).delete(productionMaterial).then((value) {
+      if (value > 0) {
+        onDeleteData(productionMaterial);
+      }
+      return value;
+    });
   }
 
   /// retrieves dispatch with giver dispatch number OR
@@ -43,5 +67,16 @@ class ProductionMaterialsDao extends DatabaseAccessor<Database>
     } else {
       return productionMaterialList.first;
     }
+  }
+
+  void onUpdateData(ProductionMaterial model) {
+    addSynchroUpdate(
+        model.uuid, SyncType.production_material, model.toJsonString());
+  }
+
+  void onDeleteData(ProductionMaterial model) {
+    addSynchroUpdate(
+        model.uuid, SyncType.production_material, model.toJsonString(),
+        deleted: true);
   }
 }
