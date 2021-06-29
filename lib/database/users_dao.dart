@@ -16,6 +16,18 @@ class UsersDao extends DatabaseAccessor<Database> with _$UsersDaoMixin {
     return into(users).insert(user, mode: InsertMode.replace);
   }
 
+  /// retrieves user with given id
+  Future<User> getUserById(int id) async {
+    final usersList =
+        await (select(users)..where((u) => u.id.equals(id))).get();
+
+    if (usersList.isEmpty) {
+      throw RecordNotFoundException();
+    } else {
+      return usersList.first;
+    }
+  }
+
   /// retrieves user with given user number
   Future<User> getUserByNumber(String userNr) async {
     final usersList =

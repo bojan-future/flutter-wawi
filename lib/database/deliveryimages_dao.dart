@@ -59,12 +59,16 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
     });
   }
 
-// todo: encode image data as base64 into json
-  void onUpdateData(DeliveryImage model) {
+  void onUpdateData(DeliveryImage model) async {
+    var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
     json['data'] = File(model.filePath).readAsBytes().then(base64Encode);
+    json['delivery'] = await db.deliveriesDao
+        .getDelivery(model.delivery)
+        .then((delivery) => delivery.uuid, onError: (e) => 'error')
+        .catchError((e) => 'error');
 
-    addSynchroUpdate(model.uuid, SyncType.delivery_image, json.toString());
+    addSynchroUpdate(model.uuid, SyncType.delivery_image, jsonEncode(json));
   }
 
   void onDeleteData(DeliveryImage model) {

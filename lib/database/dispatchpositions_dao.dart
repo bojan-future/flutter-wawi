@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -66,9 +68,20 @@ class DispatchPositionsDao extends DatabaseAccessor<Database>
     }
   }
 
-  void onUpdateData(DispatchPosition model) {
-    addSynchroUpdate(
-        model.uuid, SyncType.dispatch_position, model.toJsonString());
+  Future<void> onUpdateData(DispatchPosition model) async {
+    var db = DatabaseFactory.getDatabaseInstance();
+    var json = model.toJson();
+
+    json['dispatch'] = await db.dispatchesDao
+        .getDispatchByID(model.dispatch)
+        .then((dispatch) => dispatch.uuid);
+
+    json['packet'] = await db.packetsDao
+        .getPacketWithId(model.packet)
+        .then((packet) => packet.uuid, onError: (e) => 'error')
+        .catchError((e) => 'error');
+
+    addSynchroUpdate(model.uuid, SyncType.dispatch_position, jsonEncode(json));
   }
 
   void onDeleteData(DispatchPosition model) {

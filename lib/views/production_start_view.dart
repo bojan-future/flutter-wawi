@@ -25,11 +25,6 @@ class _ProductionStartViewState extends State<ProductionStartView> {
   List<Packet> scanViewList = [];
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ScanListView(
       title: 'Produktion-Start',

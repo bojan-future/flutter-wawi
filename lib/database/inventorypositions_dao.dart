@@ -65,7 +65,19 @@ class InventoryPositionsDao extends DatabaseAccessor<Database>
     }
   }
 
-  void onUpdateData(InventoryPosition model) {
+  Future<void> onUpdateData(InventoryPosition model) async {
+    var db = DatabaseFactory.getDatabaseInstance();
+    var json = model.toJson();
+
+    json['inventory'] = await db.inventoriesDao
+        .getInventory(model.inventory)
+        .then((inventory) => inventory.uuid);
+
+    json['packet'] = await db.packetsDao
+        .getPacketWithId(model.packet)
+        .then((packet) => packet.uuid, onError: (e) => 'error')
+        .catchError((e) => 'error');
+
     addSynchroUpdate(
         model.uuid, SyncType.inventory_position, model.toJsonString());
   }

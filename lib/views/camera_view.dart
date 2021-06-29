@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
-import 'display_picture.dart';
+import '../ui_widgets/display_picture.dart';
 
 /// A screen that allows users to take a picture using a given camera
 class TakePictureScreen extends StatefulWidget {

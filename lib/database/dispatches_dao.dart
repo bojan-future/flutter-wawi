@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'database.dart';
@@ -59,8 +61,14 @@ class DispatchesDao extends DatabaseAccessor<Database>
     }
   }
 
-  void onUpdateData(Dispatch model) {
-    addSynchroUpdate(model.uuid, SyncType.dispatch, model.toJsonString());
+  Future<void> onUpdateData(Dispatch model) async {
+    var db = DatabaseFactory.getDatabaseInstance();
+    var json = model.toJson();
+    json['order'] = await db.ordersDao
+        .getOrderById(model.orderID)
+        .then((order) => order.uuid, onError: (e) => 'error');
+
+    addSynchroUpdate(model.uuid, SyncType.dispatch, jsonEncode(json));
   }
 
   void onDeleteData(Dispatch model) {

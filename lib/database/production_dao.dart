@@ -18,8 +18,21 @@ class ProductionDao extends DatabaseAccessor<Database>
     return into(productionOrders).insert(productionOrder);
   }
 
+  /// returns a production with given id
+  Future<ProductionOrder> getProductionById(int id) async {
+    return (select(productionOrders)..where((o) => o.id.equals(id)))
+        .getSingleOrNull()
+        .then((value) {
+      if (value != null) {
+        return value;
+      } else {
+        return Future.error(RecordNotFoundException());
+      }
+    });
+  }
+
   /// returns a production that has the requested barcode
-  Future<int> getProductionByBarcode(String prodBarcode) async {
+  Future<int> getProductionIdByBarcode(String prodBarcode) async {
     final productionList = await (select(productionOrders)
           ..where((o) => o.productionOrderBarcode.equals(prodBarcode)))
         .get();
@@ -36,7 +49,8 @@ class ProductionDao extends DatabaseAccessor<Database>
       Map<String, dynamic> json, String uuid) {
     return ProductionOrdersCompanion(
       uuid: Value(uuid),
-      productionOrderNr: Value(json['number']),
+      productionOrderNr: Value(json['productionOrderNr']),
+      productionOrderBarcode: Value(json['productionOrderBarcode']),
       //todo: other fields
     );
   }

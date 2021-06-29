@@ -95,6 +95,7 @@ class SynchroController {
   void _syncDown() async {
     var lastid =
         int.tryParse(await _database.systemVariablesDao.get('lastid')) ?? 0;
+    lastid = 0;
     var syncResponse = await _fetchSync(lastid);
     var highestid = lastid;
     if (syncResponse.success) {

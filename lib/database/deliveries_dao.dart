@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'database.dart';
@@ -65,8 +67,13 @@ class DeliveriesDao extends DatabaseAccessor<Database>
     return deliveryList;
   }
 
-  void onUpdateData(Delivery model) {
-    addSynchroUpdate(model.uuid, SyncType.delivery, model.toJsonString());
+  Future<void> onUpdateData(Delivery model) async {
+    var db = DatabaseFactory.getDatabaseInstance();
+    var json = model.toJson();
+    json['user'] = await db.usersDao
+        .getUserById(model.user)
+        .then((user) => user.uuid, onError: (e) => 'null');
+    addSynchroUpdate(model.uuid, SyncType.delivery, jsonEncode(json));
   }
 
   void onDeleteData(Delivery model) {

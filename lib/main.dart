@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kuda_lager/services/synchro_controller.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +14,7 @@ import 'business_logic/packets_controller.dart';
 import 'business_logic/production_controller.dart';
 import 'business_logic/scan_bottom_sheet_result.dart';
 import 'services/scanner_controller.dart';
+import 'services/synchro_controller.dart';
 import 'test_helpers/scannercontroller_mock.dart';
 import 'ui_widgets/alert_warnings.dart';
 import 'ui_widgets/drawer.dart';
@@ -25,9 +25,10 @@ import 'views/dispatch_view.dart';
 import 'views/login_view.dart';
 import 'views/production_completion_view.dart';
 import 'views/production_start_view.dart';
+import 'views/unwrap_view.dart';
 
 void main() {
-  FlutterError.onError = FlutterError.dumpErrorToConsole;
+  //FlutterError.onError = FlutterError.dumpErrorToConsole;
   WidgetsFlutterBinding.ensureInitialized();
 
   final synchroController = SynchroController();
@@ -70,13 +71,14 @@ void main() {
           // Barcode Lengths: 34 / 44 / 36 / 20
           create: (context) => ScannerControllerImplMock([
             '9999912345',
-            '147258369',
-            '1111222233334444555566667777888899',
-            '9999888877776666555544443333222211',
-            '9999666633338888555522227777444411',
-            '12345678901234567890123456789012345678901234',
-            '2222555588883333666699997777444411',
-            '12345678901234567890'
+            '01384332323999643110006035103314112210121012',
+            '01384332323999643110006035103314112210121012',
+            '5000675021234567890123456781000100',
+            '5000675021234567890123456782000100',
+            '5000675021234567890123456783000100',
+            '5000675021234567890123456784000100',
+            '5000675021234567890123456785000100',
+            '5000675021234567890123456786000100',
           ]),
         ),
         Provider<SynchroController>(create: (context) {
@@ -205,15 +207,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 bottomSheetText: "Außenpaket Scannen",
                 title: "Caddies Scannen",
                 col: Colors.deepOrange[300]!,
-                child: Scaffold(
-                  appBar: AppBar(
-                    backgroundColor: Colors.amber[300]!,
-                    title: Text('Caddies Scannen'),
-                  ),
-                  body: Center(child: Text('Coming soon...')),
-                ),
+                builder: (packetId) => UnwrapView(wrappingId: packetId),
                 onScanBottomSheet: (barcode) async {
-                  return ScanBottomSheetResult(barcode.isNotEmpty, 0);
+                  var packetsController =
+                      Provider.of<PacketsController>(context, listen: false);
+
+                  return packetsController
+                      .getPacketByBarcode(barcode)
+                      .then((packet) => ScanBottomSheetResult(true, packet.id),
+                          onError: (e) {
+                    buildAlert(context, "Achtung!",
+                            "Der gescannte Paket konnte nicht gefunden werden!")
+                        .show();
+                    ScanBottomSheetResult(barcode.isNotEmpty, 0);
+                  });
                 },
               ),
               SizedBox(height: 10),

@@ -11,7 +11,7 @@ class ProductionController {
 
   /// returns a production order that has the requested barcode
   Future<int> getProductionByBarcode(String barcode) async {
-    return database.productionDao.getProductionByBarcode(barcode);
+    return database.productionDao.getProductionIdByBarcode(barcode);
   }
 
   // ignore: lines_longer_than_80_chars

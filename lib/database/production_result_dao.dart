@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -66,9 +68,20 @@ class ProductionResultsDao extends DatabaseAccessor<Database>
     }
   }
 
-  void onUpdateData(ProductionResult model) {
-    addSynchroUpdate(
-        model.uuid, SyncType.production_result, model.toJsonString());
+  Future<void> onUpdateData(ProductionResult model) async {
+    var db = DatabaseFactory.getDatabaseInstance();
+    var json = model.toJson();
+
+    json['prodOrder'] = await db.productionDao
+        .getProductionById(model.prodOrder)
+        .then((prodOrder) => prodOrder.uuid);
+
+    json['packet'] = await db.packetsDao
+        .getPacketWithId(model.packet)
+        .then((packet) => packet.uuid, onError: (e) => 'error')
+        .catchError((e) => 'error');
+
+    addSynchroUpdate(model.uuid, SyncType.production_result, jsonEncode(json));
   }
 
   void onDeleteData(ProductionResult model) {

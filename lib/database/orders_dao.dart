@@ -26,23 +26,30 @@ class OrdersDao extends DatabaseAccessor<Database> with _$OrdersDaoMixin {
     return delete(orders).delete(order);
   }
 
-  /// retrieves order with giver order number OR
-  /// creates a new one if order with given number does not exist
-  Future<Order> getOrderByNumber(String orderNumber) async {
-    final orderList = await (select(orders)
-          ..where((o) => o.orderNr.equals(orderNumber)))
-        .get();
+  /// retrieves order with given id
+  Future<Order> getOrderById(int id) {
+    return (select(orders)..where((o) => o.id.equals(id)))
+        .getSingleOrNull()
+        .then((value) {
+      if (value != null) {
+        return value;
+      } else {
+        return Future.error(RecordNotFoundException());
+      }
+    });
+  }
 
-    if (orderList.isEmpty) {
-      //insert new order with given order number and return it
-      final newId =
-          await createOrder(OrdersCompanion(orderNr: Value(orderNumber)));
-      final newOrderList =
-          await (select(orders)..where((o) => o.id.equals(newId))).get();
-      return newOrderList.first;
-    } else {
-      return orderList.first;
-    }
+  /// retrieves order with given order number
+  Future<Order> getOrderByNumber(String orderNumber) async {
+    return (select(orders)..where((o) => o.orderNr.equals(orderNumber)))
+        .getSingleOrNull()
+        .then((value) {
+      if (value != null) {
+        return value;
+      } else {
+        return Future.error(RecordNotFoundException());
+      }
+    });
   }
 
   /// returns an order that has the requested barcode
