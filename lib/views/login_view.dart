@@ -10,7 +10,6 @@ import '../ui_widgets/alert_warnings.dart';
 
 /// Widget representing Login Screen
 class LoginView extends StatefulWidget {
-  static const routeName = '/auth';
   @override
   _LoginViewState createState() => _LoginViewState();
 }

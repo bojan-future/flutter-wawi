@@ -7,7 +7,10 @@ import '../ui_widgets/display_picture.dart';
 
 /// A screen that allows users to take a picture using a given camera
 class TakePictureScreen extends StatefulWidget {
+  /// handle to the user camera
   final CameraDescription camera;
+
+  /// id of the parent delivery
   final int deliveryID;
 
   ///

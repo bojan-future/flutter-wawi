@@ -14,13 +14,13 @@ class DeliveryController {
   final database = DatabaseFactory.getDatabaseInstance();
 
   final BuildContext _context;
-  late AuthController authController;
-  late dynamic userID;
+  late AuthController _authController;
+  late dynamic _userID;
 
   /// Delivery Controller
   DeliveryController(this._context) {
-    authController = Provider.of<AuthController>(_context, listen: false);
-    userID = authController.getUserId();
+    _authController = Provider.of<AuthController>(_context, listen: false);
+    _userID = _authController.getUserId();
   }
 
   /// add delivery
@@ -28,7 +28,7 @@ class DeliveryController {
     var now = DateTime.now();
     var formattedDate = DateFormat('dd.MM.yyyy / kk:mm').format(now);
     return database.deliveriesDao.createDelivery(DeliveriesCompanion(
-        user: Value(userID),
+        user: Value(_userID),
         date: Value(formattedDate),
         pictureCount: Value(0)));
   }

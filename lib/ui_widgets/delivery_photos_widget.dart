@@ -18,11 +18,22 @@ class DeliveryImagesWidget extends StatefulWidget {
     required this.onPhotoFinished,
   }) : super(key: key);
 
+  /// Screen title
   final String title;
+
+  /// header color
   final Color color;
+
+  /// count of elements in the list
   final int itemCount;
+
+  /// list item builder
   final IndexedWidgetBuilder itemBuilder;
+
+  /// id of the parent delivery
   final int deliveryID;
+
+  /// callback executed when photo has been made
   final VoidCallback onPhotoFinished;
 
   @override

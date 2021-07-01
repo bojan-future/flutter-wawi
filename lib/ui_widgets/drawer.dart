@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kuda_lager/database/database.dart';
 import 'package:mdi/mdi.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 
+import '../database/database.dart';
 import '../views/inventory_view.dart';
 import '../views/login_view.dart';
 

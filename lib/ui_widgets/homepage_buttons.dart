@@ -30,6 +30,7 @@ class TextButtonWidget extends StatelessWidget {
   /// defines what happens if something was scanned in the bottom sheet
   final Future<ScanBottomSheetResult> Function(String)? onScanBottomSheet;
 
+  ///
   const TextButtonWidget(
       {required this.icon,
       required this.buttonLabel,

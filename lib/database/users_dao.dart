@@ -1,5 +1,4 @@
 import 'package:moor_flutter/moor_flutter.dart';
-import 'package:uuid/uuid.dart';
 import 'database.dart';
 
 part 'users_dao.g.dart';

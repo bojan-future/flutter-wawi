@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
-import '../business_logic/delivery_controller.dart';
 import '../business_logic/file_controller.dart';
 
 /// A widget that displays the picture taken by the user

@@ -12,7 +12,7 @@ class FileController {
 
   /// get images from a given delivery
   Stream<List<DeliveryImage>> getDeliveryImages(int deliveryID) {
-    return database.deliveryImagesDao.getDeliveryImages(deliveryID);
+    return database.deliveryImagesDao.watchDeliveryImages(deliveryID);
   }
 
   /// create images for a given delivery

@@ -32,7 +32,6 @@ class ProductionMaterialsDao extends DatabaseAccessor<Database>
       getProductionMaterialByID(value).then(onUpdateData);
       return value;
     });
-    ;
   }
 
   /// updates dispatch in the database
@@ -71,6 +70,7 @@ class ProductionMaterialsDao extends DatabaseAccessor<Database>
     }
   }
 
+  ///hook executed when record has been changed
   Future<void> onUpdateData(ProductionMaterial model) async {
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
@@ -88,6 +88,7 @@ class ProductionMaterialsDao extends DatabaseAccessor<Database>
         model.uuid, SyncType.production_material, jsonEncode(json));
   }
 
+  ///hook executed when record has been deleted
   void onDeleteData(ProductionMaterial model) {
     addSynchroUpdate(
         model.uuid, SyncType.production_material, model.toJsonString(),

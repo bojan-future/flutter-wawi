@@ -68,6 +68,7 @@ class ProductionResultsDao extends DatabaseAccessor<Database>
     }
   }
 
+  ///hook executed when record has been changed
   Future<void> onUpdateData(ProductionResult model) async {
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
@@ -84,6 +85,7 @@ class ProductionResultsDao extends DatabaseAccessor<Database>
     addSynchroUpdate(model.uuid, SyncType.production_result, jsonEncode(json));
   }
 
+  ///hook executed when record has been deleted
   void onDeleteData(ProductionResult model) {
     addSynchroUpdate(
         model.uuid, SyncType.production_result, model.toJsonString(),

@@ -1,5 +1,4 @@
 import 'package:moor_flutter/moor_flutter.dart';
-import 'package:uuid/uuid.dart';
 import 'database.dart';
 
 part 'production_dao.g.dart';
@@ -44,7 +43,8 @@ class ProductionDao extends DatabaseAccessor<Database>
     }
   }
 
-  ///parses synchronization json object and returns ProductionOrdersCompanion for insert
+  ///parses synchronization json object
+  ///and returns ProductionOrdersCompanion for insert
   static ProductionOrdersCompanion companionFromSyncJson(
       Map<String, dynamic> json, String uuid) {
     return ProductionOrdersCompanion(

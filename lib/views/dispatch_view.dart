@@ -15,6 +15,7 @@ class DispatchView extends StatefulWidget {
     required this.orderID,
   }) : super(key: key);
 
+  /// linked order
   final int orderID;
 
   @override

@@ -1,14 +1,18 @@
-import 'package:kuda_lager/database/synchroupdates_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 import 'database.dart';
 
+/// add function to all DAOs
 extension AddSynchroImpl on DatabaseAccessor<Database> {
+  /// insert synchronization packet into database
   void addSynchroUpdate(String uuid, int type, String dataJson,
       {bool deleted = false}) {
     db.synchroUpdatesDao.add(uuid, type, dataJson, deleted: deleted);
   }
 }
+
+// ignore_for_file: public_member_api_docs
+// ignore_for_file: constant_identifier_names
 
 ///enum-like class for type mapping
 class SyncType {
@@ -22,6 +26,7 @@ class SyncType {
 
   //outgoing
   static const int delivery = 187;
+
   static const int delivery_position = 188;
   static const int delivery_image = 39;
   static const int dispatch = 154;

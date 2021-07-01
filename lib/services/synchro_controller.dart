@@ -10,28 +10,30 @@ import '../database/production_dao.dart';
 import '../database/products_dao.dart';
 import '../database/synchronizable.dart';
 
+///
 class SynchroController {
   final Database _database;
   final Cron _cron;
-  bool _sync_in_progress = false;
+  bool _syncInProgress = false;
 
   ///default constructor
   SynchroController()
       : _database = DatabaseFactory.getDatabaseInstance(),
         _cron = Cron();
 
+  /// starts scheduled synchronization (every 3 minutes)
   void initSchedule() {
     _cron.schedule(Schedule.parse('*/3 * * * *'), synchronize);
   }
 
   /// synchronize local database with the server
   Future<void> synchronize() async {
-    if (_sync_in_progress) return;
-    _sync_in_progress = true;
+    if (_syncInProgress) return;
+    _syncInProgress = true;
     _syncDown();
 
     _syncUp();
-    _sync_in_progress = false;
+    _syncInProgress = false;
   }
 
   Future<SyncResponse> _fetchSync(int lastid) async {
@@ -101,7 +103,7 @@ class SynchroController {
     if (syncResponse.success) {
       for (var sync in syncResponse.syncs) {
         _updateDatabase(sync);
-        highestid = max(highestid, sync.id ?? 0);
+        highestid = max(highestid, sync.id);
       }
     }
     _database.systemVariablesDao.set('lastid', highestid.toString());
@@ -130,34 +132,55 @@ class SynchroController {
   }
 }
 
+/// represents answer from the server, containing synchronization packets
 class SyncResponse {
+  /// was call successfull
   final bool success;
+
+  /// list of synchronization packets
   final List<Sync> syncs;
 
   ///default constructor
   SyncResponse({required this.success, required this.syncs});
 
+  /// creates SyncResponse from raw JSON
   factory SyncResponse.fromJson(Map<String, dynamic> json) {
-    List<dynamic> syncs_raw = json['syncs'];
+    List<dynamic> syncsRaw = json['syncs'];
     return SyncResponse(
         success: json['success'],
-        syncs: syncs_raw.map((json) => Sync.fromJson(json)).toList());
+        syncs: syncsRaw.map((json) => Sync.fromJson(json)).toList());
   }
 }
 
+/// Represents incoming Synchronization Packet
 class Sync {
-  final int? id;
+  /// synchronization id
+  final int id;
+
+  /// record uuid
   final String uuid;
+
+  /// customer licence
   final String? lic;
+
+  /// user identification
   final String? userid;
+
+  /// source identification
   final String? source;
+
+  /// record type (same as table number in Future Factory)
   final int type;
+
+  /// true if record is to be deleted
   final bool deleted;
+
+  /// record detail data
   final Map<String, dynamic> data; //json
 
   ///default constructor
   Sync(
-      {this.id,
+      {required this.id,
       required this.uuid,
       this.lic,
       this.userid,

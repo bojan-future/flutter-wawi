@@ -67,6 +67,7 @@ class DeliveriesDao extends DatabaseAccessor<Database>
     return deliveryList;
   }
 
+  ///hook executed when record has been changed
   Future<void> onUpdateData(Delivery model) async {
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
@@ -76,6 +77,7 @@ class DeliveriesDao extends DatabaseAccessor<Database>
     addSynchroUpdate(model.uuid, SyncType.delivery, jsonEncode(json));
   }
 
+  ///hook executed when record has been deleted
   void onDeleteData(Delivery model) {
     addSynchroUpdate(model.uuid, SyncType.delivery, model.toJsonString(),
         deleted: true);

@@ -11,7 +11,7 @@ class SystemVariablesDao extends DatabaseAccessor<Database>
   ///
   SystemVariablesDao(Database db) : super(db);
 
-  /// retrieves user with given user number
+  /// retrieve value with given key
   Future<String> get(String name) async {
     return (select(systemVariables)..where((v) => v.name.equals(name)))
         .getSingleOrNull()
@@ -24,6 +24,7 @@ class SystemVariablesDao extends DatabaseAccessor<Database>
     });
   }
 
+  /// set given key to the given value
   Future<void> set(String name, String value) async {
     into(systemVariables).insert(
         SystemVariablesCompanion(name: Value(name), value: Value(value)),

@@ -1,5 +1,4 @@
 import 'package:moor_flutter/moor_flutter.dart';
-import 'package:uuid/uuid.dart';
 import 'database.dart';
 
 part 'products_dao.g.dart';
@@ -88,11 +87,11 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
       uuid: Value(uuid),
       productNr: Value(json['number'] ?? ''),
       productName: Value(json['name'] ?? ''),
-      gtin1: Value(int.parse(json['gtin'] ?? '0')),
-      gtin2: Value(int.parse(json['gtin2'] ?? '0')),
-      gtin3: Value(int.parse(json['gtin3'] ?? '0')),
-      gtin4: Value(int.parse(json['gtin4'] ?? '0')),
-      gtin5: Value(int.parse(json['gtin5'] ?? '0')),
+      gtin1: Value(int.tryParse(json['gtin'] ?? '0') ?? 0),
+      gtin2: Value(int.tryParse(json['gtin2'] ?? '0') ?? 0),
+      gtin3: Value(int.tryParse(json['gtin3'] ?? '0') ?? 0),
+      gtin4: Value(int.tryParse(json['gtin4'] ?? '0') ?? 0),
+      gtin5: Value(int.tryParse(json['gtin5'] ?? '0') ?? 0),
       //todo: other fields
     );
   }

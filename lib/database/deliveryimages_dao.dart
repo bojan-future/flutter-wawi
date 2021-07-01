@@ -22,14 +22,15 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
         .getSingle();
   }
 
-  /// retrieves last 10 deliveries
-  Stream<List<DeliveryImage>> getDeliveryImages(int deliveryID) {
+  /// observer for images of one specific delivery
+  Stream<List<DeliveryImage>> watchDeliveryImages(int deliveryID) {
     final imageList = (select(deliveryImages)
           ..where((p) => p.delivery.equals(deliveryID)))
         .watch();
     return imageList;
   }
 
+  /// retrieve by id
   Future<DeliveryImage> getDeliveryImageById(int id) {
     return (select(deliveryImages)..where((p) => p.id.equals(id))).getSingle();
   }
@@ -59,10 +60,11 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
     });
   }
 
+  ///hook executed when record has been changed
   void onUpdateData(DeliveryImage model) async {
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
-    json['data'] = File(model.filePath).readAsBytes().then(base64Encode);
+    json['data'] = await File(model.filePath).readAsBytes().then(base64Encode);
     json['delivery'] = await db.deliveriesDao
         .getDelivery(model.delivery)
         .then((delivery) => delivery.uuid, onError: (e) => 'error')
@@ -71,6 +73,7 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
     addSynchroUpdate(model.uuid, SyncType.delivery_image, jsonEncode(json));
   }
 
+  ///hook executed when record has been deleted
   void onDeleteData(DeliveryImage model) {
     addSynchroUpdate(model.uuid, SyncType.delivery_image, model.toJsonString(),
         deleted: true);

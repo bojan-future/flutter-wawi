@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:kuda_lager/database/products_dao.dart';
-import 'package:kuda_lager/database/synchronizable.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:uuid/uuid.dart';
+
 import 'database.dart';
+import 'synchronizable.dart';
 
 part 'packets_dao.g.dart';
 
@@ -99,6 +99,7 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
     );
   }
 
+  ///hook executed when record has been changed
   Future<void> onUpdateData(Packet model) async {
     var json = model.toJson();
     json['wrapping'] = await getPacketWithId(model.wrapping!)
@@ -108,6 +109,7 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
     addSynchroUpdate(model.uuid, SyncType.packet, jsonEncode(json));
   }
 
+  ///hook executed when record has been deleted
   void onDeleteData(Packet model) {
     addSynchroUpdate(model.uuid, SyncType.packet, model.toJsonString(),
         deleted: true);

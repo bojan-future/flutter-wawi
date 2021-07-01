@@ -16,10 +16,19 @@ class ScanListView extends StatefulWidget {
     required this.itemBuilder,
   }) : super(key: key);
 
+  /// Screen Title
   final String title;
+
+  /// Titlebar color
   final Color color;
+
+  /// callback executed when a barcode has been scanned
   final void Function(String) onScan;
+
+  /// count of items in the list
   final int itemCount;
+
+  /// list item builder
   final IndexedWidgetBuilder itemBuilder;
 
   @override

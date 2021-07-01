@@ -68,6 +68,7 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
     }
   }
 
+  ///hook executed when record has been changed
   Future<void> onUpdateData(DeliveryPosition model) async {
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
@@ -83,6 +84,7 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
     addSynchroUpdate(model.uuid, SyncType.delivery_position, jsonEncode(json));
   }
 
+  ///hook executed when record has been deleted
   void onDeleteData(DeliveryPosition model) {
     addSynchroUpdate(
         model.uuid, SyncType.delivery_position, model.toJsonString(),

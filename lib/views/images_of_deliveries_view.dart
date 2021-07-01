@@ -16,6 +16,7 @@ class DeliveryImagesView extends StatefulWidget {
     required this.deliveryId,
   }) : super(key: key);
 
+  /// parent delivery
   final int deliveryId;
 
   @override

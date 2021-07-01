@@ -26,6 +26,7 @@ class InventoriesDao extends DatabaseAccessor<Database>
     });
   }
 
+  /// retrieve record by id
   Future<Inventory> getInventory(int id) {
     return (select(inventories)..where((t) => t.id.equals(id))).getSingle();
   }
@@ -50,10 +51,12 @@ class InventoriesDao extends DatabaseAccessor<Database>
     });
   }
 
+  ///hook executed when record has been changed
   void onUpdateData(Inventory model) {
     addSynchroUpdate(model.uuid, SyncType.inventory, model.toJsonString());
   }
 
+  ///hook executed when record has been deleted
   void onDeleteData(Inventory model) {
     addSynchroUpdate(model.uuid, SyncType.inventory, model.toJsonString(),
         deleted: true);

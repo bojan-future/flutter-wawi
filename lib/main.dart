@@ -115,9 +115,6 @@ class MyApp extends StatelessWidget {
 /// Home screen
 class MyHomePage extends StatefulWidget {
   ///
-  static const routeName = '/homepage';
-
-  ///
   MyHomePage({Key? key}) : super(key: key);
 
   @override

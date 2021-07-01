@@ -1,10 +1,14 @@
-import  '../services/scanner_controller.dart';
+import '../services/scanner_controller.dart';
 
+/// ScannerController Mock Implementation for test Purposes
 class ScannerControllerImplMock implements ScannerController {
+  /// init with list of barcodes that are sent when onScan is called
   ScannerControllerImplMock(List<String> testBarcodes)
       : _testBarcodes = testBarcodes;
 
   final List<String> _testBarcodes;
+
+  /// add further test barcodes to the list
   void addTestBarcodes(List<String> barcodeList) {
     _testBarcodes.addAll(barcodeList);
   }

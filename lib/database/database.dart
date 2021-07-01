@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:kuda_lager/services/synchro_controller.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -16,14 +15,28 @@ import 'production_dao.dart';
 import 'production_material_dao.dart';
 import 'production_result_dao.dart';
 import 'products_dao.dart';
-import 'users_dao.dart';
-import 'systemvariables_dao.dart';
 import 'synchroupdates_dao.dart';
+import 'systemvariables_dao.dart';
+import 'users_dao.dart';
 
 part 'database.exception.dart';
 part 'database.g.dart';
 
+///used for code generation on script-side
+class FutureTableNumber {
+  ///
+  const FutureTableNumber({required int table, required int guidColumn});
+}
+
+///used for code generation on script-side
+class FutureColumnNumber {
+  ///
+  const FutureColumnNumber(int column);
+}
+
 @DataClassName('SynchroUpdate')
+
+/// Represents one Synchronisation Packet for sending to the server
 class SynchroUpdates extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
@@ -54,9 +67,13 @@ extension MapConversion on SynchroUpdate {
 }
 
 @DataClassName('SystemVariable')
+
+///various Variables that need Persistance
 class SystemVariables extends Table {
+  /// key
   TextColumn get name => text().customConstraint('UNIQUE')();
 
+  /// value
   TextColumn get value => text()();
 }
 
@@ -114,6 +131,7 @@ class Packets extends Table {
 @DataClassName('Product')
 
 /// represents a product as part of a package
+@FutureTableNumber(table: 90, guidColumn: 156)
 class Products extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
@@ -122,24 +140,31 @@ class Products extends Table {
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// product number
+  @FutureColumnNumber(5)
   TextColumn get productNr => text()();
 
   /// product name
+  /// @FutureColumnNumber(6)
   TextColumn get productName => text()();
 
   /// gtin 1
+  /// @FutureColumnNumber(8)
   IntColumn get gtin1 => integer()();
 
   /// gtin 2
+  /// @FutureColumnNumber(49)
   IntColumn get gtin2 => integer()();
 
   /// gtin 3
+  /// @FutureColumnNumber(50)
   IntColumn get gtin3 => integer()();
 
   /// gtin 4
+  /// @FutureColumnNumber(163)
   IntColumn get gtin4 => integer()();
 
   /// gtin 5
+  /// @FutureColumnNumber(164)
   IntColumn get gtin5 => integer()();
 }
 
@@ -427,7 +452,7 @@ class Database extends _$Database {
       },
       onUpgrade: (m, from, to) async {},
       beforeOpen: (details) async {
-        if (details.wasCreated || kDebugMode) {
+        if (details.wasCreated /* || kDebugMode*/) {
           if (kDebugMode) {
             final m = createMigrator(); // changed to this
             for (final table in allTables) {

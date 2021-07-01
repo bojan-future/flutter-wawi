@@ -61,6 +61,7 @@ class DispatchesDao extends DatabaseAccessor<Database>
     }
   }
 
+  ///hook executed when record has been changed
   Future<void> onUpdateData(Dispatch model) async {
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
@@ -71,6 +72,7 @@ class DispatchesDao extends DatabaseAccessor<Database>
     addSynchroUpdate(model.uuid, SyncType.dispatch, jsonEncode(json));
   }
 
+  ///hook executed when record has been deleted
   void onDeleteData(Dispatch model) {
     addSynchroUpdate(model.uuid, SyncType.dispatch, model.toJsonString(),
         deleted: true);
