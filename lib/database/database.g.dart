@@ -32,16 +32,17 @@ class SynchroUpdate extends DataClass implements Insertable<SynchroUpdate> {
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
-    final boolType = db.typeSystem.forDartType<bool>();
     return SynchroUpdate(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      type: intType.mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
-      deleted:
-          boolType.mapFromDatabaseResponse(data['${effectivePrefix}deleted'])!,
-      data: stringType.mapFromDatabaseResponse(data['${effectivePrefix}data'])!,
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      type: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
+      deleted: const BoolType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}deleted'])!,
+      data: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}data'])!,
     );
   }
   @override
@@ -115,7 +116,7 @@ class SynchroUpdate extends DataClass implements Insertable<SynchroUpdate> {
       $mrjc(uuid.hashCode,
           $mrjc(type.hashCode, $mrjc(deleted.hashCode, data.hashCode)))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is SynchroUpdate &&
           other.id == this.id &&
@@ -314,8 +315,8 @@ class $SynchroUpdatesTable extends SynchroUpdates
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   SynchroUpdate map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return SynchroUpdate.fromData(data, _db, prefix: effectivePrefix);
+    return SynchroUpdate.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -325,18 +326,21 @@ class $SynchroUpdatesTable extends SynchroUpdates
 }
 
 class SystemVariable extends DataClass implements Insertable<SystemVariable> {
+  /// key
   final String name;
+
+  /// value
   final String value;
   SystemVariable({required this.name, required this.value});
   factory SystemVariable.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final stringType = db.typeSystem.forDartType<String>();
     return SystemVariable(
-      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name'])!,
-      value:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}value'])!,
+      name: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}name'])!,
+      value: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}value'])!,
     );
   }
   @override
@@ -387,7 +391,7 @@ class SystemVariable extends DataClass implements Insertable<SystemVariable> {
   @override
   int get hashCode => $mrjf($mrjc(name.hashCode, value.hashCode));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is SystemVariable &&
           other.name == this.name &&
@@ -502,8 +506,8 @@ class $SystemVariablesTable extends SystemVariables
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
   SystemVariable map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return SystemVariable.fromData(data, _db, prefix: effectivePrefix);
+    return SystemVariable.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -532,14 +536,14 @@ class User extends DataClass implements Insertable<User> {
   factory User.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return User(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      barcode: stringType
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      barcode: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}barcode'])!,
-      userNr: stringType
+      userNr: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}user_nr'])!,
     );
   }
@@ -605,7 +609,7 @@ class User extends DataClass implements Insertable<User> {
   int get hashCode => $mrjf($mrjc(id.hashCode,
       $mrjc(uuid.hashCode, $mrjc(barcode.hashCode, userNr.hashCode))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is User &&
           other.id == this.id &&
@@ -773,8 +777,8 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   User map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return User.fromData(data, _db, prefix: effectivePrefix);
+    return User.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -824,25 +828,25 @@ class Packet extends DataClass implements Insertable<Packet> {
   factory Packet.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
-    final doubleType = db.typeSystem.forDartType<double>();
     return Packet(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      barcode: stringType
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      barcode: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}barcode'])!,
-      lot: stringType.mapFromDatabaseResponse(data['${effectivePrefix}lot'])!,
-      quantity: doubleType
+      lot: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}lot'])!,
+      quantity: const RealType()
           .mapFromDatabaseResponse(data['${effectivePrefix}quantity'])!,
-      product:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}product'])!,
-      productName: stringType
+      product: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}product'])!,
+      productName: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}product_name'])!,
-      productNr: stringType
+      productNr: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}product_nr'])!,
-      wrapping:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}wrapping']),
+      wrapping: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}wrapping']),
     );
   }
   @override
@@ -964,7 +968,7 @@ class Packet extends DataClass implements Insertable<Packet> {
                               $mrjc(productNr.hashCode,
                                   wrapping.hashCode)))))))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Packet &&
           other.id == this.id &&
@@ -1286,8 +1290,8 @@ class $PacketsTable extends Packets with TableInfo<$PacketsTable, Packet> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Packet map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Packet.fromData(data, _db, prefix: effectivePrefix);
+    return Packet.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -1307,21 +1311,27 @@ class Product extends DataClass implements Insertable<Product> {
   final String productNr;
 
   /// product name
+  /// @FutureColumnNumber(6)
   final String productName;
 
   /// gtin 1
+  /// @FutureColumnNumber(8)
   final int gtin1;
 
   /// gtin 2
+  /// @FutureColumnNumber(49)
   final int gtin2;
 
   /// gtin 3
+  /// @FutureColumnNumber(50)
   final int gtin3;
 
   /// gtin 4
+  /// @FutureColumnNumber(163)
   final int gtin4;
 
   /// gtin 5
+  /// @FutureColumnNumber(164)
   final int gtin5;
   Product(
       {required this.id,
@@ -1336,20 +1346,25 @@ class Product extends DataClass implements Insertable<Product> {
   factory Product.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return Product(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      productNr: stringType
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      productNr: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}product_nr'])!,
-      productName: stringType
+      productName: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}product_name'])!,
-      gtin1: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin1'])!,
-      gtin2: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin2'])!,
-      gtin3: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin3'])!,
-      gtin4: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin4'])!,
-      gtin5: intType.mapFromDatabaseResponse(data['${effectivePrefix}gtin5'])!,
+      gtin1: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}gtin1'])!,
+      gtin2: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}gtin2'])!,
+      gtin3: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}gtin3'])!,
+      gtin4: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}gtin4'])!,
+      gtin5: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}gtin5'])!,
     );
   }
   @override
@@ -1465,7 +1480,7 @@ class Product extends DataClass implements Insertable<Product> {
                           $mrjc(gtin3.hashCode,
                               $mrjc(gtin4.hashCode, gtin5.hashCode)))))))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Product &&
           other.id == this.id &&
@@ -1787,8 +1802,8 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Product map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Product.fromData(data, _db, prefix: effectivePrefix);
+    return Product.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -1809,28 +1824,23 @@ class Order extends DataClass implements Insertable<Order> {
 
   /// order barcode
   final String orderBarcode;
-
-  /// foreign key -> user
-  final int? user;
   Order(
       {required this.id,
       required this.uuid,
       required this.orderNr,
-      required this.orderBarcode,
-      this.user});
+      required this.orderBarcode});
   factory Order.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return Order(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      orderNr: stringType
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      orderNr: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}order_nr'])!,
-      orderBarcode: stringType
+      orderBarcode: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}order_barcode'])!,
-      user: intType.mapFromDatabaseResponse(data['${effectivePrefix}user']),
     );
   }
   @override
@@ -1840,9 +1850,6 @@ class Order extends DataClass implements Insertable<Order> {
     map['uuid'] = Variable<String>(uuid);
     map['order_nr'] = Variable<String>(orderNr);
     map['order_barcode'] = Variable<String>(orderBarcode);
-    if (!nullToAbsent || user != null) {
-      map['user'] = Variable<int?>(user);
-    }
     return map;
   }
 
@@ -1852,7 +1859,6 @@ class Order extends DataClass implements Insertable<Order> {
       uuid: Value(uuid),
       orderNr: Value(orderNr),
       orderBarcode: Value(orderBarcode),
-      user: user == null && nullToAbsent ? const Value.absent() : Value(user),
     );
   }
 
@@ -1864,7 +1870,6 @@ class Order extends DataClass implements Insertable<Order> {
       uuid: serializer.fromJson<String>(json['uuid']),
       orderNr: serializer.fromJson<String>(json['orderNr']),
       orderBarcode: serializer.fromJson<String>(json['orderBarcode']),
-      user: serializer.fromJson<int?>(json['user']),
     );
   }
   @override
@@ -1875,22 +1880,16 @@ class Order extends DataClass implements Insertable<Order> {
       'uuid': serializer.toJson<String>(uuid),
       'orderNr': serializer.toJson<String>(orderNr),
       'orderBarcode': serializer.toJson<String>(orderBarcode),
-      'user': serializer.toJson<int?>(user),
     };
   }
 
   Order copyWith(
-          {int? id,
-          String? uuid,
-          String? orderNr,
-          String? orderBarcode,
-          int? user}) =>
+          {int? id, String? uuid, String? orderNr, String? orderBarcode}) =>
       Order(
         id: id ?? this.id,
         uuid: uuid ?? this.uuid,
         orderNr: orderNr ?? this.orderNr,
         orderBarcode: orderBarcode ?? this.orderBarcode,
-        user: user ?? this.user,
       );
   @override
   String toString() {
@@ -1898,28 +1897,22 @@ class Order extends DataClass implements Insertable<Order> {
           ..write('id: $id, ')
           ..write('uuid: $uuid, ')
           ..write('orderNr: $orderNr, ')
-          ..write('orderBarcode: $orderBarcode, ')
-          ..write('user: $user')
+          ..write('orderBarcode: $orderBarcode')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          uuid.hashCode,
-          $mrjc(
-              orderNr.hashCode, $mrjc(orderBarcode.hashCode, user.hashCode)))));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(uuid.hashCode, $mrjc(orderNr.hashCode, orderBarcode.hashCode))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Order &&
           other.id == this.id &&
           other.uuid == this.uuid &&
           other.orderNr == this.orderNr &&
-          other.orderBarcode == this.orderBarcode &&
-          other.user == this.user);
+          other.orderBarcode == this.orderBarcode);
 }
 
 class OrdersCompanion extends UpdateCompanion<Order> {
@@ -1927,20 +1920,17 @@ class OrdersCompanion extends UpdateCompanion<Order> {
   final Value<String> uuid;
   final Value<String> orderNr;
   final Value<String> orderBarcode;
-  final Value<int?> user;
   const OrdersCompanion({
     this.id = const Value.absent(),
     this.uuid = const Value.absent(),
     this.orderNr = const Value.absent(),
     this.orderBarcode = const Value.absent(),
-    this.user = const Value.absent(),
   });
   OrdersCompanion.insert({
     this.id = const Value.absent(),
     required String uuid,
     required String orderNr,
     required String orderBarcode,
-    this.user = const Value.absent(),
   })  : uuid = Value(uuid),
         orderNr = Value(orderNr),
         orderBarcode = Value(orderBarcode);
@@ -1949,14 +1939,12 @@ class OrdersCompanion extends UpdateCompanion<Order> {
     Expression<String>? uuid,
     Expression<String>? orderNr,
     Expression<String>? orderBarcode,
-    Expression<int?>? user,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (uuid != null) 'uuid': uuid,
       if (orderNr != null) 'order_nr': orderNr,
       if (orderBarcode != null) 'order_barcode': orderBarcode,
-      if (user != null) 'user': user,
     });
   }
 
@@ -1964,14 +1952,12 @@ class OrdersCompanion extends UpdateCompanion<Order> {
       {Value<int>? id,
       Value<String>? uuid,
       Value<String>? orderNr,
-      Value<String>? orderBarcode,
-      Value<int?>? user}) {
+      Value<String>? orderBarcode}) {
     return OrdersCompanion(
       id: id ?? this.id,
       uuid: uuid ?? this.uuid,
       orderNr: orderNr ?? this.orderNr,
       orderBarcode: orderBarcode ?? this.orderBarcode,
-      user: user ?? this.user,
     );
   }
 
@@ -1990,9 +1976,6 @@ class OrdersCompanion extends UpdateCompanion<Order> {
     if (orderBarcode.present) {
       map['order_barcode'] = Variable<String>(orderBarcode.value);
     }
-    if (user.present) {
-      map['user'] = Variable<int?>(user.value);
-    }
     return map;
   }
 
@@ -2002,8 +1985,7 @@ class OrdersCompanion extends UpdateCompanion<Order> {
           ..write('id: $id, ')
           ..write('uuid: $uuid, ')
           ..write('orderNr: $orderNr, ')
-          ..write('orderBarcode: $orderBarcode, ')
-          ..write('user: $user')
+          ..write('orderBarcode: $orderBarcode')
           ..write(')'))
         .toString();
   }
@@ -2052,16 +2034,8 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
     );
   }
 
-  final VerificationMeta _userMeta = const VerificationMeta('user');
   @override
-  late final GeneratedIntColumn user = _constructUser();
-  GeneratedIntColumn _constructUser() {
-    return GeneratedIntColumn('user', $tableName, true,
-        $customConstraints: 'NULLABLE REFERENCES users(id)');
-  }
-
-  @override
-  List<GeneratedColumn> get $columns => [id, uuid, orderNr, orderBarcode, user];
+  List<GeneratedColumn> get $columns => [id, uuid, orderNr, orderBarcode];
   @override
   $OrdersTable get asDslTable => this;
   @override
@@ -2096,10 +2070,6 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
     } else if (isInserting) {
       context.missing(_orderBarcodeMeta);
     }
-    if (data.containsKey('user')) {
-      context.handle(
-          _userMeta, user.isAcceptableOrUnknown(data['user']!, _userMeta));
-    }
     return context;
   }
 
@@ -2107,8 +2077,8 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Order map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Order.fromData(data, _db, prefix: effectivePrefix);
+    return Order.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -2131,12 +2101,13 @@ class OrderPosition extends DataClass implements Insertable<OrderPosition> {
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return OrderPosition(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order'])!,
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      order: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}order'])!,
     );
   }
   @override
@@ -2194,7 +2165,7 @@ class OrderPosition extends DataClass implements Insertable<OrderPosition> {
   int get hashCode =>
       $mrjf($mrjc(id.hashCode, $mrjc(uuid.hashCode, order.hashCode)));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is OrderPosition &&
           other.id == this.id &&
@@ -2328,8 +2299,8 @@ class $OrderPositionsTable extends OrderPositions
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   OrderPosition map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return OrderPosition.fromData(data, _db, prefix: effectivePrefix);
+    return OrderPosition.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -2359,14 +2330,14 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return ProductionOrder(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      productionOrderNr: stringType.mapFromDatabaseResponse(
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      productionOrderNr: const StringType().mapFromDatabaseResponse(
           data['${effectivePrefix}production_order_nr'])!,
-      productionOrderBarcode: stringType.mapFromDatabaseResponse(
+      productionOrderBarcode: const StringType().mapFromDatabaseResponse(
           data['${effectivePrefix}production_order_barcode'])!,
     );
   }
@@ -2441,7 +2412,7 @@ class ProductionOrder extends DataClass implements Insertable<ProductionOrder> {
       $mrjc(uuid.hashCode,
           $mrjc(productionOrderNr.hashCode, productionOrderBarcode.hashCode))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ProductionOrder &&
           other.id == this.id &&
@@ -2622,8 +2593,8 @@ class $ProductionOrdersTable extends ProductionOrders
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   ProductionOrder map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return ProductionOrder.fromData(data, _db, prefix: effectivePrefix);
+    return ProductionOrder.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -2655,15 +2626,15 @@ class ProductionMaterial extends DataClass
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return ProductionMaterial(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      prodOrder: intType
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      prodOrder: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}prod_order'])!,
-      packet:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
+      packet: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
     );
   }
   @override
@@ -2729,7 +2700,7 @@ class ProductionMaterial extends DataClass
   int get hashCode => $mrjf($mrjc(id.hashCode,
       $mrjc(uuid.hashCode, $mrjc(prodOrder.hashCode, packet.hashCode))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ProductionMaterial &&
           other.id == this.id &&
@@ -2892,8 +2863,8 @@ class $ProductionMaterialsTable extends ProductionMaterials
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   ProductionMaterial map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return ProductionMaterial.fromData(data, _db, prefix: effectivePrefix);
+    return ProductionMaterial.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -2925,15 +2896,15 @@ class ProductionResult extends DataClass
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return ProductionResult(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      prodOrder: intType
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      prodOrder: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}prod_order'])!,
-      packet:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
+      packet: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
     );
   }
   @override
@@ -2999,7 +2970,7 @@ class ProductionResult extends DataClass
   int get hashCode => $mrjf($mrjc(id.hashCode,
       $mrjc(uuid.hashCode, $mrjc(prodOrder.hashCode, packet.hashCode))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ProductionResult &&
           other.id == this.id &&
@@ -3162,8 +3133,8 @@ class $ProductionResultsTable extends ProductionResults
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   ProductionResult map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return ProductionResult.fromData(data, _db, prefix: effectivePrefix);
+    return ProductionResult.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -3179,9 +3150,6 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   /// globaly unique id used for synchronizing
   final String uuid;
 
-  /// creation date
-  final String date;
-
   /// picture count
   final int pictureCount;
 
@@ -3190,21 +3158,20 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   Delivery(
       {required this.id,
       required this.uuid,
-      required this.date,
       required this.pictureCount,
       required this.user});
   factory Delivery.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return Delivery(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      date: stringType.mapFromDatabaseResponse(data['${effectivePrefix}date'])!,
-      pictureCount: intType
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      pictureCount: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}picture_count'])!,
-      user: intType.mapFromDatabaseResponse(data['${effectivePrefix}user'])!,
+      user: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}user'])!,
     );
   }
   @override
@@ -3212,7 +3179,6 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['uuid'] = Variable<String>(uuid);
-    map['date'] = Variable<String>(date);
     map['picture_count'] = Variable<int>(pictureCount);
     map['user'] = Variable<int>(user);
     return map;
@@ -3222,7 +3188,6 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     return DeliveriesCompanion(
       id: Value(id),
       uuid: Value(uuid),
-      date: Value(date),
       pictureCount: Value(pictureCount),
       user: Value(user),
     );
@@ -3234,7 +3199,6 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     return Delivery(
       id: serializer.fromJson<int>(json['id']),
       uuid: serializer.fromJson<String>(json['uuid']),
-      date: serializer.fromJson<String>(json['date']),
       pictureCount: serializer.fromJson<int>(json['pictureCount']),
       user: serializer.fromJson<int>(json['user']),
     );
@@ -3245,22 +3209,15 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'uuid': serializer.toJson<String>(uuid),
-      'date': serializer.toJson<String>(date),
       'pictureCount': serializer.toJson<int>(pictureCount),
       'user': serializer.toJson<int>(user),
     };
   }
 
-  Delivery copyWith(
-          {int? id,
-          String? uuid,
-          String? date,
-          int? pictureCount,
-          int? user}) =>
+  Delivery copyWith({int? id, String? uuid, int? pictureCount, int? user}) =>
       Delivery(
         id: id ?? this.id,
         uuid: uuid ?? this.uuid,
-        date: date ?? this.date,
         pictureCount: pictureCount ?? this.pictureCount,
         user: user ?? this.user,
       );
@@ -3269,7 +3226,6 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     return (StringBuffer('Delivery(')
           ..write('id: $id, ')
           ..write('uuid: $uuid, ')
-          ..write('date: $date, ')
           ..write('pictureCount: $pictureCount, ')
           ..write('user: $user')
           ..write(')'))
@@ -3277,17 +3233,14 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(uuid.hashCode,
-          $mrjc(date.hashCode, $mrjc(pictureCount.hashCode, user.hashCode)))));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(uuid.hashCode, $mrjc(pictureCount.hashCode, user.hashCode))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Delivery &&
           other.id == this.id &&
           other.uuid == this.uuid &&
-          other.date == this.date &&
           other.pictureCount == this.pictureCount &&
           other.user == this.user);
 }
@@ -3295,37 +3248,31 @@ class Delivery extends DataClass implements Insertable<Delivery> {
 class DeliveriesCompanion extends UpdateCompanion<Delivery> {
   final Value<int> id;
   final Value<String> uuid;
-  final Value<String> date;
   final Value<int> pictureCount;
   final Value<int> user;
   const DeliveriesCompanion({
     this.id = const Value.absent(),
     this.uuid = const Value.absent(),
-    this.date = const Value.absent(),
     this.pictureCount = const Value.absent(),
     this.user = const Value.absent(),
   });
   DeliveriesCompanion.insert({
     this.id = const Value.absent(),
     required String uuid,
-    required String date,
     required int pictureCount,
     required int user,
   })  : uuid = Value(uuid),
-        date = Value(date),
         pictureCount = Value(pictureCount),
         user = Value(user);
   static Insertable<Delivery> custom({
     Expression<int>? id,
     Expression<String>? uuid,
-    Expression<String>? date,
     Expression<int>? pictureCount,
     Expression<int>? user,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (uuid != null) 'uuid': uuid,
-      if (date != null) 'date': date,
       if (pictureCount != null) 'picture_count': pictureCount,
       if (user != null) 'user': user,
     });
@@ -3334,13 +3281,11 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
   DeliveriesCompanion copyWith(
       {Value<int>? id,
       Value<String>? uuid,
-      Value<String>? date,
       Value<int>? pictureCount,
       Value<int>? user}) {
     return DeliveriesCompanion(
       id: id ?? this.id,
       uuid: uuid ?? this.uuid,
-      date: date ?? this.date,
       pictureCount: pictureCount ?? this.pictureCount,
       user: user ?? this.user,
     );
@@ -3354,9 +3299,6 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
     }
     if (uuid.present) {
       map['uuid'] = Variable<String>(uuid.value);
-    }
-    if (date.present) {
-      map['date'] = Variable<String>(date.value);
     }
     if (pictureCount.present) {
       map['picture_count'] = Variable<int>(pictureCount.value);
@@ -3372,7 +3314,6 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
     return (StringBuffer('DeliveriesCompanion(')
           ..write('id: $id, ')
           ..write('uuid: $uuid, ')
-          ..write('date: $date, ')
           ..write('pictureCount: $pictureCount, ')
           ..write('user: $user')
           ..write(')'))
@@ -3401,17 +3342,6 @@ class $DeliveriesTable extends Deliveries
         $customConstraints: 'UNIQUE');
   }
 
-  final VerificationMeta _dateMeta = const VerificationMeta('date');
-  @override
-  late final GeneratedTextColumn date = _constructDate();
-  GeneratedTextColumn _constructDate() {
-    return GeneratedTextColumn(
-      'date',
-      $tableName,
-      false,
-    );
-  }
-
   final VerificationMeta _pictureCountMeta =
       const VerificationMeta('pictureCount');
   @override
@@ -3433,7 +3363,7 @@ class $DeliveriesTable extends Deliveries
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, uuid, date, pictureCount, user];
+  List<GeneratedColumn> get $columns => [id, uuid, pictureCount, user];
   @override
   $DeliveriesTable get asDslTable => this;
   @override
@@ -3453,12 +3383,6 @@ class $DeliveriesTable extends Deliveries
           _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
     } else if (isInserting) {
       context.missing(_uuidMeta);
-    }
-    if (data.containsKey('date')) {
-      context.handle(
-          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
-    } else if (isInserting) {
-      context.missing(_dateMeta);
     }
     if (data.containsKey('picture_count')) {
       context.handle(
@@ -3481,8 +3405,8 @@ class $DeliveriesTable extends Deliveries
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Delivery map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Delivery.fromData(data, _db, prefix: effectivePrefix);
+    return Delivery.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -3513,15 +3437,15 @@ class DeliveryPosition extends DataClass
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return DeliveryPosition(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      delivery:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}delivery'])!,
-      packet:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      delivery: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}delivery'])!,
+      packet: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
     );
   }
   @override
@@ -3587,7 +3511,7 @@ class DeliveryPosition extends DataClass
   int get hashCode => $mrjf($mrjc(id.hashCode,
       $mrjc(uuid.hashCode, $mrjc(delivery.hashCode, packet.hashCode))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is DeliveryPosition &&
           other.id == this.id &&
@@ -3750,8 +3674,8 @@ class $DeliveryPositionsTable extends DeliveryPositions
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   DeliveryPosition map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return DeliveryPosition.fromData(data, _db, prefix: effectivePrefix);
+    return DeliveryPosition.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -3773,13 +3697,13 @@ class Dispatch extends DataClass implements Insertable<Dispatch> {
   factory Dispatch.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return Dispatch(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      orderID:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}order_i_d'])!,
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      orderID: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}order_i_d'])!,
     );
   }
   @override
@@ -3837,7 +3761,7 @@ class Dispatch extends DataClass implements Insertable<Dispatch> {
   int get hashCode =>
       $mrjf($mrjc(id.hashCode, $mrjc(uuid.hashCode, orderID.hashCode)));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Dispatch &&
           other.id == this.id &&
@@ -3971,8 +3895,8 @@ class $DispatchesTable extends Dispatches
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Dispatch map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Dispatch.fromData(data, _db, prefix: effectivePrefix);
+    return Dispatch.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -4003,15 +3927,15 @@ class DispatchPosition extends DataClass
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return DispatchPosition(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      dispatch:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}dispatch'])!,
-      packet:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      dispatch: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}dispatch'])!,
+      packet: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
     );
   }
   @override
@@ -4077,7 +4001,7 @@ class DispatchPosition extends DataClass
   int get hashCode => $mrjf($mrjc(id.hashCode,
       $mrjc(uuid.hashCode, $mrjc(dispatch.hashCode, packet.hashCode))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is DispatchPosition &&
           other.id == this.id &&
@@ -4240,8 +4164,8 @@ class $DispatchPositionsTable extends DispatchPositions
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   DispatchPosition map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return DispatchPosition.fromData(data, _db, prefix: effectivePrefix);
+    return DispatchPosition.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -4260,7 +4184,7 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
   /// file path
   final String filePath;
 
-  /// foreign key -> production order
+  /// foreign key -> delivery
   final int delivery;
   DeliveryImage(
       {required this.id,
@@ -4271,15 +4195,15 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return DeliveryImage(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      filePath: stringType
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      filePath: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}file_path'])!,
-      delivery:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}delivery'])!,
+      delivery: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}delivery'])!,
     );
   }
   @override
@@ -4345,7 +4269,7 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
   int get hashCode => $mrjf($mrjc(id.hashCode,
       $mrjc(uuid.hashCode, $mrjc(filePath.hashCode, delivery.hashCode))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is DeliveryImage &&
           other.id == this.id &&
@@ -4511,8 +4435,8 @@ class $DeliveryImagesTable extends DeliveryImages
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   DeliveryImage map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return DeliveryImage.fromData(data, _db, prefix: effectivePrefix);
+    return DeliveryImage.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -4531,11 +4455,11 @@ class Inventory extends DataClass implements Insertable<Inventory> {
   factory Inventory.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return Inventory(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
     );
   }
   @override
@@ -4586,7 +4510,7 @@ class Inventory extends DataClass implements Insertable<Inventory> {
   @override
   int get hashCode => $mrjf($mrjc(id.hashCode, uuid.hashCode));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Inventory && other.id == this.id && other.uuid == this.uuid);
 }
@@ -4691,8 +4615,8 @@ class $InventoriesTable extends Inventories
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Inventory map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Inventory.fromData(data, _db, prefix: effectivePrefix);
+    return Inventory.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
@@ -4727,17 +4651,16 @@ class InventoryPosition extends DataClass
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
-    final doubleType = db.typeSystem.forDartType<double>();
     return InventoryPosition(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      uuid: stringType.mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
-      inventory:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}inventory'])!,
-      packet:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
-      quantity: doubleType
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      inventory: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}inventory'])!,
+      packet: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
+      quantity: const RealType()
           .mapFromDatabaseResponse(data['${effectivePrefix}quantity'])!,
     );
   }
@@ -4818,7 +4741,7 @@ class InventoryPosition extends DataClass
           $mrjc(
               inventory.hashCode, $mrjc(packet.hashCode, quantity.hashCode)))));
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is InventoryPosition &&
           other.id == this.id &&
@@ -5011,8 +4934,8 @@ class $InventoryPositionsTable extends InventoryPositions
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   InventoryPosition map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return InventoryPosition.fromData(data, _db, prefix: effectivePrefix);
+    return InventoryPosition.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override

@@ -87,6 +87,10 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
       });
     });
 
+    //todo: in case product has been created here,
+    //      the productName and productNr will be empty
+    //      find a way to update packet after the synchronization has completed
+
     return PacketsCompanion(
       uuid: Value(uuid),
       barcode: Value(json['barcode']),

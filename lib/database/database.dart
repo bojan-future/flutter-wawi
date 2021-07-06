@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:uuid/uuid.dart';
 
+import '../misc/future_annotations.dart';
 import 'deliveries_dao.dart';
 import 'deliveryimages_dao.dart';
 import 'deliverypositions_dao.dart';
@@ -21,18 +22,6 @@ import 'users_dao.dart';
 
 part 'database.exception.dart';
 part 'database.g.dart';
-
-///used for code generation on script-side
-class FutureTableNumber {
-  ///
-  const FutureTableNumber({required int table, required int guidColumn});
-}
-
-///used for code generation on script-side
-class FutureColumnNumber {
-  ///
-  const FutureColumnNumber(int column);
-}
 
 @DataClassName('SynchroUpdate')
 
@@ -79,39 +68,49 @@ class SystemVariables extends Table {
 
 /// represents a user
 @DataClassName('User')
+@FutureTableNumber(200)
 class Users extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(131)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// barcode
+  @FutureColumnNumber(139)
   TextColumn get barcode => text()();
 
   /// user number
+  @FutureColumnNumber(8)
   TextColumn get userNr => text()();
 }
 
 /// represents a physical package with product, barcode, lot and quantity
 @DataClassName('Packet')
+@FutureTableNumber(529)
 class Packets extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(96)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// barcode
+  @FutureColumnNumber(53)
   TextColumn get barcode => text()();
 
   /// lot (charge)
+  @FutureColumnNumber(52)
   TextColumn get lot => text()();
 
   /// quantity of items in the package
+  @FutureColumnNumber(35)
   RealColumn get quantity => real()();
 
   /// foreign key -> product
+  @FutureColumnNumber(5)
   IntColumn get product =>
       integer().customConstraint('REFERENCES products(id)')();
 
@@ -131,12 +130,13 @@ class Packets extends Table {
 @DataClassName('Product')
 
 /// represents a product as part of a package
-@FutureTableNumber(table: 90, guidColumn: 156)
+@FutureTableNumber(90)
 class Products extends Table {
   /// primary key
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(156)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// product number
@@ -169,6 +169,7 @@ class Products extends Table {
 }
 
 @DataClassName('Order')
+@FutureTableNumber(152)
 
 /// represents an order, has many positions
 class Orders extends Table {
@@ -176,19 +177,20 @@ class Orders extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(193)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// order number
+  @FutureColumnNumber(5)
   TextColumn get orderNr => text()();
 
   /// order barcode
+  @FutureColumnNumber(1)
   TextColumn get orderBarcode => text()();
-
-  /// foreign key -> user
-  IntColumn get user =>
-      integer().nullable().customConstraint('NULLABLE REFERENCES users(id)')();
 }
 
+//not used for now - will be used later for checking dispatches
+//(offene verkaufspositionen)
 @DataClassName('OrderPosition')
 
 /// one position in an order
@@ -204,6 +206,7 @@ class OrderPositions extends Table {
 }
 
 @DataClassName('Delivery')
+@FutureTableNumber(187)
 
 /// represents a delivery, has many positions
 class Deliveries extends Table {
@@ -211,19 +214,19 @@ class Deliveries extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(107)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
-
-  /// creation date
-  TextColumn get date => text()();
 
   /// picture count
   IntColumn get pictureCount => integer()();
 
   /// foreign key -> user
+  @FutureColumnNumber(9)
   IntColumn get user => integer().customConstraint('REFERENCES users(id)')();
 }
 
 @DataClassName('DeliveryPosition')
+@FutureTableNumber(188)
 
 /// one position in a delivery
 class DeliveryPositions extends Table {
@@ -231,18 +234,23 @@ class DeliveryPositions extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(34)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// foreign key -> delivery
+  @FutureColumnNumber(2)
   IntColumn get delivery =>
       integer().customConstraint('REFERENCES deliveries(id)')();
 
   /// foreign key -> packets
+  // 999 -> not a real column, but we need it generated for JSON conversion
+  @FutureColumnNumber(999)
   IntColumn get packet =>
       integer().customConstraint('REFERENCES packets(id)')();
 }
 
 @DataClassName('Dispatch')
+@FutureTableNumber(154)
 
 /// represents a dispatch, has many positions
 class Dispatches extends Table {
@@ -250,14 +258,17 @@ class Dispatches extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(193)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// foreign key -> order
+  @FutureColumnNumber(50)
   IntColumn get orderID =>
       integer().customConstraint('REFERENCES orders(id)')();
 }
 
 @DataClassName('DispatchPosition')
+@FutureTableNumber(155)
 
 /// one position in a dispatch
 class DispatchPositions extends Table {
@@ -265,18 +276,23 @@ class DispatchPositions extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(68)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// foreign key -> dispatch
+  @FutureColumnNumber(2)
   IntColumn get dispatch =>
       integer().customConstraint('REFERENCES dispatches(id)')();
 
   /// foreign key -> packets
+  // 999 -> not a real column, but we need it generated for JSON conversion
+  @FutureColumnNumber(999)
   IntColumn get packet =>
       integer().customConstraint('REFERENCES packets(id)')();
 }
 
 @DataClassName('DeliveryImage')
+@FutureTableNumber(39)
 
 /// images for deliveries
 class DeliveryImages extends Table {
@@ -284,17 +300,21 @@ class DeliveryImages extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(16)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// file path
+  @FutureColumnNumber(5)
   TextColumn get filePath => text()();
 
-  /// foreign key -> production order
+  /// foreign key -> delivery
+  @FutureColumnNumber(12)
   IntColumn get delivery =>
       integer().customConstraint('REFERENCES deliveries(id)')();
 }
 
 @DataClassName('Inventory')
+@FutureTableNumber(107)
 
 /// represents an inventory, has many positions
 class Inventories extends Table {
@@ -306,6 +326,7 @@ class Inventories extends Table {
 }
 
 @DataClassName('InventoryPosition')
+@FutureTableNumber(999107)
 
 /// one position in an inventory
 class InventoryPositions extends Table {
@@ -316,10 +337,12 @@ class InventoryPositions extends Table {
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// foreign key -> inventory
+  @FutureColumnNumber(998)
   IntColumn get inventory =>
       integer().customConstraint('REFERENCES inventories(id)')();
 
   /// foreign key -> packets
+  @FutureColumnNumber(999)
   IntColumn get packet =>
       integer().customConstraint('REFERENCES packets(id)')();
 
@@ -328,6 +351,7 @@ class InventoryPositions extends Table {
 }
 
 @DataClassName('ProductionOrder')
+@FutureTableNumber(170)
 
 /// production order with input materials and output results
 class ProductionOrders extends Table {
@@ -335,16 +359,20 @@ class ProductionOrders extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(79)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// production order number
+  @FutureColumnNumber(5)
   TextColumn get productionOrderNr => text()();
 
   /// production order barcode
+  @FutureColumnNumber(35)
   TextColumn get productionOrderBarcode => text()();
 }
 
 @DataClassName('ProductionMaterial')
+@FutureTableNumber(999170)
 
 /// material part of production order (many materials - one order)
 class ProductionMaterials extends Table {
@@ -355,16 +383,19 @@ class ProductionMaterials extends Table {
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// foreign key -> production order
+  @FutureColumnNumber(998)
   IntColumn get prodOrder =>
       integer().customConstraint('REFERENCES production_orders(id)')();
 
   /// Material Packet
   /// foreign key -> packets
+  @FutureColumnNumber(999)
   IntColumn get packet =>
       integer().customConstraint('REFERENCES packets(id)')();
 }
 
 @DataClassName('ProductionResult')
+@FutureTableNumber(998170)
 
 /// result part of production order (many results - one order)
 class ProductionResults extends Table {
@@ -375,11 +406,13 @@ class ProductionResults extends Table {
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
   /// foreign key -> production order
+  @FutureColumnNumber(998)
   IntColumn get prodOrder =>
       integer().customConstraint('REFERENCES production_orders(id)')();
 
   /// Resulting Packet
   /// foreign key -> packets
+  @FutureColumnNumber(999)
   IntColumn get packet =>
       integer().customConstraint('REFERENCES packets(id)')();
 }

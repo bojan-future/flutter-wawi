@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:cron/cron.dart';
 import 'package:http/http.dart' as http;
+import 'package:kuda_lager/database/packets_dao.dart';
+import 'package:kuda_lager/database/users_dao.dart';
 
 import '../database/database.dart';
 import '../database/orders_dao.dart';
@@ -109,7 +111,7 @@ class SynchroController {
     _database.systemVariablesDao.set('lastid', highestid.toString());
   }
 
-  void _updateDatabase(Sync sync) {
+  Future<void> _updateDatabase(Sync sync) async {
     switch (sync.type) {
       case SyncType.product:
         _database.productsDao.createProduct(
@@ -122,6 +124,14 @@ class SynchroController {
       case SyncType.production:
         _database.productionDao.createProduction(
             ProductionDao.companionFromSyncJson(sync.data, sync.uuid));
+        break;
+      case SyncType.user:
+        _database.usersDao
+            .createUser(UsersDao.companionFromSyncJson(sync.data, sync.uuid));
+        break;
+      case SyncType.packet:
+        _database.packetsDao.createPacket(
+            await PacketsDao.companionFromSyncJson(sync.data, sync.uuid));
         break;
       //todo: other tables
       default:

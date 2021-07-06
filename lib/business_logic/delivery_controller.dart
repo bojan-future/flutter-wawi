@@ -25,12 +25,8 @@ class DeliveryController {
 
   /// add delivery
   Future<int> addDelivery() async {
-    var now = DateTime.now();
-    var formattedDate = DateFormat('dd.MM.yyyy / kk:mm').format(now);
-    return database.deliveriesDao.createDelivery(DeliveriesCompanion(
-        user: Value(_userID),
-        date: Value(formattedDate),
-        pictureCount: Value(0)));
+    return database.deliveriesDao.createDelivery(
+        DeliveriesCompanion(user: Value(_userID), pictureCount: Value(0)));
   }
 
   /// add delivery position together with an associated packet

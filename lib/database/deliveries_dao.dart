@@ -20,7 +20,6 @@ class DeliveriesDao extends DatabaseAccessor<Database>
     if (!delivery.uuid.present) {
       delivery = DeliveriesCompanion(
           uuid: Value(Uuid().v4()),
-          date: delivery.date,
           pictureCount: delivery.pictureCount,
           user: delivery.user);
     }

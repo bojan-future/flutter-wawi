@@ -20,13 +20,13 @@ class SyncType {
   static const int product = 90;
   static const int order = 152;
   static const int production = 170;
+  static const int user = 200;
 
   // incoming / outgoing
   static const int packet = 529;
 
   //outgoing
   static const int delivery = 187;
-
   static const int delivery_position = 188;
   static const int delivery_image = 39;
   static const int dispatch = 154;

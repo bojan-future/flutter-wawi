@@ -85,8 +85,8 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
       Map<String, dynamic> json, String uuid) {
     return ProductsCompanion(
       uuid: Value(uuid),
-      productNr: Value(json['number'] ?? ''),
-      productName: Value(json['name'] ?? ''),
+      productNr: Value(json['productNr'] ?? ''),
+      productName: Value(json['productName'] ?? ''),
       gtin1: Value(int.tryParse(json['gtin'] ?? '0') ?? 0),
       gtin2: Value(int.tryParse(json['gtin2'] ?? '0') ?? 0),
       gtin3: Value(int.tryParse(json['gtin3'] ?? '0') ?? 0),

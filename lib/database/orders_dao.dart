@@ -69,8 +69,8 @@ class OrdersDao extends DatabaseAccessor<Database> with _$OrdersDaoMixin {
       Map<String, dynamic> json, String uuid) {
     return OrdersCompanion(
       uuid: Value(uuid),
-      orderNr: Value(json['number']),
-      //todo: other fields
+      orderNr: Value(json['orderNr']),
+      orderBarcode: Value(json['orderBarcode']),
     );
   }
 }
