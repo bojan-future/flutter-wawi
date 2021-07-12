@@ -3150,6 +3150,9 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   /// globaly unique id used for synchronizing
   final String uuid;
 
+  /// creation date
+  final String date;
+
   /// picture count
   final int pictureCount;
 
@@ -3158,6 +3161,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   Delivery(
       {required this.id,
       required this.uuid,
+      required this.date,
       required this.pictureCount,
       required this.user});
   factory Delivery.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -3168,6 +3172,8 @@ class Delivery extends DataClass implements Insertable<Delivery> {
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       uuid: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      date: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}date'])!,
       pictureCount: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}picture_count'])!,
       user: const IntType()
@@ -3179,6 +3185,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['uuid'] = Variable<String>(uuid);
+    map['date'] = Variable<String>(date);
     map['picture_count'] = Variable<int>(pictureCount);
     map['user'] = Variable<int>(user);
     return map;
@@ -3188,6 +3195,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     return DeliveriesCompanion(
       id: Value(id),
       uuid: Value(uuid),
+      date: Value(date),
       pictureCount: Value(pictureCount),
       user: Value(user),
     );
@@ -3199,6 +3207,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     return Delivery(
       id: serializer.fromJson<int>(json['id']),
       uuid: serializer.fromJson<String>(json['uuid']),
+      date: serializer.fromJson<String>(json['date']),
       pictureCount: serializer.fromJson<int>(json['pictureCount']),
       user: serializer.fromJson<int>(json['user']),
     );
@@ -3209,15 +3218,22 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'uuid': serializer.toJson<String>(uuid),
+      'date': serializer.toJson<String>(date),
       'pictureCount': serializer.toJson<int>(pictureCount),
       'user': serializer.toJson<int>(user),
     };
   }
 
-  Delivery copyWith({int? id, String? uuid, int? pictureCount, int? user}) =>
+  Delivery copyWith(
+          {int? id,
+          String? uuid,
+          String? date,
+          int? pictureCount,
+          int? user}) =>
       Delivery(
         id: id ?? this.id,
         uuid: uuid ?? this.uuid,
+        date: date ?? this.date,
         pictureCount: pictureCount ?? this.pictureCount,
         user: user ?? this.user,
       );
@@ -3226,6 +3242,7 @@ class Delivery extends DataClass implements Insertable<Delivery> {
     return (StringBuffer('Delivery(')
           ..write('id: $id, ')
           ..write('uuid: $uuid, ')
+          ..write('date: $date, ')
           ..write('pictureCount: $pictureCount, ')
           ..write('user: $user')
           ..write(')'))
@@ -3233,14 +3250,17 @@ class Delivery extends DataClass implements Insertable<Delivery> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(uuid.hashCode, $mrjc(pictureCount.hashCode, user.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(uuid.hashCode,
+          $mrjc(date.hashCode, $mrjc(pictureCount.hashCode, user.hashCode)))));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Delivery &&
           other.id == this.id &&
           other.uuid == this.uuid &&
+          other.date == this.date &&
           other.pictureCount == this.pictureCount &&
           other.user == this.user);
 }
@@ -3248,31 +3268,37 @@ class Delivery extends DataClass implements Insertable<Delivery> {
 class DeliveriesCompanion extends UpdateCompanion<Delivery> {
   final Value<int> id;
   final Value<String> uuid;
+  final Value<String> date;
   final Value<int> pictureCount;
   final Value<int> user;
   const DeliveriesCompanion({
     this.id = const Value.absent(),
     this.uuid = const Value.absent(),
+    this.date = const Value.absent(),
     this.pictureCount = const Value.absent(),
     this.user = const Value.absent(),
   });
   DeliveriesCompanion.insert({
     this.id = const Value.absent(),
     required String uuid,
+    required String date,
     required int pictureCount,
     required int user,
   })  : uuid = Value(uuid),
+        date = Value(date),
         pictureCount = Value(pictureCount),
         user = Value(user);
   static Insertable<Delivery> custom({
     Expression<int>? id,
     Expression<String>? uuid,
+    Expression<String>? date,
     Expression<int>? pictureCount,
     Expression<int>? user,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (uuid != null) 'uuid': uuid,
+      if (date != null) 'date': date,
       if (pictureCount != null) 'picture_count': pictureCount,
       if (user != null) 'user': user,
     });
@@ -3281,11 +3307,13 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
   DeliveriesCompanion copyWith(
       {Value<int>? id,
       Value<String>? uuid,
+      Value<String>? date,
       Value<int>? pictureCount,
       Value<int>? user}) {
     return DeliveriesCompanion(
       id: id ?? this.id,
       uuid: uuid ?? this.uuid,
+      date: date ?? this.date,
       pictureCount: pictureCount ?? this.pictureCount,
       user: user ?? this.user,
     );
@@ -3299,6 +3327,9 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
     }
     if (uuid.present) {
       map['uuid'] = Variable<String>(uuid.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<String>(date.value);
     }
     if (pictureCount.present) {
       map['picture_count'] = Variable<int>(pictureCount.value);
@@ -3314,6 +3345,7 @@ class DeliveriesCompanion extends UpdateCompanion<Delivery> {
     return (StringBuffer('DeliveriesCompanion(')
           ..write('id: $id, ')
           ..write('uuid: $uuid, ')
+          ..write('date: $date, ')
           ..write('pictureCount: $pictureCount, ')
           ..write('user: $user')
           ..write(')'))
@@ -3342,6 +3374,17 @@ class $DeliveriesTable extends Deliveries
         $customConstraints: 'UNIQUE');
   }
 
+  final VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedTextColumn date = _constructDate();
+  GeneratedTextColumn _constructDate() {
+    return GeneratedTextColumn(
+      'date',
+      $tableName,
+      false,
+    );
+  }
+
   final VerificationMeta _pictureCountMeta =
       const VerificationMeta('pictureCount');
   @override
@@ -3363,7 +3406,7 @@ class $DeliveriesTable extends Deliveries
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, uuid, pictureCount, user];
+  List<GeneratedColumn> get $columns => [id, uuid, date, pictureCount, user];
   @override
   $DeliveriesTable get asDslTable => this;
   @override
@@ -3383,6 +3426,12 @@ class $DeliveriesTable extends Deliveries
           _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
     } else if (isInserting) {
       context.missing(_uuidMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+    } else if (isInserting) {
+      context.missing(_dateMeta);
     }
     if (data.containsKey('picture_count')) {
       context.handle(

@@ -78,10 +78,10 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
       Map<String, dynamic> json, String uuid) async {
     var db = DatabaseFactory.getDatabaseInstance();
     var product = await db.productsDao
-        .getProductByUuid(json['product_uuid'])
+        .getProductByUuid(json['product'])
         .then((product) => product, onError: (e) {
       db.productsDao
-          .createProduct(ProductsCompanion(uuid: Value(json['product_uuid'])))
+          .createProduct(ProductsCompanion(uuid: Value(json['product'])))
           .then((productId) {
         return db.productsDao.getProductById(productId);
       });
@@ -90,6 +90,7 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
     //todo: in case product has been created here,
     //      the productName and productNr will be empty
     //      find a way to update packet after the synchronization has completed
+    //idea: when synchronizing product, check if there are packets with that product and add productName and productNumber
 
     return PacketsCompanion(
       uuid: Value(uuid),

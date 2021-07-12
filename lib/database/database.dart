@@ -217,6 +217,9 @@ class Deliveries extends Table {
   @FutureColumnNumber(107)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
+  /// creation date
+  TextColumn get date => text()();
+
   /// picture count
   IntColumn get pictureCount => integer()();
 

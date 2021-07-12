@@ -17,6 +17,7 @@ class SynchroController {
   final Database _database;
   final Cron _cron;
   bool _syncInProgress = false;
+  final _appSource = 'kuda-lager-app';
 
   ///default constructor
   SynchroController()
@@ -40,7 +41,7 @@ class SynchroController {
 
   Future<SyncResponse> _fetchSync(int lastid) async {
     final response = await http.get(Uri.parse(
-        "http://ffsync-test.futurefactory-software.com/syncs?lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid"));
+        "http://ffsync-test.futurefactory-software.com/syncs?lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
 
     if (response.statusCode == 200) {
       var body = response.body.replaceAll(r"\r", "").replaceAll(r"\n", "");
@@ -59,7 +60,7 @@ class SynchroController {
 
     //todo: add lic, source and userid to the body
     body['lic'] = 'AAAA-AAAA-AAAA-AAAA';
-    body['source'] = 'kuda-lager-app';
+    body['source'] = _appSource;
     body['userid'] = 'bojan';
 
     var url = Uri.parse(
@@ -155,7 +156,7 @@ class SyncResponse {
 
   /// creates SyncResponse from raw JSON
   factory SyncResponse.fromJson(Map<String, dynamic> json) {
-    List<dynamic> syncsRaw = json['syncs'];
+    List<dynamic> syncsRaw = (json['success'] == true) ? json['syncs'] : [];
     return SyncResponse(
         success: json['success'],
         syncs: syncsRaw.map((json) => Sync.fromJson(json)).toList());
@@ -209,7 +210,7 @@ class Sync {
       source: json['source'],
       type: int.parse(json['type']),
       deleted: int.parse(json['deleted']) == 0 ? false : true,
-      data: jsonDecode(json['data'].isEmpty ? '{}' : json['data']),
+      data: json['data'] ?? {},
     );
   }
 }
