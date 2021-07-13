@@ -26,7 +26,7 @@ class DeliveryController {
   /// add delivery
   Future<int> addDelivery() async {
     var now = DateTime.now();
-    var formattedDate = DateFormat('dd.MM.yyyy / kk:mm').format(now);
+    var formattedDate = DateFormat('dd.MM.yyyy kk:mm:ss').format(now);
     return database.deliveriesDao.createDelivery(DeliveriesCompanion(
         user: Value(_userID),
         date: Value(formattedDate),

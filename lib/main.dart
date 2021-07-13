@@ -66,21 +66,21 @@ void main() {
           create: (context) => FileController(),
         ),
         Provider<ScannerController>(
-          //create: (context) => ScannerControllerImplDataWedge()
-          // use this implementation in Emulator
-          // Barcode Lengths: 34 / 44 / 36 / 20
-          create: (context) => ScannerControllerImplMock([
-            '9999912345',
-            '01384332323999643110006035103314112210121012',
-            '01384332323999643110006035103314112210121012',
-            '5000675021234567890123456781000100',
-            '5000675021234567890123456782000100',
-            '5000675021234567890123456783000100',
-            '5000675021234567890123456784000100',
-            '5000675021234567890123456785000100',
-            '5000675021234567890123456786000100',
-          ]),
-        ),
+            create: (context) => ScannerControllerImplDataWedge()
+            // use this implementation in Emulator
+            // Barcode Lengths: 34 / 44 / 36 / 20
+            // create: (context) => ScannerControllerImplMock([
+            //   '9999912345',
+            //   '01384332323999643110006035103314112210121012',
+            //   '01384332323999643110006035103314112210121012',
+            //   '5000675021234567890123456781000100',
+            //   '5000675021234567890123456782000100',
+            //   '5000675021234567890123456783000100',
+            //   '5000675021234567890123456784000100',
+            //   '5000675021234567890123456785000100',
+            //   '5000675021234567890123456786000100',
+            // ]),
+            ),
         Provider<SynchroController>(create: (context) {
           final synchroController = SynchroController();
           synchroController.synchronize(); //synchronize once at the start

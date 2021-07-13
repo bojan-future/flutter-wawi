@@ -5,6 +5,7 @@ import 'package:cron/cron.dart';
 import 'package:http/http.dart' as http;
 import 'package:kuda_lager/database/packets_dao.dart';
 import 'package:kuda_lager/database/users_dao.dart';
+import 'package:moor_flutter/moor_flutter.dart';
 
 import '../database/database.dart';
 import '../database/orders_dao.dart';
@@ -100,13 +101,18 @@ class SynchroController {
   void _syncDown() async {
     var lastid =
         int.tryParse(await _database.systemVariablesDao.get('lastid')) ?? 0;
-    lastid = 0;
+
     var syncResponse = await _fetchSync(lastid);
     var highestid = lastid;
     if (syncResponse.success) {
       for (var sync in syncResponse.syncs) {
-        _updateDatabase(sync);
-        highestid = max(highestid, sync.id);
+        try {
+          await _updateDatabase(sync);
+          highestid = max(highestid, sync.id);
+        } on InvalidDataException catch (e) {
+          print(e.toString());
+          //ignore this update
+        }
       }
     }
     _database.systemVariablesDao.set('lastid', highestid.toString());

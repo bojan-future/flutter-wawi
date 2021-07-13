@@ -60,6 +60,7 @@ class _LoginViewState extends State<LoginView> {
               children: [
                 Flexible(
                   child: TextField(
+                    keyboardType: TextInputType.visiblePassword,
                     obscureText: false,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),

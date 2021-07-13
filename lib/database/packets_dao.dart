@@ -29,8 +29,14 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
         wrapping: packet.wrapping,
       );
     }
-    return into(packets).insert(packet, mode: InsertMode.replace).then((value) {
-      getPacketWithId(value).then(onUpdateData);
+    return into(packets)
+        .insert(packet, mode: InsertMode.replace)
+        .then((value) async {
+      await getPacketWithId(value).then((packet) {
+        onUpdateData(packet);
+      }, onError: (e) {
+        print(e.toString());
+      });
       return value;
     });
   }
@@ -77,6 +83,9 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
   static Future<PacketsCompanion> companionFromSyncJson(
       Map<String, dynamic> json, String uuid) async {
     var db = DatabaseFactory.getDatabaseInstance();
+    if (json['product'] == "") {
+      throw InvalidDataException("Ungültige Daten vom Server empfangen.");
+    }
     var product = await db.productsDao
         .getProductByUuid(json['product'])
         .then((product) => product, onError: (e) {
@@ -96,7 +105,7 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
       uuid: Value(uuid),
       barcode: Value(json['barcode']),
       lot: Value(json['lot']),
-      quantity: Value(json['quantity']),
+      quantity: Value(double.tryParse(json['quantity']) ?? 0.0),
       product: Value(product.id),
       productName: Value(product.productName),
       productNr: Value(product.productNr),
@@ -106,12 +115,23 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
 
   ///hook executed when record has been changed
   Future<void> onUpdateData(Packet model) async {
-    var json = model.toJson();
-    json['wrapping'] = await getPacketWithId(model.wrapping!)
-        .then((wrapping) => wrapping.uuid, onError: (e) => 'null')
-        .catchError((e) => 'null');
+    try {
+      var json = model.toJson();
+      if (model.wrapping != null) {
+        json['wrapping'] = await getPacketWithId(model.wrapping!)
+            .then((wrapping) => wrapping.uuid, onError: (e) => 'null')
+            .catchError((e) => 'null');
+      }
 
-    addSynchroUpdate(model.uuid, SyncType.packet, jsonEncode(json));
+      json['product'] = await db.productsDao
+          .getProductById(model.product)
+          .then((product) => product.uuid, onError: (e) => 'null')
+          .catchError((e) => 'null');
+
+      addSynchroUpdate(model.uuid, SyncType.packet, jsonEncode(json));
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   ///hook executed when record has been deleted

@@ -25,7 +25,7 @@ class PacketsController {
 
       if (barcode.length == 44) {
         correctBarcode = true;
-        gtin = barcode.substring(3, 15);
+        gtin = barcode.substring(3, 16);
         quantity = barcode.substring(20, 26);
         lot = barcode.substring(28, 44);
 
