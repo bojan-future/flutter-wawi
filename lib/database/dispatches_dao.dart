@@ -69,6 +69,8 @@ class DispatchesDao extends DatabaseAccessor<Database>
         .getOrderById(model.orderID)
         .then((order) => order.uuid, onError: (e) => 'error');
 
+    json.remove('orderID'); //do not polute server with internal informations
+
     addSynchroUpdate(model.uuid, SyncType.dispatch, jsonEncode(json));
   }
 

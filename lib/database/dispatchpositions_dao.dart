@@ -73,9 +73,13 @@ class DispatchPositionsDao extends DatabaseAccessor<Database>
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
 
-    json['dispatch'] = await db.dispatchesDao
-        .getDispatchByID(model.dispatch)
-        .then((dispatch) => dispatch.uuid);
+    var dispatch = await db.dispatchesDao.getDispatchByID(model.dispatch);
+
+    json['dispatch'] = dispatch.uuid;
+
+    json['orderBarcode'] = await db.ordersDao
+        .getOrderById(dispatch.orderID)
+        .then((order) => order.orderBarcode);
 
     json['packet'] = await db.packetsDao
         .getPacketWithId(model.packet)

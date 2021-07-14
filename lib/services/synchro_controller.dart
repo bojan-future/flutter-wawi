@@ -42,7 +42,7 @@ class SynchroController {
 
   Future<SyncResponse> _fetchSync(int lastid) async {
     final response = await http.get(Uri.parse(
-        "http://ffsync-test.futurefactory-software.com/syncs?types=[90]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
+        "http://ffsync-test.futurefactory-software.com/syncs?types=[90,152,200]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
 
     if (response.statusCode == 200) {
       var body = response.body.replaceAll(r"\r", "").replaceAll(r"\n", "");
