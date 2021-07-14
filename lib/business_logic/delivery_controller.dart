@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 import '../database/database.dart';
 import 'auth_controller.dart';
+import 'business.exception.dart';
 import 'packets_controller.dart';
 
 /// Business Logic for Deliveries
@@ -35,7 +36,24 @@ class DeliveryController {
 
   /// add delivery position together with an associated packet
   Future<int> addDeliveryPosition(String barcode, int deliveryID) async {
-    var packetID = await PacketsController().addPacket(barcode);
+    //check if already existing
+
+    final packetTestId =
+        await PacketsController().getPacketByBarcode(barcode).then((packet) {
+      return packet.id;
+    }, onError: (e) {
+      return Future.value(-1);
+      //do nothing -> we expect the packet not to exist
+    }).catchError((e) {
+      return Future.value(-1);
+      //do nothing -> we expect the packet not to exist
+    });
+
+    if (packetTestId > 0) {
+      throw PacketAlreadyExists();
+    }
+
+    final packetID = await PacketsController().addPacket(barcode);
 
     return database.deliveryPositionsDao
         .createDeliveryPosition(DeliveryPositionsCompanion(

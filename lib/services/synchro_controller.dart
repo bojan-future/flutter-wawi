@@ -27,7 +27,7 @@ class SynchroController {
 
   /// starts scheduled synchronization (every 3 minutes)
   void initSchedule() {
-    _cron.schedule(Schedule.parse('*/3 * * * *'), synchronize);
+    _cron.schedule(Schedule.parse('* * * * *'), synchronize);
   }
 
   /// synchronize local database with the server
@@ -42,7 +42,7 @@ class SynchroController {
 
   Future<SyncResponse> _fetchSync(int lastid) async {
     final response = await http.get(Uri.parse(
-        "http://ffsync-test.futurefactory-software.com/syncs?lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
+        "http://ffsync-test.futurefactory-software.com/syncs?types=[90]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
 
     if (response.statusCode == 200) {
       var body = response.body.replaceAll(r"\r", "").replaceAll(r"\n", "");
@@ -108,14 +108,16 @@ class SynchroController {
       for (var sync in syncResponse.syncs) {
         try {
           await _updateDatabase(sync);
-          highestid = max(highestid, sync.id);
+          //highestid = max(highestid, sync.id);
+
         } on InvalidDataException catch (e) {
           print(e.toString());
           //ignore this update
         }
+        _database.systemVariablesDao.set('lastid', sync.id.toString());
       }
     }
-    _database.systemVariablesDao.set('lastid', highestid.toString());
+    //_database.systemVariablesDao.set('lastid', highestid.toString());
   }
 
   Future<void> _updateDatabase(Sync sync) async {

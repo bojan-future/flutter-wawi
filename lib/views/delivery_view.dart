@@ -63,13 +63,19 @@ class _DeliveryViewState extends State<DeliveryView> {
         } on RecordNotFoundException {
           setState(() {
             buildAlert(context, "Achtung!",
-                    "Der gescannte Packet wurde nicht erkannt!")
+                    "Der gescannte Paket wurde nicht erkannt!")
                 .show();
           });
         } on InvalidBarcodeException {
           setState(() {
             buildAlert(
                     context, "Achtung!", "Der gescannte Barcode ist ungültig!")
+                .show();
+          });
+        } on PacketAlreadyExists {
+          setState(() {
+            buildAlert(context, "Achtung!",
+                    "Der gescannte Paket wurde bereits als geliefert erfasst!")
                 .show();
           });
         }
