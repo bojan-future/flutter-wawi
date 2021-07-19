@@ -13,18 +13,12 @@ class PacketsController {
   Future<int> addPacket(String barcode, {int? wrapping}) async {
     final database = DatabaseFactory.getDatabaseInstance();
 
-    //large packets have unique barcode
-    if (barcode.length == 44) {
-      //if already exists, return its id
-      return await database.packetsDao
-          .getPacketByBarcode(barcode)
-          .then((packet) => packet.id, onError: (e) async {
-        return await _addPacket(barcode, wrapping: wrapping);
-      });
-    } else {
-      // short barcode -> not unique - allow duplicates
-      return _addPacket(barcode, wrapping: wrapping);
-    }
+    //if already exists, return its id
+    return await database.packetsDao
+        .getPacketByBarcode(barcode)
+        .then((packet) => packet.id, onError: (e) async {
+      return await _addPacket(barcode, wrapping: wrapping);
+    });
   }
 
   /// returns a packet that has the requested id.

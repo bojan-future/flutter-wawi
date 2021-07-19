@@ -488,14 +488,16 @@ class Database extends _$Database {
       },
       onUpgrade: (m, from, to) async {},
       beforeOpen: (details) async {
-        if (details.wasCreated /* || kDebugMode*/) {
-          // if (kDebugMode) {
-          //   final m = createMigrator(); // changed to this
-          //   for (final table in allTables) {
-          //     await m.deleteTable(table.actualTableName);
-          //     await m.createTable(table);
-          //   }
-          // }
+        if (details.wasCreated || kDebugMode) {
+          if (kDebugMode) {
+            final m = createMigrator(); // changed to this
+            for (final table in allTables) {
+              if (table.actualTableName == 'production_orders') {
+                await m.deleteTable(table.actualTableName);
+                await m.createTable(table);
+              }
+            }
+          }
           // await into(products).insert(Product(
           //     id: 1,
           //     uuid: Uuid().v4(),

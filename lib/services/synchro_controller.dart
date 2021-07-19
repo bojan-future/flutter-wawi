@@ -42,7 +42,7 @@ class SynchroController {
 
   Future<SyncResponse> _fetchSync(int lastid) async {
     final response = await http.get(Uri.parse(
-        "http://ffsync-test.futurefactory-software.com/syncs?types=[90,152,200]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
+        "http://ffsync-test.futurefactory-software.com/syncs?types=[90,152,200,170]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
 
     if (response.statusCode == 200) {
       var body = response.body.replaceAll(r"\r", "").replaceAll(r"\n", "");
@@ -101,7 +101,7 @@ class SynchroController {
   void _syncDown() async {
     var lastid =
         int.tryParse(await _database.systemVariablesDao.get('lastid')) ?? 0;
-
+    lastid = 149178;
     var syncResponse = await _fetchSync(lastid);
     var highestid = lastid;
     if (syncResponse.success) {
@@ -111,6 +111,9 @@ class SynchroController {
           //highestid = max(highestid, sync.id);
 
         } on InvalidDataException catch (e) {
+          print(e.toString());
+          //ignore this update
+        } on DatabaseException catch (e) {
           print(e.toString());
           //ignore this update
         }
