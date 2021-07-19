@@ -73,14 +73,21 @@ class ProductionResultsDao extends DatabaseAccessor<Database>
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
 
-    json['prodOrder'] = await db.productionDao
-        .getProductionById(model.prodOrder)
-        .then((prodOrder) => prodOrder.uuid);
+    await db.productionDao.getProductionById(model.prodOrder).then((prodOrder) {
+      json['prodOrder'] = prodOrder.uuid;
+      json['prodOrderBarcode'] = prodOrder.productionOrderBarcode;
+    }).catchError((e) {
+      json['prodOrder'] = 'error';
+      json['prodOrderBarcode'] = 'error';
+    });
 
-    json['packet'] = await db.packetsDao
-        .getPacketWithId(model.packet)
-        .then((packet) => packet.uuid, onError: (e) => 'error')
-        .catchError((e) => 'error');
+    await db.packetsDao.getPacketWithId(model.packet).then((packet) {
+      json['packet'] = packet.uuid;
+      json['packetBarcode'] = packet.barcode;
+    }).catchError((e) {
+      json['packet'] = 'error';
+      json['packetBarcode'] = 'error';
+    });
 
     addSynchroUpdate(model.uuid, SyncType.production_result, jsonEncode(json));
   }

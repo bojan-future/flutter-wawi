@@ -74,10 +74,13 @@ class InventoryPositionsDao extends DatabaseAccessor<Database>
         .getInventory(model.inventory)
         .then((inventory) => inventory.uuid);
 
-    json['packet'] = await db.packetsDao
-        .getPacketWithId(model.packet)
-        .then((packet) => packet.uuid, onError: (e) => 'error')
-        .catchError((e) => 'error');
+    await db.packetsDao.getPacketWithId(model.packet).then((packet) {
+      json['packet'] = packet.uuid;
+      json['packetBarcode'] = packet.barcode;
+    }).catchError((e) {
+      json['packet'] = 'error';
+      json['packetBarcode'] = 'error';
+    });
 
     addSynchroUpdate(
         model.uuid, SyncType.inventory_position, model.toJsonString());

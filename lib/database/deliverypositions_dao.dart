@@ -76,10 +76,13 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
         .getDelivery(model.delivery)
         .then((delivery) => delivery.uuid);
 
-    json['packet'] = await db.packetsDao
-        .getPacketWithId(model.packet)
-        .then((packet) => packet.uuid, onError: (e) => 'error')
-        .catchError((e) => 'error');
+    await db.packetsDao.getPacketWithId(model.packet).then((packet) {
+      json['packet'] = packet.uuid;
+      json['packetBarcode'] = packet.barcode;
+    }).catchError((e) {
+      json['packet'] = 'error';
+      json['packetBarcode'] = 'error';
+    });
 
     addSynchroUpdate(model.uuid, SyncType.delivery_position, jsonEncode(json));
   }
