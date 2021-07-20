@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'database.dart';
@@ -82,8 +84,7 @@ class InventoryPositionsDao extends DatabaseAccessor<Database>
       json['packetBarcode'] = 'error';
     });
 
-    addSynchroUpdate(
-        model.uuid, SyncType.inventory_position, model.toJsonString());
+    addSynchroUpdate(model.uuid, SyncType.inventory_position, jsonEncode(json));
   }
 
   ///hook executed when record has been deleted

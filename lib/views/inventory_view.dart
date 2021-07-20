@@ -57,6 +57,12 @@ class _InventoryViewState extends State<InventoryView> {
                     context, "Achtung!", "Der gescannte Barcode ist ungültig!")
                 .show();
           });
+        } on RecordNotFoundException {
+          setState(() {
+            buildAlert(context, "Achtung!",
+                    "Der gescannte Paket wurde nicht erkannt!")
+                .show();
+          });
         }
       },
       itemCount: scanViewList.length,

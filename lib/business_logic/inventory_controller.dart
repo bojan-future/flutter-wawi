@@ -20,9 +20,9 @@ class InventoryController {
     Packet packet;
     try {
       packet = await PacketsController().getPacketByBarcode(barcode);
-      // ignore: avoid_catching_errors
-    } on StateError {
-      var packetID = await PacketsController().addPacket(barcode);
+    } on RecordNotFoundException {
+      var packetID = await PacketsController()
+          .addPacket(barcode, createInexistingProduct: true);
       packet = await PacketsController().getPacketWithId(packetID);
     }
 

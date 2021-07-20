@@ -68,19 +68,14 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
 
   /// returns a packet that has the requested barcode
   Future<Packet> getPacketByBarcode(String barcode) async {
-    return (select(packets)..where((p) => p.barcode.equals(barcode)))
-        .getSingleOrNull()
-        .then((value) {
-      if (value == null) {
-        throw Future.error(RecordNotFoundException());
-      } else {
-        return value;
-      }
-    }, onError: (e) {
-      throw Future.error(RecordNotFoundException());
-    }).catchError((e) {
-      throw Future.error(RecordNotFoundException());
-    });
+    final packetList =
+        await (select(packets)..where((p) => p.barcode.equals(barcode))).get();
+
+    if (packetList.isEmpty) {
+      throw RecordNotFoundException();
+    } else {
+      return packetList.first;
+    }
   }
 
   ///parses synchronization json object and returns PacketsCompanion for insert

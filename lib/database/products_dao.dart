@@ -66,11 +66,11 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
   Future<Product> getProductByGTIN(int gtin) async {
     final productList = await (select(products)
           ..where((p) =>
-              p.gtin1.equals(gtin) |
-              p.gtin2.equals(gtin) |
-              p.gtin3.equals(gtin) |
-              p.gtin4.equals(gtin) |
-              p.gtin5.equals(gtin)))
+              (p.gtin1 / Variable(10)).equals(gtin) |
+              (p.gtin2 / Variable(10)).equals(gtin) |
+              (p.gtin3 / Variable(10)).equals(gtin) |
+              (p.gtin4 / Variable(10)).equals(gtin) |
+              (p.gtin5 / Variable(10)).equals(gtin)))
         .get();
 
     if (productList.isEmpty) {
