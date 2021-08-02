@@ -11,13 +11,13 @@ class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
 
   /// id of the parent delivery
-  final int deliveryID;
+  final int packetID;
 
   ///
   const TakePictureScreen({
     Key? key,
     required this.camera,
-    required this.deliveryID,
+    required this.packetID,
   }) : super(key: key);
 
   @override
@@ -84,7 +84,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
                     MaterialPageRoute(
                       builder: (context) => DisplayPictureScreen(
                         imagePath: image.path,
-                        deliveryID: widget.deliveryID,
+                        packetID: widget.packetID,
                       ),
                     ),
                   );

@@ -11,12 +11,12 @@ class FileController {
   final database = DatabaseFactory.getDatabaseInstance();
 
   /// get images from a given delivery
-  Stream<List<DeliveryImage>> getDeliveryImages(int deliveryID) {
-    return database.deliveryImagesDao.watchDeliveryImages(deliveryID);
+  Stream<List<DeliveryImage>> getPacketImages(int packetId) {
+    return database.deliveryImagesDao.watchDeliveryImages(packetId);
   }
 
   /// create images for a given delivery
-  Future<int> createDeliveryImage(String imagePath, int deliveryID) async {
+  Future<int> createPacketImage(String imagePath, int packetId) async {
     final image = File(imagePath);
     var documentsDirectory = await getApplicationDocumentsDirectory();
 
@@ -33,7 +33,7 @@ class FileController {
 
     return database.deliveryImagesDao.createDeliveryImage(
         DeliveryImagesCompanion(
-            delivery: Value(deliveryID), filePath: Value(newPath)));
+            packet: Value(packetId), filePath: Value(newPath)));
   }
 
   /// add inventory

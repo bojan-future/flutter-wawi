@@ -311,9 +311,9 @@ class DeliveryImages extends Table {
   TextColumn get filePath => text()();
 
   /// foreign key -> delivery
-  @FutureColumnNumber(12)
-  IntColumn get delivery =>
-      integer().customConstraint('REFERENCES deliveries(id)')();
+  @FutureColumnNumber(999)
+  IntColumn get packet =>
+      integer().customConstraint('REFERENCES packets(id)')();
 }
 
 @DataClassName('Inventory')
@@ -492,7 +492,7 @@ class Database extends _$Database {
           if (kDebugMode) {
             final m = createMigrator(); // changed to this
             for (final table in allTables) {
-              if (table.actualTableName == 'production_orders') {
+              if (table.actualTableName == 'delivery_images') {
                 await m.deleteTable(table.actualTableName);
                 await m.createTable(table);
               }

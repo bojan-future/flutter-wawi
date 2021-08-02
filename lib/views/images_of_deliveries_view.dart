@@ -13,11 +13,11 @@ class DeliveryImagesView extends StatefulWidget {
   ///
   DeliveryImagesView({
     Key? key,
-    required this.deliveryId,
+    required this.packetId,
   }) : super(key: key);
 
   /// parent delivery
-  final int deliveryId;
+  final int packetId;
 
   @override
   _DeliveryImagesViewState createState() => _DeliveryImagesViewState();
@@ -34,7 +34,7 @@ class _DeliveryImagesViewState extends State<DeliveryImagesView> {
 
   _asyncMethod() async {
     var fileController = Provider.of<FileController>(context, listen: false);
-    imageListStream = fileController.getDeliveryImages(widget.deliveryId);
+    imageListStream = fileController.getPacketImages(widget.packetId);
   }
 
   @override
@@ -57,7 +57,7 @@ class _DeliveryImagesViewState extends State<DeliveryImagesView> {
                 ),
               );
             },
-            deliveryID: widget.deliveryId,
+            packetID: widget.packetId,
             onPhotoFinished: () {},
           );
         });

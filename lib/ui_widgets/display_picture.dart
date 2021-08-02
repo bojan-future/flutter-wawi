@@ -13,11 +13,11 @@ class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
 
   ///ID of delivery
-  final int deliveryID;
+  final int packetID;
 
   ///
   const DisplayPictureScreen(
-      {Key? key, required this.imagePath, required this.deliveryID})
+      {Key? key, required this.imagePath, required this.packetID})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -67,8 +67,8 @@ class DisplayPictureScreen extends StatelessWidget {
                         var fileController =
                             Provider.of<FileController>(context, listen: false);
 
-                        await fileController.createDeliveryImage(
-                            imagePath, deliveryID);
+                        await fileController.createPacketImage(
+                            imagePath, packetID);
 
                         Navigator.pop(context);
                         Navigator.pop(context);

@@ -15,13 +15,12 @@ import 'business_logic/production_controller.dart';
 import 'business_logic/scan_bottom_sheet_result.dart';
 import 'services/scanner_controller.dart';
 import 'services/synchro_controller.dart';
-import 'test_helpers/scannercontroller_mock.dart';
 import 'ui_widgets/alert_warnings.dart';
 import 'ui_widgets/drawer.dart';
 import 'ui_widgets/homepage_buttons.dart';
-import 'views/deliveries_for_images_view.dart';
 import 'views/delivery_view.dart';
 import 'views/dispatch_view.dart';
+import 'views/images_of_deliveries_view.dart';
 import 'views/login_view.dart';
 import 'views/production_completion_view.dart';
 import 'views/production_start_view.dart';
@@ -157,11 +156,29 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButtonWidget(
                         icon: Mdi.camera,
                         buttonLabel: "Foto",
-                        bottomSheetText: "",
+                        bottomSheetText: "Betroffenen Paket scannen",
                         title: "Fotos",
                         col: Colors.red[400]!,
-                        child: DeliveriesForImagesView(),
-                        onScanBottomSheet: null,
+                        builder: (packetId) =>
+                            DeliveryImagesView(packetId: packetId),
+                        onScanBottomSheet: (barcode) async {
+                          var packetsController =
+                              Provider.of<PacketsController>(context,
+                                  listen: false);
+
+                          return packetsController
+                              .getPacketByBarcode(barcode)
+                              .then(
+                                  (packet) =>
+                                      ScanBottomSheetResult(true, packet.id),
+                                  onError: (e) async {
+                            var packetID = await packetsController.addPacket(
+                                barcode,
+                                createInexistingProduct: true);
+
+                            return ScanBottomSheetResult(true, packetID);
+                          });
+                        },
                       ),
                     )
                   ],

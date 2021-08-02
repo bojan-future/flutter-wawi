@@ -14,7 +14,7 @@ class DeliveryImagesWidget extends StatefulWidget {
     this.color = Colors.red,
     required this.itemCount,
     required this.itemBuilder,
-    required this.deliveryID,
+    required this.packetID,
     required this.onPhotoFinished,
   }) : super(key: key);
 
@@ -31,7 +31,7 @@ class DeliveryImagesWidget extends StatefulWidget {
   final IndexedWidgetBuilder itemBuilder;
 
   /// id of the parent delivery
-  final int deliveryID;
+  final int packetID;
 
   /// callback executed when photo has been made
   final VoidCallback onPhotoFinished;
@@ -63,7 +63,7 @@ class _DeliveryImagesWidgetState extends State<DeliveryImagesWidget> {
                   CupertinoPageRoute(
                       builder: (context) => TakePictureScreen(
                             camera: firstCamera,
-                            deliveryID: widget.deliveryID,
+                            packetID: widget.packetID,
                           ))).then((value) {
                 widget.onPhotoFinished();
               });

@@ -4234,12 +4234,12 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
   final String filePath;
 
   /// foreign key -> delivery
-  final int delivery;
+  final int packet;
   DeliveryImage(
       {required this.id,
       required this.uuid,
       required this.filePath,
-      required this.delivery});
+      required this.packet});
   factory DeliveryImage.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
@@ -4251,8 +4251,8 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
           .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
       filePath: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}file_path'])!,
-      delivery: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}delivery'])!,
+      packet: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}packet'])!,
     );
   }
   @override
@@ -4261,7 +4261,7 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
     map['id'] = Variable<int>(id);
     map['uuid'] = Variable<String>(uuid);
     map['file_path'] = Variable<String>(filePath);
-    map['delivery'] = Variable<int>(delivery);
+    map['packet'] = Variable<int>(packet);
     return map;
   }
 
@@ -4270,7 +4270,7 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
       id: Value(id),
       uuid: Value(uuid),
       filePath: Value(filePath),
-      delivery: Value(delivery),
+      packet: Value(packet),
     );
   }
 
@@ -4281,7 +4281,7 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
       id: serializer.fromJson<int>(json['id']),
       uuid: serializer.fromJson<String>(json['uuid']),
       filePath: serializer.fromJson<String>(json['filePath']),
-      delivery: serializer.fromJson<int>(json['delivery']),
+      packet: serializer.fromJson<int>(json['packet']),
     );
   }
   @override
@@ -4291,17 +4291,17 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
       'id': serializer.toJson<int>(id),
       'uuid': serializer.toJson<String>(uuid),
       'filePath': serializer.toJson<String>(filePath),
-      'delivery': serializer.toJson<int>(delivery),
+      'packet': serializer.toJson<int>(packet),
     };
   }
 
   DeliveryImage copyWith(
-          {int? id, String? uuid, String? filePath, int? delivery}) =>
+          {int? id, String? uuid, String? filePath, int? packet}) =>
       DeliveryImage(
         id: id ?? this.id,
         uuid: uuid ?? this.uuid,
         filePath: filePath ?? this.filePath,
-        delivery: delivery ?? this.delivery,
+        packet: packet ?? this.packet,
       );
   @override
   String toString() {
@@ -4309,14 +4309,14 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
           ..write('id: $id, ')
           ..write('uuid: $uuid, ')
           ..write('filePath: $filePath, ')
-          ..write('delivery: $delivery')
+          ..write('packet: $packet')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(uuid.hashCode, $mrjc(filePath.hashCode, delivery.hashCode))));
+      $mrjc(uuid.hashCode, $mrjc(filePath.hashCode, packet.hashCode))));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4324,39 +4324,39 @@ class DeliveryImage extends DataClass implements Insertable<DeliveryImage> {
           other.id == this.id &&
           other.uuid == this.uuid &&
           other.filePath == this.filePath &&
-          other.delivery == this.delivery);
+          other.packet == this.packet);
 }
 
 class DeliveryImagesCompanion extends UpdateCompanion<DeliveryImage> {
   final Value<int> id;
   final Value<String> uuid;
   final Value<String> filePath;
-  final Value<int> delivery;
+  final Value<int> packet;
   const DeliveryImagesCompanion({
     this.id = const Value.absent(),
     this.uuid = const Value.absent(),
     this.filePath = const Value.absent(),
-    this.delivery = const Value.absent(),
+    this.packet = const Value.absent(),
   });
   DeliveryImagesCompanion.insert({
     this.id = const Value.absent(),
     required String uuid,
     required String filePath,
-    required int delivery,
+    required int packet,
   })  : uuid = Value(uuid),
         filePath = Value(filePath),
-        delivery = Value(delivery);
+        packet = Value(packet);
   static Insertable<DeliveryImage> custom({
     Expression<int>? id,
     Expression<String>? uuid,
     Expression<String>? filePath,
-    Expression<int>? delivery,
+    Expression<int>? packet,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (uuid != null) 'uuid': uuid,
       if (filePath != null) 'file_path': filePath,
-      if (delivery != null) 'delivery': delivery,
+      if (packet != null) 'packet': packet,
     });
   }
 
@@ -4364,12 +4364,12 @@ class DeliveryImagesCompanion extends UpdateCompanion<DeliveryImage> {
       {Value<int>? id,
       Value<String>? uuid,
       Value<String>? filePath,
-      Value<int>? delivery}) {
+      Value<int>? packet}) {
     return DeliveryImagesCompanion(
       id: id ?? this.id,
       uuid: uuid ?? this.uuid,
       filePath: filePath ?? this.filePath,
-      delivery: delivery ?? this.delivery,
+      packet: packet ?? this.packet,
     );
   }
 
@@ -4385,8 +4385,8 @@ class DeliveryImagesCompanion extends UpdateCompanion<DeliveryImage> {
     if (filePath.present) {
       map['file_path'] = Variable<String>(filePath.value);
     }
-    if (delivery.present) {
-      map['delivery'] = Variable<int>(delivery.value);
+    if (packet.present) {
+      map['packet'] = Variable<int>(packet.value);
     }
     return map;
   }
@@ -4397,7 +4397,7 @@ class DeliveryImagesCompanion extends UpdateCompanion<DeliveryImage> {
           ..write('id: $id, ')
           ..write('uuid: $uuid, ')
           ..write('filePath: $filePath, ')
-          ..write('delivery: $delivery')
+          ..write('packet: $packet')
           ..write(')'))
         .toString();
   }
@@ -4435,16 +4435,16 @@ class $DeliveryImagesTable extends DeliveryImages
     );
   }
 
-  final VerificationMeta _deliveryMeta = const VerificationMeta('delivery');
+  final VerificationMeta _packetMeta = const VerificationMeta('packet');
   @override
-  late final GeneratedIntColumn delivery = _constructDelivery();
-  GeneratedIntColumn _constructDelivery() {
-    return GeneratedIntColumn('delivery', $tableName, false,
-        $customConstraints: 'REFERENCES deliveries(id)');
+  late final GeneratedIntColumn packet = _constructPacket();
+  GeneratedIntColumn _constructPacket() {
+    return GeneratedIntColumn('packet', $tableName, false,
+        $customConstraints: 'REFERENCES packets(id)');
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, uuid, filePath, delivery];
+  List<GeneratedColumn> get $columns => [id, uuid, filePath, packet];
   @override
   $DeliveryImagesTable get asDslTable => this;
   @override
@@ -4471,11 +4471,11 @@ class $DeliveryImagesTable extends DeliveryImages
     } else if (isInserting) {
       context.missing(_filePathMeta);
     }
-    if (data.containsKey('delivery')) {
-      context.handle(_deliveryMeta,
-          delivery.isAcceptableOrUnknown(data['delivery']!, _deliveryMeta));
+    if (data.containsKey('packet')) {
+      context.handle(_packetMeta,
+          packet.isAcceptableOrUnknown(data['packet']!, _packetMeta));
     } else if (isInserting) {
-      context.missing(_deliveryMeta);
+      context.missing(_packetMeta);
     }
     return context;
   }

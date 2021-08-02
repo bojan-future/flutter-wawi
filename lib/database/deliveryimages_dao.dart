@@ -23,9 +23,9 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
   }
 
   /// observer for images of one specific delivery
-  Stream<List<DeliveryImage>> watchDeliveryImages(int deliveryID) {
+  Stream<List<DeliveryImage>> watchDeliveryImages(int packetId) {
     final imageList = (select(deliveryImages)
-          ..where((p) => p.delivery.equals(deliveryID)))
+          ..where((p) => p.packet.equals(packetId)))
         .watch();
     return imageList;
   }
@@ -40,7 +40,7 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
     if (!deliveryImage.uuid.present) {
       deliveryImage = DeliveryImagesCompanion(
         uuid: Value(Uuid().v4()),
-        delivery: deliveryImage.delivery,
+        packet: deliveryImage.packet,
         filePath: deliveryImage.filePath,
       );
     }
@@ -65,9 +65,9 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
     json['data'] = await File(model.filePath).readAsBytes().then(base64Encode);
-    json['delivery'] = await db.deliveriesDao
-        .getDelivery(model.delivery)
-        .then((delivery) => delivery.uuid, onError: (e) => 'error')
+    json['packet'] = await db.packetsDao
+        .getPacketWithId(model.packet)
+        .then((packet) => packet.uuid, onError: (e) => 'error')
         .catchError((e) => 'error');
 
     addSynchroUpdate(model.uuid, SyncType.delivery_image, jsonEncode(json));
