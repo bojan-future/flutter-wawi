@@ -68,6 +68,18 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
     }
   }
 
+  Future<bool> checkDeliveryPositionByPacket(int packetID) async {
+    final deliveryPositionList = await (select(deliveryPositions)
+          ..where((o) => o.packet.equals(packetID)))
+        .get();
+
+    if (deliveryPositionList.isEmpty) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   ///hook executed when record has been changed
   Future<void> onUpdateData(DeliveryPosition model) async {
     var db = DatabaseFactory.getDatabaseInstance();

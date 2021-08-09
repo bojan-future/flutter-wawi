@@ -5,4 +5,4 @@ class BusinessException implements Exception {}
 class InvalidBarcodeException extends BusinessException {}
 
 /// Exception for already existing packets
-class PacketAlreadyExists extends BusinessException {}
+class DeliveryPositionAlreadyExists extends BusinessException {}

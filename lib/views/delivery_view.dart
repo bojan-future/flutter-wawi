@@ -72,7 +72,7 @@ class _DeliveryViewState extends State<DeliveryView> {
                     context, "Achtung!", "Der gescannte Barcode ist ungültig!")
                 .show();
           });
-        } on PacketAlreadyExists {
+        } on DeliveryPositionAlreadyExists {
           setState(() {
             buildAlert(context, "Achtung!",
                     "Der gescannte Paket wurde bereits als geliefert erfasst!")

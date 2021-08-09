@@ -50,7 +50,10 @@ class DeliveryController {
     });
 
     if (packetTestId > 0) {
-      throw PacketAlreadyExists();
+      var exists = await checkDeliveryPositionByPacket(packetTestId);
+      if (exists) {
+        throw DeliveryPositionAlreadyExists();
+      }
     }
 
     final packetID = await PacketsController().addPacket(barcode);
@@ -67,6 +70,11 @@ class DeliveryController {
   Future<DeliveryPosition> getDeliveryPosition(int deliveryPositionID) async {
     return database.deliveryPositionsDao
         .getDeliveryPositionByID(deliveryPositionID);
+  }
+
+  Future<bool> checkDeliveryPositionByPacket(int packetID) async {
+    return database.deliveryPositionsDao
+        .checkDeliveryPositionByPacket(packetID);
   }
 
   /// get delivery position
