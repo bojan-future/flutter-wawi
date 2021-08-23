@@ -14,7 +14,8 @@ class ProductionDao extends DatabaseAccessor<Database>
   /// creates a new production model without materials or results
   Future<int> createProduction(
       ProductionOrdersCompanion productionOrder) async {
-    return into(productionOrders).insert(productionOrder);
+    return into(productionOrders)
+        .insert(productionOrder, mode: InsertMode.replace);
   }
 
   /// returns a production with given id

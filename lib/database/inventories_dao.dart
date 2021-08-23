@@ -20,7 +20,9 @@ class InventoriesDao extends DatabaseAccessor<Database>
         uuid: Value(Uuid().v4()),
       );
     }
-    return into(inventories).insert(inventory).then((value) {
+    return into(inventories)
+        .insert(inventory, mode: InsertMode.replace)
+        .then((value) {
       getInventory(value).then(onUpdateData);
       return value;
     });

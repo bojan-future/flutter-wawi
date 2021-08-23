@@ -98,6 +98,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    var synchroController =
+        Provider.of<SynchroController>(context, listen: false);
     return MaterialApp(
       title: 'Kuda Lager',
       theme: ThemeData(
@@ -106,7 +108,7 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.amberAccent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginView(),
+      home: LoginView(synchroController.synchroProgress.stream),
     );
   }
 }

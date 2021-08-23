@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kuda_lager/services/synchro_controller.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
@@ -10,17 +13,34 @@ import '../ui_widgets/alert_warnings.dart';
 
 /// Widget representing Login Screen
 class LoginView extends StatefulWidget {
+  final Stream<double>? progressStream;
+  LoginView(this.progressStream);
+
   @override
   _LoginViewState createState() => _LoginViewState();
 }
 
 class _LoginViewState extends State<LoginView> {
   final textEditController = TextEditingController();
+  double progress = 0.0;
+  StreamSubscription<double>? progressSubscription;
 
   @override
   void dispose() {
     textEditController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.progressStream != null) {
+      progressSubscription = widget.progressStream!.listen((synchroProgress) {
+        setState(() {
+          progress = synchroProgress;
+        });
+      });
+    }
   }
 
   void loginWithBarcode(String barcode) async {
@@ -51,6 +71,7 @@ class _LoginViewState extends State<LoginView> {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: <Widget>[
+            LinearProgressIndicator(value: progress),
             Flexible(
               child: SizedBox(
                 height: 180,

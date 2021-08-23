@@ -24,7 +24,9 @@ class DeliveriesDao extends DatabaseAccessor<Database>
           pictureCount: delivery.pictureCount,
           user: delivery.user);
     }
-    return into(deliveries).insert(delivery).then((value) {
+    return into(deliveries)
+        .insert(delivery, mode: InsertMode.replace)
+        .then((value) {
       getDelivery(value).then(onUpdateData);
 
       return value;

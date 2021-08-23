@@ -1,17 +1,17 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:cron/cron.dart';
 import 'package:http/http.dart' as http;
-import 'package:kuda_lager/database/packets_dao.dart';
-import 'package:kuda_lager/database/users_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 import '../database/database.dart';
 import '../database/orders_dao.dart';
+import '../database/packets_dao.dart';
 import '../database/production_dao.dart';
 import '../database/products_dao.dart';
 import '../database/synchronizable.dart';
+import '../database/users_dao.dart';
 
 ///
 class SynchroController {
@@ -19,6 +19,7 @@ class SynchroController {
   final Cron _cron;
   bool _syncInProgress = false;
   final _appSource = 'kuda-lager-app';
+  final StreamController<double> synchroProgress = StreamController<double>();
 
   ///default constructor
   SynchroController()
@@ -34,15 +35,15 @@ class SynchroController {
   Future<void> synchronize() async {
     if (_syncInProgress) return;
     _syncInProgress = true;
-    _syncDown();
+    await _syncDown();
 
-    _syncUp();
+    await _syncUp();
     _syncInProgress = false;
   }
 
   Future<SyncResponse> _fetchSync(int lastid) async {
     final response = await http.get(Uri.parse(
-        "http://ffsync-test.futurefactory-software.com/syncs?types=[90,152,200,170]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
+        "http://ffsync-test.futurefactory-software.com/syncs?types=[200,90,152,170,529]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
 
     if (response.statusCode == 200) {
       var body = response.body.replaceAll(r"\r", "").replaceAll(r"\n", "");
@@ -59,10 +60,10 @@ class SynchroController {
   Future<bool> _uploadSync(SynchroUpdate synchroUpdate) async {
     var body = synchroUpdate.toMap();
 
-    //todo: add lic, source and userid to the body
+    //add lic, source and userid to the body
     body['lic'] = 'AAAA-AAAA-AAAA-AAAA';
     body['source'] = _appSource;
-    body['userid'] = 'bojan';
+    body['userid'] = 'app';
 
     var url = Uri.parse(
         "http://ffsync-test.futurefactory-software.com/syncs/${synchroUpdate.uuid}");
@@ -79,7 +80,7 @@ class SynchroController {
     }
   }
 
-  void _syncUp() async {
+  Future<void> _syncUp() async {
     var doTry = true;
     while (doTry) {
       doTry = await _database.synchroUpdatesDao.getNext().then(
@@ -98,18 +99,16 @@ class SynchroController {
     }
   }
 
-  void _syncDown() async {
+  Future<void> _syncDown() async {
     var lastid =
         int.tryParse(await _database.systemVariablesDao.get('lastid')) ?? 0;
-    lastid = 149178;
     var syncResponse = await _fetchSync(lastid);
-    var highestid = lastid;
+
     if (syncResponse.success) {
+      var counter = 0;
       for (var sync in syncResponse.syncs) {
         try {
           await _updateDatabase(sync);
-          //highestid = max(highestid, sync.id);
-
         } on InvalidDataException catch (e) {
           print(e.toString());
           //ignore this update
@@ -118,9 +117,11 @@ class SynchroController {
           //ignore this update
         }
         _database.systemVariablesDao.set('lastid', sync.id.toString());
+        counter++;
+        synchroProgress.add(counter / syncResponse.syncs.length);
       }
+      synchroProgress.add(1.0);
     }
-    //_database.systemVariablesDao.set('lastid', highestid.toString());
   }
 
   Future<void> _updateDatabase(Sync sync) async {
@@ -143,7 +144,8 @@ class SynchroController {
         break;
       case SyncType.packet:
         _database.packetsDao.createPacket(
-            await PacketsDao.companionFromSyncJson(sync.data, sync.uuid));
+            await PacketsDao.companionFromSyncJson(sync.data, sync.uuid),
+            skipOnUpdate: true);
         break;
       //todo: other tables
       default:

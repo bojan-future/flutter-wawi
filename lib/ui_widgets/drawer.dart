@@ -62,7 +62,7 @@ class DrawerWidget extends StatelessWidget {
             title: Text('Abmelden'),
             onTap: () {
               Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                builder: (context) => LoginView(),
+                builder: (context) => LoginView(null),
               ));
             },
           ),

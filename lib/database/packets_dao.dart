@@ -16,7 +16,8 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
   PacketsDao(Database db) : super(db);
 
   /// inserts given packet into database
-  Future<int> createPacket(PacketsCompanion packet) {
+  Future<int> createPacket(PacketsCompanion packet,
+      {bool skipOnUpdate = false}) {
     if (!packet.uuid.present) {
       packet = PacketsCompanion(
         uuid: Value(Uuid().v4()),
@@ -33,7 +34,9 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
         .insert(packet, mode: InsertMode.replace)
         .then((value) async {
       await getPacketWithId(value).then((packet) {
-        onUpdateData(packet);
+        if (!skipOnUpdate) {
+          onUpdateData(packet);
+        }
       }, onError: (e) {
         print(e.toString());
       });

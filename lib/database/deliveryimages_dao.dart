@@ -44,7 +44,9 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
         filePath: deliveryImage.filePath,
       );
     }
-    return into(deliveryImages).insert(deliveryImage).then((value) {
+    return into(deliveryImages)
+        .insert(deliveryImage, mode: InsertMode.replace)
+        .then((value) {
       getDeliveryImageById(value).then(onUpdateData);
       return value;
     });

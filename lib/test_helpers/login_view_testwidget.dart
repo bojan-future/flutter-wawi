@@ -18,8 +18,9 @@ class LoginViewTestWidget extends StatefulWidget {
 class _LoginViewTestWidgetState extends State<LoginViewTestWidget> {
   @override
   Widget build(BuildContext context) {
+    Stream<double> testStream = Stream<double>.value(1.0);
     return MaterialApp(
-      home: LoginView(),
+      home: LoginView(testStream),
     );
   }
 }

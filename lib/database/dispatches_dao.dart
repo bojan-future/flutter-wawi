@@ -23,7 +23,9 @@ class DispatchesDao extends DatabaseAccessor<Database>
         orderID: dispatch.orderID,
       );
     }
-    return into(dispatches).insert(dispatch).then((value) {
+    return into(dispatches)
+        .insert(dispatch, mode: InsertMode.replace)
+        .then((value) {
       getDispatchByID(value).then(onUpdateData);
       return value;
     });
