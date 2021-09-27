@@ -1,18 +1,96 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
-import 'database/database.dart';
+import 'business_logic/auth_controller.dart';
+import 'business_logic/delivery_controller.dart';
+import 'business_logic/dispatch_controller.dart';
+import 'business_logic/file_controller.dart';
+import 'business_logic/inventory_controller.dart';
+import 'business_logic/order_controller.dart';
+import 'business_logic/packets_controller.dart';
+import 'business_logic/production_controller.dart';
+import 'business_logic/scan_bottom_sheet_result.dart';
+import 'services/scanner_controller.dart';
+import 'services/synchro_controller.dart';
+import 'ui_widgets/alert_warnings.dart';
+import 'ui_widgets/drawer.dart';
+import 'ui_widgets/homepage_buttons.dart';
+import 'views/delivery_view.dart';
+import 'views/dispatch_view.dart';
+import 'views/images_of_deliveries_view.dart';
+import 'views/login_view.dart';
+import 'views/production_completion_view.dart';
+import 'views/production_start_view.dart';
+import 'views/unwrap_view.dart';
 
 void main() {
-  FlutterError.onError = FlutterError.dumpErrorToConsole;
+  //FlutterError.onError = FlutterError.dumpErrorToConsole;
+  WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(Provider<Database>(
-    create: (context) => Database(Database.createDefaultQueryExecutor()),
-    dispose: (context, db) => db.close(),
-    child: MyApp(),
-  ));
+  final synchroController = SynchroController();
+  synchroController.synchronize(); //synchronize once at the start
+  //start scheduler
+  synchroController.initSchedule();
+
+  /// blocks rotation; sets orientation to: portrait
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MultiProvider(
+      providers: [
+        Provider<AuthController>(
+          create: (context) => AuthControllerImplDatabase(),
+        ),
+        Provider<PacketsController>(
+          create: (context) => PacketsController(),
+        ),
+        Provider<DeliveryController>(
+          create: (context) => DeliveryController(context),
+        ),
+        Provider<DispatchController>(
+          create: (context) => DispatchController(),
+        ),
+        Provider<OrderController>(
+          create: (context) => OrderController(),
+        ),
+        Provider<ProductionController>(
+          create: (context) => ProductionController(),
+        ),
+        Provider<InventoryController>(
+          create: (context) => InventoryController(),
+        ),
+        Provider<FileController>(
+          create: (context) => FileController(),
+        ),
+        Provider<ScannerController>(
+            create: (context) => ScannerControllerImplDataWedge()
+            // use this implementation in Emulator
+            // Barcode Lengths: 34 / 44 / 36 / 20
+            // create: (context) => ScannerControllerImplMock([
+            //   '9999912345',
+            //   '01384332323999643110006035103314112210121012',
+            //   '01384332323999643110006035103314112210121012',
+            //   '5000675021234567890123456781000100',
+            //   '5000675021234567890123456782000100',
+            //   '5000675021234567890123456783000100',
+            //   '5000675021234567890123456784000100',
+            //   '5000675021234567890123456785000100',
+            //   '5000675021234567890123456786000100',
+            // ]),
+            ),
+        Provider<SynchroController>(create: (context) {
+          final synchroController = SynchroController();
+          synchroController.synchronize(); //synchronize once at the start
+          //start scheduler
+          synchroController.initSchedule();
+          return synchroController;
+        })
+      ],
+      child: MyApp(),
+    ));
+  });
 }
 
 /// Top App Widget
@@ -20,26 +98,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    var synchroController =
+        Provider.of<SynchroController>(context, listen: false);
     return MaterialApp(
       title: 'Kuda Lager',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
+        // Theme of the application.
         primarySwatch: Colors.blue,
         accentColor: Colors.amberAccent,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Kuda Lager'),
+      home: LoginView(synchroController.synchroProgress.stream),
     );
   }
 }
@@ -47,19 +116,7 @@ class MyApp extends StatelessWidget {
 /// Home screen
 class MyHomePage extends StatefulWidget {
   ///
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  /// title is displayed on the top of the screen
-  final String title;
+  MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -68,225 +125,185 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text("Kuda Lager"),
+        backwardsCompatibility: false,
+        titleTextStyle: TextStyle(
+            color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+        foregroundColor: Colors.black,
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: const <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Kuda Lager Demo',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Mdi.buffer),
-              title: Text('Inventur'),
-            ),
-            ListTile(
-              leading: Icon(Icons.history),
-              title: Text('Historie'),
-            ),
-            ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text('Mitarbeiter'),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Einstellungen'),
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Abmelden'),
-            ),
-          ],
-        ),
-      ),
+      drawer: DrawerWidget(),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: FlatButton.icon(
-                  icon: Icon(Mdi.dolly, size: 48),
-                  label: Text("Anlieferung", style: TextStyle(fontSize: 24)),
-                  color: Colors.blue[300],
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) => Delivery(
-                                title: "Anlieferung",
-                                color: Colors.blue[300],
-                              )),
-                    );
-                  },
+              Flexible(
+                child: Row(
+                  children: [
+                    TextButtonWidget(
+                      icon: Mdi.dolly,
+                      buttonLabel: "Anlieferung",
+                      bottomSheetText: "",
+                      title: "Anlieferung",
+                      col: Colors.blue[300]!,
+                      child: DeliveryView(),
+                      onScanBottomSheet: null,
+                    ),
+                    SizedBox(width: 10),
+                    Container(
+                      width: 90,
+                      child: TextButtonWidget(
+                        icon: Mdi.camera,
+                        buttonLabel: "Foto",
+                        bottomSheetText: "Betroffenen Paket scannen",
+                        title: "Fotos",
+                        col: Colors.red[400]!,
+                        builder: (packetId) =>
+                            DeliveryImagesView(packetId: packetId),
+                        onScanBottomSheet: (barcode) async {
+                          var packetsController =
+                              Provider.of<PacketsController>(context,
+                                  listen: false);
+
+                          return packetsController
+                              .getPacketByBarcode(barcode)
+                              .then(
+                                  (packet) =>
+                                      ScanBottomSheetResult(true, packet.id),
+                                  onError: (e) async {
+                            var packetID = await packetsController.addPacket(
+                                barcode,
+                                createInexistingProduct: true);
+
+                            return ScanBottomSheetResult(true, packetID);
+                          });
+                        },
+                      ),
+                    )
+                  ],
                 ),
               ),
               SizedBox(height: 10),
-              Expanded(
-                flex: 2,
-                child: FlatButton.icon(
-                  icon: Icon(Mdi.truckDelivery, size: 48),
-                  label: Text("Auslieferung", style: TextStyle(fontSize: 24)),
-                  color: Colors.amber[300],
-                  onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          height: 200,
-                          color: Colors.amber[300],
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                const Text('Auftrag Scannen'),
-                                ElevatedButton(
-                                  child: const Icon(Mdi.barcodeScan),
-                                  onPressed: () => Navigator.pop(context),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ).then((value) => Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => Delivery(
-                                    title: "Auslieferung",
-                                    color: Colors.amber[300],
-                                  )),
-                        ));
-                  },
-                ),
+              TextButtonWidget(
+                icon: Mdi.truckDelivery,
+                buttonLabel: "Auslieferung",
+                bottomSheetText: "Auftrag Scannen",
+                title: "Auslieferung",
+                col: Colors.amber[300]!,
+                builder: (parentId) {
+                  return DispatchView(orderID: parentId);
+                },
+                onScanBottomSheet: (barcode) async {
+                  var dispatchController =
+                      Provider.of<DispatchController>(context, listen: false);
+
+                  var orderController =
+                      Provider.of<OrderController>(context, listen: false);
+
+                  return dispatchController
+                      .onScanBarcode(barcode, orderController)
+                      .catchError((error, stackTrace) {
+                    buildAlert(
+                            context,
+                            "Achtung!",
+                            // ignore: lines_longer_than_80_chars
+                            "Der gescannte Auftrag konnte nicht gefunden werden!")
+                        .show();
+                    return ScanBottomSheetResult(false, 0);
+                  });
+                },
+              ),
+              SizedBox(height: 10),
+              TextButtonWidget(
+                icon: Mdi.packageVariant,
+                buttonLabel: "Auspacken",
+                bottomSheetText: "Außenpaket Scannen",
+                title: "Caddies Scannen",
+                col: Colors.deepOrange[300]!,
+                builder: (packetId) => UnwrapView(wrappingId: packetId),
+                onScanBottomSheet: (barcode) async {
+                  var packetsController =
+                      Provider.of<PacketsController>(context, listen: false);
+
+                  return packetsController
+                      .getPacketByBarcode(barcode)
+                      .then((packet) => ScanBottomSheetResult(true, packet.id),
+                          onError: (e) {
+                    buildAlert(context, "Achtung!",
+                            "Der gescannte Paket konnte nicht gefunden werden!")
+                        .show();
+                    ScanBottomSheetResult(barcode.isNotEmpty, 0);
+                  });
+                },
               ),
               SizedBox(height: 10),
               Expanded(
-                child: FlatButton.icon(
-                  icon: Icon(
-                    Mdi.packageVariant,
-                    size: 48,
-                  ),
-                  label: Text("Auspacken", style: TextStyle(fontSize: 24)),
-                  color: Colors.deepOrange[300],
-                  onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          height: 200,
-                          color: Colors.deepOrange[300],
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                const Text('Außenpaket Scannen'),
-                                ElevatedButton(
-                                  child: const Icon(Mdi.barcodeScan),
-                                  onPressed: () => Navigator.pop(context),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
+                child: Row(
+                  children: [
+                    TextButtonWidget(
+                      icon: Mdi.hammerWrench,
+                      buttonLabel: "Produktion\nStart",
+                      bottomSheetText: "Produktionsauftrag Scannen",
+                      title: "Produktion-Start",
+                      col: Colors.lightGreen[300]!,
+                      builder: (parentId) {
+                        return ProductionStartView(productionID: parentId);
                       },
-                    ).then((value) => Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => Delivery(
-                                    title: "Caddies Scannen",
-                                    color: Colors.deepOrange[300],
-                                  )),
-                        ));
-                  },
+                      onScanBottomSheet: (barcode) async {
+                        var productionController =
+                            Provider.of<ProductionController>(context,
+                                listen: false);
+
+                        return productionController
+                            .onScanProdBarcode(barcode)
+                            .catchError((error, stackTrace) {
+                          buildAlert(
+                                  context,
+                                  "Achtung!",
+                                  // ignore: lines_longer_than_80_chars
+                                  "Der gescannte Produktionsauftrag konnte nicht gefunden werden!")
+                              .show();
+                          return ScanBottomSheetResult(false, 0);
+                        });
+                      },
+                    ),
+                    SizedBox(width: 10),
+                    TextButtonWidget(
+                      icon: Mdi.hammerWrench,
+                      buttonLabel: "Produktion\nAbschluss",
+                      bottomSheetText: "Produktionsauftrag Scannen",
+                      title: "Produktion-Abschluss",
+                      col: Colors.teal[300]!,
+                      builder: (parentId) {
+                        return ProductionCompletionView(productionID: parentId);
+                      },
+                      onScanBottomSheet: (barcode) async {
+                        var productionController =
+                            Provider.of<ProductionController>(context,
+                                listen: false);
+
+                        return productionController
+                            .onScanProdBarcode(barcode)
+                            .catchError((error, stackTrace) {
+                          buildAlert(
+                                  context,
+                                  "Achtung!",
+                                  // ignore: lines_longer_than_80_chars
+                                  "Der gescannte Produktionsauftrag konnte nicht gefunden werden!")
+                              .show();
+                          return ScanBottomSheetResult(false, 0);
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class Delivery extends StatefulWidget {
-  Delivery({Key key, this.title, this.color}) : super(key: key);
-
-  final String title;
-  final Color color;
-
-  @override
-  _DeliveryState createState() => _DeliveryState();
-}
-
-class _DeliveryState extends State<Delivery> {
-  final List<String> _scanList = <String>[];
-  ScrollController _scrollController = new ScrollController();
-
-  void addItemToList() {
-    setState(() {
-      final int nextItemNumber = _scanList.length + 1;
-      _scanList.add("Artikel " + nextItemNumber.toString());
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: widget.color,
-        title: Text(widget.title),
-      ),
-      body: Column(
-        children: [
-          RaisedButton(
-            onPressed: () {
-              addItemToList();
-            },
-            color: Colors.amber,
-            child: Icon(Mdi.barcodeScan),
-          ),
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              shrinkWrap: true,
-              itemCount: _scanList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: Text((index + 1).toString()),
-                  title: Text(_scanList[index]),
-                );
-              },
-            ),
-          ),
-        ],
       ),
     );
   }

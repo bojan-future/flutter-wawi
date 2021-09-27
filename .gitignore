@@ -39,3 +39,9 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+pubspec.lock
+pubspec.lock
+/.vs/slnx.sqlite
+
+/pubspec.lock
+/.vscode/settings.json

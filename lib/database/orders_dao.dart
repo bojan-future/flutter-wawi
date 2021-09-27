@@ -1,12 +1,11 @@
 import 'package:moor_flutter/moor_flutter.dart';
-
 import 'database.dart';
 
 part 'orders_dao.g.dart';
 
 @UseDao(tables: [Orders])
 
-/// packets functionality extension for database
+/// orders functionality extension for database
 class OrdersDao extends DatabaseAccessor<Database> with _$OrdersDaoMixin {
   ///
   OrdersDao(Database db) : super(db);
@@ -26,22 +25,52 @@ class OrdersDao extends DatabaseAccessor<Database> with _$OrdersDaoMixin {
     return delete(orders).delete(order);
   }
 
-  /// retrieves order with giver order number OR
-  /// creates a new one if order with given number does not exist
+  /// retrieves order with given id
+  Future<Order> getOrderById(int id) {
+    return (select(orders)..where((o) => o.id.equals(id)))
+        .getSingleOrNull()
+        .then((value) {
+      if (value != null) {
+        return value;
+      } else {
+        return Future.error(RecordNotFoundException());
+      }
+    });
+  }
+
+  /// retrieves order with given order number
   Future<Order> getOrderByNumber(String orderNumber) async {
+    return (select(orders)..where((o) => o.orderNr.equals(orderNumber)))
+        .getSingleOrNull()
+        .then((value) {
+      if (value != null) {
+        return value;
+      } else {
+        return Future.error(RecordNotFoundException());
+      }
+    });
+  }
+
+  /// returns an order that has the requested barcode
+  Future<int> getOrderByBarcode(String orderBarcode) async {
     final orderList = await (select(orders)
-          ..where((o) => o.orderNr.equals(orderNumber)))
+          ..where((o) => o.orderBarcode.equals(orderBarcode)))
         .get();
 
     if (orderList.isEmpty) {
-      //insert new order with given order number and return it
-      final newId =
-          await createOrder(OrdersCompanion(orderNr: Value(orderNumber)));
-      final newOrderList =
-          await (select(orders)..where((o) => o.id.equals(newId))).get();
-      return newOrderList.first;
+      return Future.error(RecordNotFoundException());
     } else {
-      return orderList.first;
+      return orderList.first.id;
     }
+  }
+
+  ///parses synchronization json object and returns OrdersCompanion for insert
+  static OrdersCompanion companionFromSyncJson(
+      Map<String, dynamic> json, String uuid) {
+    return OrdersCompanion(
+      uuid: Value(uuid),
+      orderNr: Value(json['orderNr']),
+      orderBarcode: Value(json['orderBarcode']),
+    );
   }
 }
