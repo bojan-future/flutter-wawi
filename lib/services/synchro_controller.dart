@@ -43,7 +43,7 @@ class SynchroController {
 
   Future<SyncResponse> _fetchSync(int lastid) async {
     final response = await http.get(Uri.parse(
-        "http://ffsync-test.futurefactory-software.com/syncs?types=[200,90,152,170,529]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
+        "http://srv05.kuda.local/syncs?types=[200,90,152,170,529]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
 
     if (response.statusCode == 200) {
       var body = response.body.replaceAll(r"\r", "").replaceAll(r"\n", "");
@@ -65,8 +65,7 @@ class SynchroController {
     body['source'] = _appSource;
     body['userid'] = 'app';
 
-    var url = Uri.parse(
-        "http://ffsync-test.futurefactory-software.com/syncs/${synchroUpdate.uuid}");
+    var url = Uri.parse("http://srv05.kuda.local/syncs/${synchroUpdate.uuid}");
 
     if (synchroUpdate.deleted == false) {
       return http
