@@ -73,4 +73,9 @@ class OrdersDao extends DatabaseAccessor<Database> with _$OrdersDaoMixin {
       orderBarcode: Value(json['orderBarcode']),
     );
   }
+
+  /// deletes order with given uuid
+  Future deleteOrderByUuid(String uuid) {
+    return (delete(orders)..where((o) => o.uuid.equals(uuid))).go();
+  }
 }

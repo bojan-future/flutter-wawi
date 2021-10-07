@@ -77,9 +77,9 @@ class DispatchPositionsDao extends DatabaseAccessor<Database>
 
     json['dispatch'] = dispatch.uuid;
 
-    json['orderBarcode'] = await db.ordersDao
-        .getOrderById(dispatch.orderID)
-        .then((order) => order.orderBarcode);
+    json['orderBarcode'] = await db.orderPositionsDao
+        .getOrderPositionById(dispatch.orderPositionID)
+        .then((orderPos) => orderPos.barcode);
 
     await db.packetsDao.getPacketWithId(model.packet).then((packet) {
       json['packet'] = packet.uuid;

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:kuda_lager/database/orderpositions_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -192,6 +193,7 @@ class Orders extends Table {
 //not used for now - will be used later for checking dispatches
 //(offene verkaufspositionen)
 @DataClassName('OrderPosition')
+@FutureTableNumber(149)
 
 /// one position in an order
 class OrderPositions extends Table {
@@ -199,10 +201,29 @@ class OrderPositions extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// globaly unique id used for synchronizing
+  @FutureColumnNumber(33)
   TextColumn get uuid => text().customConstraint('UNIQUE')();
 
+  /// order barcode
+  @FutureColumnNumber(15)
+  TextColumn get barcode => text()();
+
+  /// original quantity
+  @FutureColumnNumber(10)
+  RealColumn get originalQuantity => real()();
+
+  /// rest quantity
+  @FutureColumnNumber(7)
+  RealColumn get restQuantity => real()();
+
   /// foreign key -> order
+  @FutureColumnNumber(13)
   IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
+
+  /// foreign key -> product
+  @FutureColumnNumber(5)
+  IntColumn get product =>
+      integer().customConstraint('REFERENCES products(id)')();
 }
 
 @DataClassName('Delivery')
@@ -266,8 +287,8 @@ class Dispatches extends Table {
 
   /// foreign key -> order
   @FutureColumnNumber(50)
-  IntColumn get orderID =>
-      integer().customConstraint('REFERENCES orders(id)')();
+  IntColumn get orderPositionID =>
+      integer().customConstraint('REFERENCES orderPositions(id)')();
 }
 
 @DataClassName('DispatchPosition')
@@ -460,6 +481,7 @@ class DatabaseFactory {
   PacketsDao,
   ProductsDao,
   OrdersDao,
+  OrderPositionsDao,
   ProductionDao,
   ProductionMaterialsDao,
   ProductionResultsDao,

@@ -46,13 +46,16 @@ class TextButtonWidget extends StatelessWidget {
     return Expanded(
       child: TextButton(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 48),
-            Text(
-              buttonLabel,
-              style: TextStyle(fontSize: 22),
-              textAlign: TextAlign.center,
+            Expanded(child: Icon(icon, size: 48)),
+            Expanded(
+              child: Text(
+                buttonLabel,
+                style: TextStyle(fontSize: 22),
+                textAlign: TextAlign.center,
+              ),
             ),
           ],
         ),

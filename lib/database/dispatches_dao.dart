@@ -20,7 +20,7 @@ class DispatchesDao extends DatabaseAccessor<Database>
     if (!dispatch.uuid.present) {
       dispatch = DispatchesCompanion(
         uuid: Value(Uuid().v4()),
-        orderID: dispatch.orderID,
+        orderPositionID: dispatch.orderPositionID,
       );
     }
     return into(dispatches)
@@ -67,9 +67,9 @@ class DispatchesDao extends DatabaseAccessor<Database>
   Future<void> onUpdateData(Dispatch model) async {
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
-    json['order'] = await db.ordersDao
-        .getOrderById(model.orderID)
-        .then((order) => order.uuid, onError: (e) => 'error');
+    json['orderPosition'] = await db.orderPositionsDao
+        .getOrderPositionById(model.orderPositionID)
+        .then((orderPos) => orderPos.uuid, onError: (e) => 'error');
 
     json.remove('orderID'); //do not polute server with internal informations
 

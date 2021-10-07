@@ -194,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 title: "Auslieferung",
                 col: Colors.amber[300]!,
                 builder: (parentId) {
-                  return DispatchView(orderID: parentId);
+                  return DispatchView(orderPositionID: parentId);
                 },
                 onScanBottomSheet: (barcode) async {
                   var dispatchController =

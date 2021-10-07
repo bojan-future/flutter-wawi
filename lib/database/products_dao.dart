@@ -95,4 +95,9 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
       //todo: other fields
     );
   }
+
+  /// deletes product with given uuid
+  Future deleteProductByUuid(String uuid) {
+    return (delete(products)..where((p) => p.uuid.equals(uuid))).go();
+  }
 }

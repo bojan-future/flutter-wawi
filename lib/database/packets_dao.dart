@@ -141,4 +141,9 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
     addSynchroUpdate(model.uuid, SyncType.packet, model.toJsonString(),
         deleted: true);
   }
+
+  /// deletes packet with given uuid
+  Future deletePacketByUuid(String uuid) {
+    return (delete(packets)..where((p) => p.uuid.equals(uuid))).go();
+  }
 }

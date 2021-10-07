@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cron/cron.dart';
 import 'package:http/http.dart' as http;
+import 'package:kuda_lager/database/orderpositions_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 import '../database/database.dart';
@@ -19,6 +20,8 @@ class SynchroController {
   final Cron _cron;
   bool _syncInProgress = false;
   final _appSource = 'kuda-lager-app';
+  final _endpoint = 'http://ffsync-test.futurefactory-software.com';
+  //final _endpoint = 'http://srv05.kuda.local';
   final StreamController<double> synchroProgress = StreamController<double>();
 
   ///default constructor
@@ -35,15 +38,22 @@ class SynchroController {
   Future<void> synchronize() async {
     if (_syncInProgress) return;
     _syncInProgress = true;
-    await _syncDown();
+    try {
+      await _syncDown();
 
-    await _syncUp();
-    _syncInProgress = false;
+      await _syncUp();
+    } on Exception catch (e) {
+      print(e.toString());
+      _syncInProgress = false;
+      throw Exception('Synchronization error');
+    } finally {
+      _syncInProgress = false;
+    }
   }
 
   Future<SyncResponse> _fetchSync(int lastid) async {
     final response = await http.get(Uri.parse(
-        "http://srv05.kuda.local/syncs?types=[200,90,152,170,529]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
+        "$_endpoint/syncs?types=[200,90,152,149,170,529]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
 
     if (response.statusCode == 200) {
       var body = response.body.replaceAll(r"\r", "").replaceAll(r"\n", "");
@@ -65,7 +75,7 @@ class SynchroController {
     body['source'] = _appSource;
     body['userid'] = 'app';
 
-    var url = Uri.parse("http://srv05.kuda.local/syncs/${synchroUpdate.uuid}");
+    var url = Uri.parse("$_endpoint/syncs/${synchroUpdate.uuid}");
 
     if (synchroUpdate.deleted == false) {
       return http
@@ -124,30 +134,59 @@ class SynchroController {
   }
 
   Future<void> _updateDatabase(Sync sync) async {
-    switch (sync.type) {
-      case SyncType.product:
-        _database.productsDao.createProduct(
-            ProductsDao.companionFromSyncJson(sync.data, sync.uuid));
-        break;
-      case SyncType.order:
-        _database.ordersDao
-            .createOrder(OrdersDao.companionFromSyncJson(sync.data, sync.uuid));
-        break;
-      case SyncType.production:
-        _database.productionDao.createProduction(
-            ProductionDao.companionFromSyncJson(sync.data, sync.uuid));
-        break;
-      case SyncType.user:
-        _database.usersDao
-            .createUser(UsersDao.companionFromSyncJson(sync.data, sync.uuid));
-        break;
-      case SyncType.packet:
-        _database.packetsDao.createPacket(
-            await PacketsDao.companionFromSyncJson(sync.data, sync.uuid),
-            skipOnUpdate: true);
-        break;
-      //todo: other tables
-      default:
+    if (sync.deleted == false) {
+      switch (sync.type) {
+        case SyncType.product:
+          _database.productsDao.createProduct(
+              ProductsDao.companionFromSyncJson(sync.data, sync.uuid));
+          break;
+        case SyncType.order:
+          _database.ordersDao.createOrder(
+              OrdersDao.companionFromSyncJson(sync.data, sync.uuid));
+          break;
+        case SyncType.production:
+          _database.productionDao.createProduction(
+              ProductionDao.companionFromSyncJson(sync.data, sync.uuid));
+          break;
+        case SyncType.user:
+          _database.usersDao
+              .createUser(UsersDao.companionFromSyncJson(sync.data, sync.uuid));
+          break;
+        case SyncType.packet:
+          _database.packetsDao.createPacket(
+              await PacketsDao.companionFromSyncJson(sync.data, sync.uuid),
+              skipOnUpdate: true);
+          break;
+        case SyncType.order_position:
+          _database.orderPositionsDao.createOrderPosition(
+              OrderPositionsDao.companionFromSyncJson(sync.data, sync.uuid));
+          break;
+        //todo: other tables
+        default:
+      }
+    } else {
+      switch (sync.type) {
+        case SyncType.product:
+          _database.productsDao.deleteProductByUuid(sync.uuid);
+          break;
+        case SyncType.order:
+          _database.ordersDao.deleteOrderByUuid(sync.uuid);
+          break;
+        case SyncType.production:
+          _database.productionDao.deleteProductionByUuid(sync.uuid);
+          break;
+        case SyncType.user:
+          _database.usersDao.deleteUserByUuid(sync.uuid);
+          break;
+        case SyncType.packet:
+          _database.packetsDao.deletePacketByUuid(sync.uuid);
+          break;
+        case SyncType.order_position:
+          _database.orderPositionsDao.deleteOrderPositionByUuid(sync.uuid);
+          break;
+        //todo: other tables
+        default:
+      }
     }
 
     /// remove synchro entry for this record to prevent uploading older version

@@ -61,4 +61,9 @@ class UsersDao extends DatabaseAccessor<Database> with _$UsersDaoMixin {
       //todo: other fields
     );
   }
+
+  /// deletes user with given uuid
+  Future deleteUserByUuid(String uuid) {
+    return (delete(users)..where((u) => u.uuid.equals(uuid))).go();
+  }
 }

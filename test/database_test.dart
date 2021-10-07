@@ -48,11 +48,11 @@ void main() {
 
   test('dispatch can be created', () async {
     final id = await database!.dispatchesDao
-        .createDispatch(DispatchesCompanion(orderID: Value(1)));
+        .createDispatch(DispatchesCompanion(orderPositionID: Value(1)));
     final dispatch = await database!.dispatchesDao.getDispatchByID(id);
 
     expect(dispatch.id, id);
-    expect(dispatch.orderID, 1);
+    expect(dispatch.orderPositionID, 1);
   });
 
   test('ignore synchroUpdates delete errors', () async {

@@ -55,4 +55,9 @@ class ProductionDao extends DatabaseAccessor<Database>
       //todo: other fields
     );
   }
+
+  /// deletes production with given uuid
+  Future deleteProductionByUuid(String uuid) {
+    return (delete(productionOrders)..where((o) => o.uuid.equals(uuid))).go();
+  }
 }
