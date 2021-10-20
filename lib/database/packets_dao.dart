@@ -16,7 +16,7 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
   PacketsDao(Database db) : super(db);
 
   /// inserts given packet into database
-  Future<int> createPacket(PacketsCompanion packet,
+  Future<String> createPacket(PacketsCompanion packet,
       {bool skipOnUpdate = false}) {
     if (!packet.uuid.present) {
       packet = PacketsCompanion(
@@ -33,14 +33,11 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
     return into(packets)
         .insert(packet, mode: InsertMode.replace)
         .then((value) async {
-      await getPacketWithId(value).then((packet) {
-        if (!skipOnUpdate) {
-          onUpdateData(packet);
-        }
-      }, onError: (e) {
-        print(e.toString());
-      });
-      return value;
+      final packet = await _getPacketById(value);
+      if (!skipOnUpdate) {
+        onUpdateData(packet);
+      }
+      return packet.uuid;
     });
   }
 
@@ -64,9 +61,12 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
     });
   }
 
-  /// watcher for packet with given id
-  Future<Packet> getPacketWithId(int id) {
+  Future<Packet> _getPacketById(int id) {
     return (select(packets)..where((p) => p.id.equals(id))).getSingle();
+  }
+
+  Future<Packet> getPacketByUuid(String uuid) {
+    return (select(packets)..where((p) => p.uuid.equals(uuid))).getSingle();
   }
 
   /// returns a packet that has the requested barcode
@@ -88,15 +88,8 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
     if (json['product'] == "") {
       throw InvalidDataException("Ungültige Daten vom Server empfangen.");
     }
-    var product = await db.productsDao
-        .getProductByUuid(json['product'])
-        .then((product) => product, onError: (e) {
-      db.productsDao
-          .createProduct(ProductsCompanion(uuid: Value(json['product'])))
-          .then((productId) {
-        return db.productsDao.getProductById(productId);
-      });
-    });
+    var product =
+        await db.productsDao.getProductByUuidCreateIfMissing(json['product']);
 
     //todo: in case product has been created here,
     //      the productName and productNr will be empty
@@ -108,7 +101,7 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
       barcode: Value(json['barcode']),
       lot: Value(json['lot']),
       quantity: Value(double.tryParse(json['quantity']) ?? 0.0),
-      product: Value(product.id),
+      product: Value(product.uuid),
       productName: Value(product.productName),
       productNr: Value(product.productNr),
       //todo: other fields
@@ -120,13 +113,13 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
     try {
       var json = model.toJson();
       if (model.wrapping != null) {
-        json['wrapping'] = await getPacketWithId(model.wrapping!)
+        json['wrapping'] = await getPacketByUuid(model.wrapping!)
             .then((wrapping) => wrapping.uuid, onError: (e) => 'null')
             .catchError((e) => 'null');
       }
 
       json['product'] = await db.productsDao
-          .getProductById(model.product)
+          .getProductByUuid(model.product)
           .then((product) => product.uuid, onError: (e) => 'null')
           .catchError((e) => 'null');
 

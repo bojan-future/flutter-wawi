@@ -16,7 +16,7 @@ class ProductionStartView extends StatefulWidget {
   }) : super(key: key);
 
   /// ID of the production order
-  final int productionID;
+  final String productionID;
 
   @override
   _ProductionStartViewState createState() => _ProductionStartViewState();
@@ -46,7 +46,7 @@ class _ProductionStartViewState extends State<ProductionStartView> {
 
           var packetID = productionMaterial.packet;
 
-          packet = await packetsController.getPacketWithId(packetID);
+          packet = await packetsController.getPacketByUuid(packetID);
           setState(() {
             scanViewList.add(packet);
           });

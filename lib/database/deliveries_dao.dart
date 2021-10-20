@@ -16,7 +16,7 @@ class DeliveriesDao extends DatabaseAccessor<Database>
   DeliveriesDao(Database db) : super(db);
 
   /// inserts given delivery into database
-  Future<int> createDelivery(DeliveriesCompanion delivery) {
+  Future<String> createDelivery(DeliveriesCompanion delivery) {
     if (!delivery.uuid.present) {
       delivery = DeliveriesCompanion(
           uuid: Value(Uuid().v4()),
@@ -27,16 +27,23 @@ class DeliveriesDao extends DatabaseAccessor<Database>
     return into(deliveries)
         .insert(delivery, mode: InsertMode.replace)
         .then((value) {
-      getDelivery(value).then(onUpdateData);
+      _getDelivery(value).then(onUpdateData);
 
-      return value;
+      return delivery.uuid.value;
     });
   }
 
   /// inserts given delivery into database
-  Future<Delivery> getDelivery(int deliveryID) {
+  Future<Delivery> _getDelivery(int deliveryID) {
     final delivery =
         (select(deliveries)..where((p) => p.id.equals(deliveryID))).getSingle();
+    return delivery;
+  }
+
+  /// inserts given delivery into database
+  Future<Delivery> getDeliveryByUuid(String uuid) {
+    final delivery =
+        (select(deliveries)..where((p) => p.uuid.equals(uuid))).getSingle();
     return delivery;
   }
 
@@ -74,7 +81,7 @@ class DeliveriesDao extends DatabaseAccessor<Database>
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
     json['user'] = await db.usersDao
-        .getUserById(model.user)
+        .getUserByUuid(model.user)
         .then((user) => user.uuid, onError: (e) => 'null');
     addSynchroUpdate(model.uuid, SyncType.delivery, jsonEncode(json));
   }

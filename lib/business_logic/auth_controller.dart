@@ -3,7 +3,7 @@ import '../database/database.dart';
 /// auth controller interface
 abstract class AuthController {
   /// get id of the logged in user
-  int getUserId();
+  String getUserUuid();
 
   /// login with unique user number
   Future<bool> loginWithUserNumber(String userNr);
@@ -18,10 +18,10 @@ class AuthControllerImplDatabase implements AuthController {
 
   User? _user;
 
-  int getUserId() {
-    if (_user == null) return -1;
+  String getUserUuid() {
+    if (_user == null) return "";
 
-    return _user!.id;
+    return _user!.uuid;
   }
 
   /// retrieve user with given user number

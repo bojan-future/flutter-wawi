@@ -144,6 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Row(
                   children: [
                     TextButtonWidget(
+                      flex: 3,
                       icon: Mdi.dolly,
                       buttonLabel: "Anlieferung",
                       bottomSheetText: "",
@@ -153,36 +154,33 @@ class _MyHomePageState extends State<MyHomePage> {
                       onScanBottomSheet: null,
                     ),
                     SizedBox(width: 10),
-                    Container(
-                      width: 90,
-                      child: TextButtonWidget(
-                        icon: Mdi.camera,
-                        buttonLabel: "Foto",
-                        bottomSheetText: "Betroffenen Paket scannen",
-                        title: "Fotos",
-                        col: Colors.red[400]!,
-                        builder: (packetId) =>
-                            DeliveryImagesView(packetId: packetId),
-                        onScanBottomSheet: (barcode) async {
-                          var packetsController =
-                              Provider.of<PacketsController>(context,
-                                  listen: false);
+                    TextButtonWidget(
+                      icon: Mdi.camera,
+                      buttonLabel: "Foto",
+                      bottomSheetText: "Betroffenen Paket scannen",
+                      title: "Fotos",
+                      col: Colors.red[400]!,
+                      builder: (packetId) =>
+                          DeliveryImagesView(packetId: packetId),
+                      onScanBottomSheet: (barcode) async {
+                        var packetsController = Provider.of<PacketsController>(
+                            context,
+                            listen: false);
 
-                          return packetsController
-                              .getPacketByBarcode(barcode)
-                              .then(
-                                  (packet) =>
-                                      ScanBottomSheetResult(true, packet.id),
-                                  onError: (e) async {
-                            var packetID = await packetsController.addPacket(
-                                barcode,
-                                createInexistingProduct: true);
+                        return packetsController
+                            .getPacketByBarcode(barcode)
+                            .then(
+                                (packet) =>
+                                    ScanBottomSheetResult(true, packet.uuid),
+                                onError: (e) async {
+                          var packetID = await packetsController.addPacket(
+                              barcode,
+                              createInexistingProduct: true);
 
-                            return ScanBottomSheetResult(true, packetID);
-                          });
-                        },
-                      ),
-                    )
+                          return ScanBottomSheetResult(true, packetID);
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -212,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             // ignore: lines_longer_than_80_chars
                             "Der gescannte Auftrag konnte nicht gefunden werden!")
                         .show();
-                    return ScanBottomSheetResult(false, 0);
+                    return ScanBottomSheetResult(false, "");
                   });
                 },
               ),
@@ -223,19 +221,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 bottomSheetText: "Außenpaket Scannen",
                 title: "Caddies Scannen",
                 col: Colors.deepOrange[300]!,
-                builder: (packetId) => UnwrapView(wrappingId: packetId),
+                builder: (packetId) => UnwrapView(wrappingUuid: packetId),
                 onScanBottomSheet: (barcode) async {
                   var packetsController =
                       Provider.of<PacketsController>(context, listen: false);
 
-                  return packetsController
-                      .getPacketByBarcode(barcode)
-                      .then((packet) => ScanBottomSheetResult(true, packet.id),
-                          onError: (e) {
+                  return packetsController.getPacketByBarcode(barcode).then(
+                      (packet) => ScanBottomSheetResult(true, packet.uuid),
+                      onError: (e) {
                     buildAlert(context, "Achtung!",
                             "Der gescannte Paket konnte nicht gefunden werden!")
                         .show();
-                    ScanBottomSheetResult(barcode.isNotEmpty, 0);
+                    ScanBottomSheetResult(barcode.isNotEmpty, "");
                   });
                 },
               ),
@@ -266,7 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   // ignore: lines_longer_than_80_chars
                                   "Der gescannte Produktionsauftrag konnte nicht gefunden werden!")
                               .show();
-                          return ScanBottomSheetResult(false, 0);
+                          return ScanBottomSheetResult(false, "");
                         });
                       },
                     ),
@@ -294,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   // ignore: lines_longer_than_80_chars
                                   "Der gescannte Produktionsauftrag konnte nicht gefunden werden!")
                               .show();
-                          return ScanBottomSheetResult(false, 0);
+                          return ScanBottomSheetResult(false, "");
                         });
                       },
                     ),

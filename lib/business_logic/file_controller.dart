@@ -11,12 +11,12 @@ class FileController {
   final database = DatabaseFactory.getDatabaseInstance();
 
   /// get images from a given delivery
-  Stream<List<DeliveryImage>> getPacketImages(int packetId) {
+  Stream<List<DeliveryImage>> getPacketImages(String packetId) {
     return database.deliveryImagesDao.watchDeliveryImages(packetId);
   }
 
   /// create images for a given delivery
-  Future<int> createPacketImage(String imagePath, int packetId) async {
+  Future<int> createPacketImage(String imagePath, String packetId) async {
     final image = File(imagePath);
     var documentsDirectory = await getApplicationDocumentsDirectory();
 

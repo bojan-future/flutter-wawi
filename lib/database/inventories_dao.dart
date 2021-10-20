@@ -14,7 +14,7 @@ class InventoriesDao extends DatabaseAccessor<Database>
   InventoriesDao(Database db) : super(db);
 
   /// inserts given inventory into database
-  Future<int> createInventory(InventoriesCompanion inventory) {
+  Future<String> createInventory(InventoriesCompanion inventory) {
     if (!inventory.uuid.present) {
       inventory = InventoriesCompanion(
         uuid: Value(Uuid().v4()),
@@ -23,14 +23,19 @@ class InventoriesDao extends DatabaseAccessor<Database>
     return into(inventories)
         .insert(inventory, mode: InsertMode.replace)
         .then((value) {
-      getInventory(value).then(onUpdateData);
-      return value;
+      _getInventoryById(value).then(onUpdateData);
+      return inventory.uuid.value;
     });
   }
 
   /// retrieve record by id
-  Future<Inventory> getInventory(int id) {
+  Future<Inventory> _getInventoryById(int id) {
     return (select(inventories)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  /// retrieve record by id
+  Future<Inventory> getInventoryByUuid(String uuid) {
+    return (select(inventories)..where((t) => t.uuid.equals(uuid))).getSingle();
   }
 
   /// updates inventory in the database

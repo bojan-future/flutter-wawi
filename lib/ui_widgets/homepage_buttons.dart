@@ -24,8 +24,10 @@ class TextButtonWidget extends StatelessWidget {
   /// next page can directly be coded and shown here instead of a seperate view
   final Widget? child;
 
+  final int flex;
+
   /// view of the next page
-  final Widget Function(int)? builder;
+  final Widget Function(String)? builder;
 
   /// defines what happens if something was scanned in the bottom sheet
   final Future<ScanBottomSheetResult> Function(String)? onScanBottomSheet;
@@ -39,11 +41,13 @@ class TextButtonWidget extends StatelessWidget {
       required this.col,
       this.child,
       this.builder,
+      this.flex = 1,
       required this.onScanBottomSheet});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
+      flex: flex,
       child: TextButton(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -67,7 +71,7 @@ class TextButtonWidget extends StatelessWidget {
           if (bottomSheetText == null || onScanBottomSheet == null) {
             Navigator.push(
               context,
-              buildCupertinoPageRoute(0), //Create page without id
+              buildCupertinoPageRoute(""), //Create page without id
             );
           } else {
             scanPopup(
@@ -95,7 +99,7 @@ class TextButtonWidget extends StatelessWidget {
   }
 
   /// iOS transition to child widget
-  CupertinoPageRoute buildCupertinoPageRoute(int parentID) {
+  CupertinoPageRoute buildCupertinoPageRoute(String parentID) {
     return CupertinoPageRoute(
       builder: (context) {
         if (builder != null) {

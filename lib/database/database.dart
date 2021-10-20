@@ -11,7 +11,6 @@ import 'dispatches_dao.dart';
 import 'dispatchpositions_dao.dart';
 import 'inventories_dao.dart';
 import 'inventorypositions_dao.dart';
-import 'orders_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
 import 'production_material_dao.dart';
@@ -112,8 +111,8 @@ class Packets extends Table {
 
   /// foreign key -> product
   @FutureColumnNumber(5)
-  IntColumn get product =>
-      integer().customConstraint('REFERENCES products(id)')();
+  TextColumn get product =>
+      text().customConstraint('REFERENCES products(uuid)')();
 
   /// product name from product
   TextColumn get productName => text()();
@@ -123,9 +122,8 @@ class Packets extends Table {
 
   /// foreign key -> 'parent' packet in case this is part of larger packet,
   /// might be null
-  IntColumn get wrapping => integer()
-      .nullable()
-      .customConstraint('NULLABLE REFERENCES packets(id)')();
+  TextColumn get wrapping =>
+      text().nullable().customConstraint('NULLABLE REFERENCES packets(uuid)')();
 }
 
 @DataClassName('Product')
@@ -169,27 +167,6 @@ class Products extends Table {
   IntColumn get gtin5 => integer()();
 }
 
-@DataClassName('Order')
-@FutureTableNumber(152)
-
-/// represents an order, has many positions
-class Orders extends Table {
-  /// primary key
-  IntColumn get id => integer().autoIncrement()();
-
-  /// globaly unique id used for synchronizing
-  @FutureColumnNumber(193)
-  TextColumn get uuid => text().customConstraint('UNIQUE')();
-
-  /// order number
-  @FutureColumnNumber(5)
-  TextColumn get orderNr => text()();
-
-  /// order barcode
-  @FutureColumnNumber(1)
-  TextColumn get orderBarcode => text()();
-}
-
 //not used for now - will be used later for checking dispatches
 //(offene verkaufspositionen)
 @DataClassName('OrderPosition')
@@ -216,14 +193,10 @@ class OrderPositions extends Table {
   @FutureColumnNumber(7)
   RealColumn get restQuantity => real()();
 
-  /// foreign key -> order
-  @FutureColumnNumber(13)
-  IntColumn get order => integer().customConstraint('REFERENCES orders(id)')();
-
   /// foreign key -> product
   @FutureColumnNumber(5)
-  IntColumn get product =>
-      integer().customConstraint('REFERENCES products(id)')();
+  TextColumn get product =>
+      text().customConstraint('REFERENCES products(uuid)')();
 }
 
 @DataClassName('Delivery')
@@ -246,7 +219,7 @@ class Deliveries extends Table {
 
   /// foreign key -> user
   @FutureColumnNumber(9)
-  IntColumn get user => integer().customConstraint('REFERENCES users(id)')();
+  TextColumn get user => text().customConstraint('REFERENCES users(uuid)')();
 }
 
 @DataClassName('DeliveryPosition')
@@ -263,14 +236,14 @@ class DeliveryPositions extends Table {
 
   /// foreign key -> delivery
   @FutureColumnNumber(2)
-  IntColumn get delivery =>
-      integer().customConstraint('REFERENCES deliveries(id)')();
+  TextColumn get delivery =>
+      text().customConstraint('REFERENCES deliveries(uuid)')();
 
   /// foreign key -> packets
   // 999 -> not a real column, but we need it generated for JSON conversion
   @FutureColumnNumber(999)
-  IntColumn get packet =>
-      integer().customConstraint('REFERENCES packets(id)')();
+  TextColumn get packet =>
+      text().customConstraint('REFERENCES packets(uuid)')();
 }
 
 @DataClassName('Dispatch')
@@ -287,8 +260,8 @@ class Dispatches extends Table {
 
   /// foreign key -> order
   @FutureColumnNumber(50)
-  IntColumn get orderPositionID =>
-      integer().customConstraint('REFERENCES orderPositions(id)')();
+  TextColumn get orderPositionID =>
+      text().customConstraint('REFERENCES orderPositions(uuid)')();
 }
 
 @DataClassName('DispatchPosition')
@@ -305,14 +278,14 @@ class DispatchPositions extends Table {
 
   /// foreign key -> dispatch
   @FutureColumnNumber(2)
-  IntColumn get dispatch =>
-      integer().customConstraint('REFERENCES dispatches(id)')();
+  TextColumn get dispatch =>
+      text().customConstraint('REFERENCES dispatches(uuid)')();
 
   /// foreign key -> packets
   // 999 -> not a real column, but we need it generated for JSON conversion
   @FutureColumnNumber(999)
-  IntColumn get packet =>
-      integer().customConstraint('REFERENCES packets(id)')();
+  TextColumn get packet =>
+      text().customConstraint('REFERENCES packets(uuid)')();
 }
 
 @DataClassName('DeliveryImage')
@@ -333,8 +306,8 @@ class DeliveryImages extends Table {
 
   /// foreign key -> delivery
   @FutureColumnNumber(999)
-  IntColumn get packet =>
-      integer().customConstraint('REFERENCES packets(id)')();
+  TextColumn get packet =>
+      text().customConstraint('REFERENCES packets(uuid)')();
 }
 
 @DataClassName('Inventory')
@@ -362,13 +335,13 @@ class InventoryPositions extends Table {
 
   /// foreign key -> inventory
   @FutureColumnNumber(998)
-  IntColumn get inventory =>
-      integer().customConstraint('REFERENCES inventories(id)')();
+  TextColumn get inventory =>
+      text().customConstraint('REFERENCES inventories(uuid)')();
 
   /// foreign key -> packets
   @FutureColumnNumber(999)
-  IntColumn get packet =>
-      integer().customConstraint('REFERENCES packets(id)')();
+  TextColumn get packet =>
+      text().customConstraint('REFERENCES packets(uuid)')();
 
   /// quantity
   RealColumn get quantity => real()();
@@ -408,14 +381,14 @@ class ProductionMaterials extends Table {
 
   /// foreign key -> production order
   @FutureColumnNumber(998)
-  IntColumn get prodOrder =>
-      integer().customConstraint('REFERENCES production_orders(id)')();
+  TextColumn get prodOrder =>
+      text().customConstraint('REFERENCES production_orders(uuid)')();
 
   /// Material Packet
   /// foreign key -> packets
   @FutureColumnNumber(999)
-  IntColumn get packet =>
-      integer().customConstraint('REFERENCES packets(id)')();
+  TextColumn get packet =>
+      text().customConstraint('REFERENCES packets(uuid)')();
 }
 
 @DataClassName('ProductionResult')
@@ -431,14 +404,14 @@ class ProductionResults extends Table {
 
   /// foreign key -> production order
   @FutureColumnNumber(998)
-  IntColumn get prodOrder =>
-      integer().customConstraint('REFERENCES production_orders(id)')();
+  TextColumn get prodOrder =>
+      text().customConstraint('REFERENCES production_orders(uuid)')();
 
   /// Resulting Packet
   /// foreign key -> packets
   @FutureColumnNumber(999)
-  IntColumn get packet =>
-      integer().customConstraint('REFERENCES packets(id)')();
+  TextColumn get packet =>
+      text().customConstraint('REFERENCES packets(uuid)')();
 }
 
 // ignore: avoid_classes_with_only_static_members
@@ -462,7 +435,6 @@ class DatabaseFactory {
   Users,
   Packets,
   Products,
-  Orders,
   OrderPositions,
   ProductionOrders,
   ProductionMaterials,
@@ -480,7 +452,6 @@ class DatabaseFactory {
   UsersDao,
   PacketsDao,
   ProductsDao,
-  OrdersDao,
   OrderPositionsDao,
   ProductionDao,
   ProductionMaterialsDao,
@@ -514,7 +485,7 @@ class Database extends _$Database {
           // if (kDebugMode) {
           //   final m = createMigrator(); // changed to this
           //   for (final table in allTables) {
-          //     if (table.actualTableName == 'delivery_images') {
+          //     if (true || table.actualTableName == 'packets') {
           //       await m.deleteTable(table.actualTableName);
           //       await m.createTable(table);
           //     }

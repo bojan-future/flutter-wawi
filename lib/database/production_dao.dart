@@ -19,8 +19,8 @@ class ProductionDao extends DatabaseAccessor<Database>
   }
 
   /// returns a production with given id
-  Future<ProductionOrder> getProductionById(int id) async {
-    return (select(productionOrders)..where((o) => o.id.equals(id)))
+  Future<ProductionOrder> getProductionByUuid(String uuid) async {
+    return (select(productionOrders)..where((o) => o.uuid.equals(uuid)))
         .getSingleOrNull()
         .then((value) {
       if (value != null) {
@@ -32,7 +32,7 @@ class ProductionDao extends DatabaseAccessor<Database>
   }
 
   /// returns a production that has the requested barcode
-  Future<int> getProductionIdByBarcode(String prodBarcode) async {
+  Future<String> getProductionUuidByBarcode(String prodBarcode) async {
     final productionList = await (select(productionOrders)
           ..where((o) => o.productionOrderBarcode.equals(prodBarcode)))
         .get();
@@ -40,7 +40,7 @@ class ProductionDao extends DatabaseAccessor<Database>
     if (productionList.isEmpty) {
       return Future.error(RecordNotFoundException());
     } else {
-      return productionList.first.id;
+      return productionList.first.uuid;
     }
   }
 

@@ -30,29 +30,30 @@ void main() {
     final testProduct =
         await database!.productsDao.getProductByNumber('500067502');
 
-    final id = await database!.packetsDao.createPacket(PacketsCompanion(
+    final uuid = await database!.packetsDao.createPacket(PacketsCompanion(
       uuid: Value(Uuid().v4()),
       barcode: Value(testBarcode),
       lot: Value('20230122'),
       quantity: Value(600),
-      product: Value(testProduct.id),
+      product: Value(testProduct.uuid),
       productName: Value(testProduct.productName),
       productNr: Value(testProduct.productNr),
     ));
 
-    final packet = await database!.packetsDao.getPacketWithId(id);
+    final packet = await database!.packetsDao.getPacketByUuid(uuid);
 
     expect(packet.barcode, testBarcode);
-    expect(packet.product, testProduct.id);
+    expect(packet.product, testProduct.uuid);
   });
 
   test('dispatch can be created', () async {
-    final id = await database!.dispatchesDao
-        .createDispatch(DispatchesCompanion(orderPositionID: Value(1)));
-    final dispatch = await database!.dispatchesDao.getDispatchByID(id);
+    const orderPositionUuid = "41e0d8d3-5d84-44a0-beb4-d5f925a24205";
+    final uuid = await database!.dispatchesDao.createDispatch(
+        DispatchesCompanion(orderPositionID: Value(orderPositionUuid)));
+    final dispatch = await database!.dispatchesDao.getDispatchByUuid(uuid);
 
-    expect(dispatch.id, id);
-    expect(dispatch.orderPositionID, 1);
+    expect(dispatch.uuid, uuid);
+    expect(dispatch.orderPositionID, orderPositionUuid);
   });
 
   test('ignore synchroUpdates delete errors', () async {

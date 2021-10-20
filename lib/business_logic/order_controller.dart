@@ -6,13 +6,13 @@ class OrderController {
   final database = DatabaseFactory.getDatabaseInstance();
 
   /// get id of the order position by barcode
-  Future<int> getOrderPositionIdByBarcode(String barcode) async {
-    return database.orderPositionsDao.getOrderPositionIdByBarcode(barcode);
+  Future<String> getOrderPositionUuidByBarcode(String barcode) async {
+    return database.orderPositionsDao.getOrderPositionUuidByBarcode(barcode);
   }
 
   /// retireves instance of order position with the given id
-  Future<OrderPosition> getOrderPositionById(int orderPositionID) {
-    return database.orderPositionsDao.getOrderPositionById(orderPositionID);
+  Future<OrderPosition> getOrderPositionByUuid(String orderPositionUuid) {
+    return database.orderPositionsDao.getOrderPositionByUuid(orderPositionUuid);
   }
 
   ///updates only fields present in the companion. field id must be present.

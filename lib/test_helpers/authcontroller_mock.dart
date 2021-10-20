@@ -30,7 +30,7 @@ class AuthControllerImplMock implements AuthController {
   }
 
   @override
-  int getUserId() {
-    return 1;
+  String getUserUuid() {
+    return "d43c969c-9b48-4089-91b6-beec42d1efac";
   }
 }

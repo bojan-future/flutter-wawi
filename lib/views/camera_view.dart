@@ -11,7 +11,7 @@ class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
 
   /// id of the parent delivery
-  final int packetID;
+  final String packetID;
 
   ///
   const TakePictureScreen({

@@ -28,6 +28,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   void dispose() {
     textEditController.dispose();
+    progressSubscription?.cancel();
     super.dispose();
   }
 

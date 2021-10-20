@@ -14,12 +14,9 @@ class OrderPositionsDao extends DatabaseAccessor<Database>
   /// inserts given order into database
   Future<int> createOrderPosition(OrderPositionsCompanion orderPosition) {
     return into(orderPositions).insert(orderPosition, mode: InsertMode.replace);
-    //TODO: problem - wenn offene menge inzwischen durch scannen geändert wurde, sollte es hier nicht geändert werden, wenn aber inzwischen bereits teilweise geliefert wurde, sollte es aktualisiert werden
-    // zweiter Teil des Problems - die offene verkaufspositionen werden einfach gelöscht - das wird hier nicht synchronisiert
-    // mögliche lösung - Auftragspositionen synchronisieren, wenn offene Menge auf 0 fällt, die position löschen
   }
 
-  /// updates order position in the database
+  /// replaces order position in the database
   Future<bool> replaceOrderPosition(OrderPosition orderPosition) {
     return update(orderPositions).replace(orderPosition);
   }
@@ -38,8 +35,8 @@ class OrderPositionsDao extends DatabaseAccessor<Database>
   }
 
   /// retrieves order with given id
-  Future<OrderPosition> getOrderPositionById(int id) {
-    return (select(orderPositions)..where((o) => o.id.equals(id)))
+  Future<OrderPosition> getOrderPositionByUuid(String uuid) {
+    return (select(orderPositions)..where((o) => o.uuid.equals(uuid)))
         .getSingleOrNull()
         .then((value) {
       if (value != null) {
@@ -51,7 +48,7 @@ class OrderPositionsDao extends DatabaseAccessor<Database>
   }
 
   /// returns an order position that has the requested barcode
-  Future<int> getOrderPositionIdByBarcode(String barcode) async {
+  Future<String> getOrderPositionUuidByBarcode(String barcode) async {
     final orderPosList = await (select(orderPositions)
           ..where((o) => o.barcode.equals(barcode)))
         .get();
@@ -59,19 +56,26 @@ class OrderPositionsDao extends DatabaseAccessor<Database>
     if (orderPosList.isEmpty) {
       return Future.error(RecordNotFoundException());
     } else {
-      return orderPosList.first.id;
+      return orderPosList.first.uuid;
     }
   }
 
   ///parses synchronization json object and returns OrdersCompanion for insert
-  static OrderPositionsCompanion companionFromSyncJson(
-      Map<String, dynamic> json, String uuid) {
+  static Future<OrderPositionsCompanion> companionFromSyncJson(
+      Map<String, dynamic> json, String uuid) async {
+    var db = DatabaseFactory.getDatabaseInstance();
+    if (json['product'] == "") {
+      throw InvalidDataException("Ungültige Daten vom Server empfangen.");
+    }
+    var product =
+        await db.productsDao.getProductByUuidCreateIfMissing(json['product']);
+
     return OrderPositionsCompanion(
-      uuid: Value(uuid),
-      barcode: Value(json['barcode']),
-      originalQuantity: Value(json['originalQuantity']),
-      restQuantity: Value(json['restQuantity']),
-    );
+        uuid: Value(uuid),
+        barcode: Value(json['barcode']),
+        originalQuantity: Value(double.parse(json['originalQuantity'])),
+        restQuantity: Value(double.parse(json['restQuantity'])),
+        product: Value(product.uuid));
   }
 
   /// deletes orderposition with given uuid

@@ -13,7 +13,7 @@ class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
 
   ///ID of delivery
-  final int packetID;
+  final String packetID;
 
   ///
   const DisplayPictureScreen(

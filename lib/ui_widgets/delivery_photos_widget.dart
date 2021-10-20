@@ -31,7 +31,7 @@ class DeliveryImagesWidget extends StatefulWidget {
   final IndexedWidgetBuilder itemBuilder;
 
   /// id of the parent delivery
-  final int packetID;
+  final String packetID;
 
   /// callback executed when photo has been made
   final VoidCallback onPhotoFinished;

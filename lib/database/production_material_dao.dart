@@ -17,7 +17,7 @@ class ProductionMaterialsDao extends DatabaseAccessor<Database>
   ProductionMaterialsDao(Database db) : super(db);
 
   /// inserts given dispatch into database
-  Future<int> createProductionMaterial(
+  Future<String> createProductionMaterial(
       ProductionMaterialsCompanion productionMaterial) {
     if (!productionMaterial.uuid.present) {
       productionMaterial = ProductionMaterialsCompanion(
@@ -29,8 +29,8 @@ class ProductionMaterialsDao extends DatabaseAccessor<Database>
     return into(productionMaterials)
         .insert(productionMaterial, mode: InsertMode.replace)
         .then((value) {
-      getProductionMaterialByID(value).then(onUpdateData);
-      return value;
+      _getProductionMaterialById(value).then(onUpdateData);
+      return productionMaterial.uuid.value;
     });
   }
 
@@ -56,11 +56,24 @@ class ProductionMaterialsDao extends DatabaseAccessor<Database>
     });
   }
 
-  /// retrieves dispatch with giver dispatch number OR
-  Future<ProductionMaterial> getProductionMaterialByID(
+  /// retrieves ProductionMaterial with given id
+  Future<ProductionMaterial> _getProductionMaterialById(
       int productionMaterialID) async {
     final productionMaterialList = await (select(productionMaterials)
           ..where((o) => o.id.equals(productionMaterialID)))
+        .get();
+
+    if (productionMaterialList.isEmpty) {
+      throw RecordNotFoundException();
+    } else {
+      return productionMaterialList.first;
+    }
+  }
+
+  /// retrieves ProductionMaterial with given uuid
+  Future<ProductionMaterial> getProductionMaterialByUuid(String uuid) async {
+    final productionMaterialList = await (select(productionMaterials)
+          ..where((o) => o.uuid.equals(uuid)))
         .get();
 
     if (productionMaterialList.isEmpty) {
@@ -75,7 +88,9 @@ class ProductionMaterialsDao extends DatabaseAccessor<Database>
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
 
-    await db.productionDao.getProductionById(model.prodOrder).then((prodOrder) {
+    await db.productionDao
+        .getProductionByUuid(model.prodOrder)
+        .then((prodOrder) {
       json['prodOrder'] = prodOrder.uuid;
       json['prodOrderBarcode'] = prodOrder.productionOrderBarcode;
     }).catchError((e) {
@@ -83,7 +98,7 @@ class ProductionMaterialsDao extends DatabaseAccessor<Database>
       json['prodOrderBarcode'] = 'error';
     });
 
-    await db.packetsDao.getPacketWithId(model.packet).then((packet) {
+    await db.packetsDao.getPacketByUuid(model.packet).then((packet) {
       json['packet'] = packet.uuid;
       json['packetBarcode'] = packet.barcode;
     }).catchError((e) {

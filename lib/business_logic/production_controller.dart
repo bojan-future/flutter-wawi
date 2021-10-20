@@ -10,48 +10,49 @@ class ProductionController {
   final database = DatabaseFactory.getDatabaseInstance();
 
   /// returns a production order that has the requested barcode
-  Future<int> getProductionByBarcode(String barcode) async {
-    return database.productionDao.getProductionIdByBarcode(barcode);
+  Future<String> getProductionUuidByBarcode(String barcode) async {
+    return database.productionDao.getProductionUuidByBarcode(barcode);
   }
 
   // ignore: lines_longer_than_80_chars
   /// add production position together with an associated packet (Production Start)
-  Future<int> addProductionMaterial(String barcode, int productionID,
+  Future<String> addProductionMaterial(String barcode, String productionUuid,
       PacketsController packetsController) async {
     return packetsController.getPacketByBarcode(barcode).then((packet) {
       return database.productionMaterialsDao.createProductionMaterial(
           ProductionMaterialsCompanion(
-              packet: Value(packet.id), prodOrder: Value(productionID)));
+              packet: Value(packet.uuid), prodOrder: Value(productionUuid)));
     });
   }
 
   // ignore: lines_longer_than_80_chars
   /// add production position together with an associated packet (Production Completion)
-  Future<int> addProductionResult(String barcode, int productionID,
+  Future<String> addProductionResult(String barcode, String productionUuid,
       PacketsController packetsController) async {
     return packetsController.getPacketByBarcode(barcode).then((packet) {
       return database.productionResultsDao.createProductionResult(
           ProductionResultsCompanion(
-              packet: Value(packet.id), prodOrder: Value(productionID)));
+              packet: Value(packet.uuid), prodOrder: Value(productionUuid)));
     });
   }
 
   /// returns a production material that has the requested id.
   Future<ProductionMaterial> getProductionMaterial(
-      int productionMaterialID) async {
+      String productionMaterialUuid) async {
     return database.productionMaterialsDao
-        .getProductionMaterialByID(productionMaterialID);
+        .getProductionMaterialByUuid(productionMaterialUuid);
   }
 
   /// returns a production result that has the requested id.
-  Future<ProductionResult> getProductionResult(int productionResultID) async {
+  Future<ProductionResult> getProductionResult(
+      String productionResultUuid) async {
     return database.productionResultsDao
-        .getProductionResultByID(productionResultID);
+        .getProductionResultByUuid(productionResultUuid);
   }
 
   /// checks if the scanned barcode can be found in the production order table.
   Future<ScanBottomSheetResult> onScanProdBarcode(String barcode) async {
-    return getProductionByBarcode(barcode)
-        .then((productionID) => ScanBottomSheetResult(true, productionID));
+    return getProductionUuidByBarcode(barcode)
+        .then((productionUuid) => ScanBottomSheetResult(true, productionUuid));
   }
 }

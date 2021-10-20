@@ -11,8 +11,10 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
   ProductsDao(Database db) : super(db);
 
   /// inserts given product into database
-  Future<int> createProduct(ProductsCompanion product) {
-    return into(products).insert(product, mode: InsertMode.replace);
+  Future<String> createProduct(ProductsCompanion product) {
+    return into(products)
+        .insert(product, mode: InsertMode.replace)
+        .then((value) => product.uuid.value);
   }
 
   /// updates product in the database
@@ -23,18 +25,6 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
   /// deletes product from the database
   Future<int> deleteProduct(Product product) {
     return delete(products).delete(product);
-  }
-
-  /// retrieves product with given id
-  Future<Product> getProductById(int productId) {
-    return (select(products)..where((p) => p.id.equals(productId)))
-        .getSingleOrNull()
-        .then((value) {
-      if (value == null) {
-        return Future.error(RecordNotFoundException());
-      }
-      return value;
-    });
   }
 
   /// retrieves product with given product number
@@ -59,6 +49,24 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
         return Future.error(RecordNotFoundException());
       }
       return value;
+    });
+  }
+
+  /// retrieves product with given uuid, creates empty one if missing
+  Future<Product> getProductByUuidCreateIfMissing(String uuid) async {
+    return getProductByUuid(uuid).then((product) => product, onError: (e) {
+      createProduct(ProductsCompanion(
+              uuid: Value(uuid),
+              gtin1: Value(0),
+              gtin2: Value(0),
+              gtin3: Value(0),
+              gtin4: Value(0),
+              gtin5: Value(0),
+              productNr: Value(''),
+              productName: Value('Unbekannter Artikel')))
+          .then((productId) {
+        return db.productsDao.getProductByUuid(productId);
+      });
     });
   }
 

@@ -7,7 +7,6 @@ import 'package:kuda_lager/database/orderpositions_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 import '../database/database.dart';
-import '../database/orders_dao.dart';
 import '../database/packets_dao.dart';
 import '../database/production_dao.dart';
 import '../database/products_dao.dart';
@@ -53,7 +52,8 @@ class SynchroController {
 
   Future<SyncResponse> _fetchSync(int lastid) async {
     final response = await http.get(Uri.parse(
-        "$_endpoint/syncs?types=[200,90,152,149,170,529]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
+//        "$_endpoint/syncs?types=[200,90,152,149,170,529]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
+        "$_endpoint/syncs?types=[90,149]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
 
     if (response.statusCode == 200) {
       var body = response.body.replaceAll(r"\r", "").replaceAll(r"\n", "");
@@ -140,10 +140,6 @@ class SynchroController {
           _database.productsDao.createProduct(
               ProductsDao.companionFromSyncJson(sync.data, sync.uuid));
           break;
-        case SyncType.order:
-          _database.ordersDao.createOrder(
-              OrdersDao.companionFromSyncJson(sync.data, sync.uuid));
-          break;
         case SyncType.production:
           _database.productionDao.createProduction(
               ProductionDao.companionFromSyncJson(sync.data, sync.uuid));
@@ -159,7 +155,8 @@ class SynchroController {
           break;
         case SyncType.order_position:
           _database.orderPositionsDao.createOrderPosition(
-              OrderPositionsDao.companionFromSyncJson(sync.data, sync.uuid));
+              await OrderPositionsDao.companionFromSyncJson(
+                  sync.data, sync.uuid));
           break;
         //todo: other tables
         default:
@@ -168,9 +165,6 @@ class SynchroController {
       switch (sync.type) {
         case SyncType.product:
           _database.productsDao.deleteProductByUuid(sync.uuid);
-          break;
-        case SyncType.order:
-          _database.ordersDao.deleteOrderByUuid(sync.uuid);
           break;
         case SyncType.production:
           _database.productionDao.deleteProductionByUuid(sync.uuid);

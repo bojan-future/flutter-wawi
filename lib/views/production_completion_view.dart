@@ -16,7 +16,7 @@ class ProductionCompletionView extends StatefulWidget {
   }) : super(key: key);
 
   /// ID of the production order
-  final int productionID;
+  final String productionID;
 
   @override
   _ProductionCompletionViewState createState() =>
@@ -52,7 +52,7 @@ class _ProductionCompletionViewState extends State<ProductionCompletionView> {
 
           var packetID = productionMaterial.packet;
 
-          packet = await packetsController.getPacketWithId(packetID);
+          packet = await packetsController.getPacketByUuid(packetID);
           setState(() {
             scanViewList.add(packet);
           });

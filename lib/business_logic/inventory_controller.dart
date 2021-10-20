@@ -10,24 +10,25 @@ class InventoryController {
   final database = DatabaseFactory.getDatabaseInstance();
 
   /// add inventory
-  Future<int> addInventory() async {
+  Future<String> addInventory() async {
     return database.inventoriesDao
         .createInventory(InventoriesCompanion(uuid: Value(Uuid().v4())));
   }
 
   /// add inventory position together with an associated packet
-  Future<int> addInventoryPosition(String barcode, int inventoryID) async {
+  Future<String> addInventoryPosition(
+      String barcode, String inventoryID) async {
     Packet packet;
     try {
       packet = await PacketsController().getPacketByBarcode(barcode);
     } on RecordNotFoundException {
-      var packetID = await PacketsController()
+      var packetUuid = await PacketsController()
           .addPacket(barcode, createInexistingProduct: true);
-      packet = await PacketsController().getPacketWithId(packetID);
+      packet = await PacketsController().getPacketByUuid(packetUuid);
     }
 
     var packetQuantity = packet.quantity;
-    var packetID = packet.id;
+    var packetID = packet.uuid;
     return database.inventoryPositionsDao.createInventoryPosition(
         InventoryPositionsCompanion(
             uuid: Value(Uuid().v4()),
@@ -38,8 +39,8 @@ class InventoryController {
 
   /// get inventory position
   Future<InventoryPosition> getInventoryPosition(
-      int inventoryPositionID) async {
+      String inventoryPositionUuid) async {
     return database.inventoryPositionsDao
-        .getInventoryPositionByID(inventoryPositionID);
+        .getInventoryPositionByUuid(inventoryPositionUuid);
   }
 }

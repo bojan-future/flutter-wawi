@@ -9,10 +9,10 @@ import '../ui_widgets/scanlistview.dart';
 /// Unwrapping packets screen
 class UnwrapView extends StatefulWidget {
   /// id of the "parrent" packet
-  final int wrappingId;
+  final String wrappingUuid;
 
   ///
-  const UnwrapView({Key? key, required this.wrappingId}) : super(key: key);
+  const UnwrapView({Key? key, required this.wrappingUuid}) : super(key: key);
 
   @override
   _UnwrapViewState createState() => _UnwrapViewState();
@@ -31,10 +31,10 @@ class _UnwrapViewState extends State<UnwrapView> {
               Provider.of<PacketsController>(context, listen: false);
 
           packetsController
-              .addPacket(barcode, wrapping: widget.wrappingId)
+              .addPacket(barcode, wrapping: widget.wrappingUuid)
               .then(
             (subpacketId) async {
-              var packet = await packetsController.getPacketWithId(subpacketId);
+              var packet = await packetsController.getPacketByUuid(subpacketId);
               setState(() {
                 scanViewList.insert(0, packet);
               });

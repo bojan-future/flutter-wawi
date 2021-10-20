@@ -10,22 +10,22 @@ class PacketsController {
   final database = DatabaseFactory.getDatabaseInstance();
 
   /// add packet and extract all info from the barcode
-  Future<int> addPacket(String barcode,
-      {int? wrapping, bool createInexistingProduct = false}) async {
+  Future<String> addPacket(String barcode,
+      {String? wrapping, bool createInexistingProduct = false}) async {
     final database = DatabaseFactory.getDatabaseInstance();
 
     //if already exists, return its id
     return await database.packetsDao
         .getPacketByBarcode(barcode)
-        .then((packet) => packet.id, onError: (e) async {
+        .then((packet) => packet.uuid, onError: (e) async {
       return await _addPacket(barcode,
           wrapping: wrapping, createInexistingProduct: createInexistingProduct);
     });
   }
 
   /// returns a packet that has the requested id.
-  Future<Packet> getPacketWithId(int id) {
-    return (database.packetsDao.getPacketWithId(id));
+  Future<Packet> getPacketByUuid(String uuid) {
+    return (database.packetsDao.getPacketByUuid(uuid));
   }
 
   /// returns a packet that has the requested barcode.
@@ -33,8 +33,8 @@ class PacketsController {
     return (database.packetsDao.getPacketByBarcode(barcode));
   }
 
-  Future<int> _addPacket(String barcode,
-      {int? wrapping, bool createInexistingProduct = false}) async {
+  Future<String> _addPacket(String barcode,
+      {String? wrapping, bool createInexistingProduct = false}) async {
     var productNr = "";
     var lot = "";
     var quantity;
@@ -54,18 +54,23 @@ class PacketsController {
       try {
         product = await database.productsDao.getProductByGTIN(gtin);
       } on RecordNotFoundException {
-        var productId = await database.productsDao.createProduct(
-            ProductsCompanion(
-                uuid: Value(Uuid().v4()),
-                gtin1: Value(gtin),
-                gtin2: Value(0),
-                gtin3: Value(0),
-                gtin4: Value(0),
-                gtin5: Value(0),
-                productNr: Value(''),
-                productName: Value('Unbekannter Artikel')));
+        if (createInexistingProduct) {
+          var productUuid = await database.productsDao.createProduct(
+              ProductsCompanion(
+                  uuid: Value(Uuid().v4()),
+                  gtin1: Value(gtin),
+                  gtin2: Value(0),
+                  gtin3: Value(0),
+                  gtin4: Value(0),
+                  gtin5: Value(0),
+                  productNr: Value(''),
+                  productName: Value('Unbekannter Artikel')));
 
-        product = await database.productsDao.getProductById(productId);
+          product = await database.productsDao.getProductByUuid(productUuid);
+        } else {
+          //rethrow
+          throw RecordNotFoundException();
+        }
       }
     }
 
@@ -82,18 +87,23 @@ class PacketsController {
       try {
         product = await database.productsDao.getProductByNumber(productNr);
       } on RecordNotFoundException {
-        var productId = await database.productsDao.createProduct(
-            ProductsCompanion(
-                uuid: Value(Uuid().v4()),
-                gtin1: Value(0),
-                gtin2: Value(0),
-                gtin3: Value(0),
-                gtin4: Value(0),
-                gtin5: Value(0),
-                productNr: Value(productNr),
-                productName: Value('Unbekannter Artikel')));
+        if (createInexistingProduct) {
+          var productUuid = await database.productsDao.createProduct(
+              ProductsCompanion(
+                  uuid: Value(Uuid().v4()),
+                  gtin1: Value(0),
+                  gtin2: Value(0),
+                  gtin3: Value(0),
+                  gtin4: Value(0),
+                  gtin5: Value(0),
+                  productNr: Value(productNr),
+                  productName: Value('Unbekannter Artikel')));
 
-        product = await database.productsDao.getProductById(productId);
+          product = await database.productsDao.getProductByUuid(productUuid);
+        } else {
+          //rethrow
+          throw RecordNotFoundException();
+        }
       }
     }
 
@@ -106,7 +116,7 @@ class PacketsController {
         barcode: Value(barcode),
         lot: Value(lot),
         quantity: Value(quantity),
-        product: Value(product.id),
+        product: Value(product.uuid),
         productNr: Value(product.productNr),
         productName: Value(product.productName),
         wrapping: Value(wrapping),

@@ -16,7 +16,7 @@ class InventoryPositionsDao extends DatabaseAccessor<Database>
   InventoryPositionsDao(Database db) : super(db);
 
   /// inserts given inventory position into database
-  Future<int> createInventoryPosition(
+  Future<String> createInventoryPosition(
       InventoryPositionsCompanion inventoryPosition) {
     if (!inventoryPosition.uuid.present) {
       inventoryPosition = InventoryPositionsCompanion(
@@ -28,8 +28,8 @@ class InventoryPositionsDao extends DatabaseAccessor<Database>
     return into(inventoryPositions)
         .insert(inventoryPosition, mode: InsertMode.replace)
         .then((value) {
-      getInventoryPositionByID(value).then(onUpdateData);
-      return value;
+      _getInventoryPositionByID(value).then(onUpdateData);
+      return inventoryPosition.uuid.value;
     });
   }
 
@@ -54,10 +54,23 @@ class InventoryPositionsDao extends DatabaseAccessor<Database>
   }
 
   /// retrieves inventory position with given ID
-  Future<InventoryPosition> getInventoryPositionByID(
+  Future<InventoryPosition> _getInventoryPositionByID(
       int inventoryPositionID) async {
     final inventoryPositionList = await (select(inventoryPositions)
           ..where((o) => o.id.equals(inventoryPositionID)))
+        .get();
+
+    if (inventoryPositionList.isEmpty) {
+      throw RecordNotFoundException();
+    } else {
+      return inventoryPositionList.first;
+    }
+  }
+
+  /// retrieves inventory position with given Uuid
+  Future<InventoryPosition> getInventoryPositionByUuid(String uuid) async {
+    final inventoryPositionList = await (select(inventoryPositions)
+          ..where((o) => o.uuid.equals(uuid)))
         .get();
 
     if (inventoryPositionList.isEmpty) {
@@ -73,10 +86,10 @@ class InventoryPositionsDao extends DatabaseAccessor<Database>
     var json = model.toJson();
 
     json['inventory'] = await db.inventoriesDao
-        .getInventory(model.inventory)
+        .getInventoryByUuid(model.inventory)
         .then((inventory) => inventory.uuid);
 
-    await db.packetsDao.getPacketWithId(model.packet).then((packet) {
+    await db.packetsDao.getPacketByUuid(model.packet).then((packet) {
       json['packet'] = packet.uuid;
       json['packetBarcode'] = packet.barcode;
     }).catchError((e) {

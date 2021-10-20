@@ -8,6 +8,7 @@ import '../business_logic/packets_controller.dart';
 import '../database/database.dart';
 import '../ui_widgets/alert_warnings.dart';
 import '../ui_widgets/scanlistview.dart';
+import '../ui_widgets/waitingscreen.dart';
 
 /// Widget representing Dispatch Screen
 class DispatchView extends StatefulWidget {
@@ -18,14 +19,14 @@ class DispatchView extends StatefulWidget {
   }) : super(key: key);
 
   /// linked order
-  final int orderPositionID;
+  final String orderPositionID;
 
   @override
   _DispatchViewState createState() => _DispatchViewState();
 }
 
 class _DispatchViewState extends State<DispatchView> {
-  int actualDispatchId = 0;
+  String? actualDispatchId;
   List<Packet> scanViewList = [];
 
   @override
@@ -34,12 +35,17 @@ class _DispatchViewState extends State<DispatchView> {
     var dispatchController =
         Provider.of<DispatchController>(context, listen: false);
     dispatchController.addDispatch(widget.orderPositionID).then((dispatchId) {
-      actualDispatchId = dispatchId;
+      setState(() {
+        actualDispatchId = dispatchId;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (actualDispatchId == null) {
+      return WaitingScreen();
+    }
     return ScanListView(
       title: 'Auslieferung',
       color: Colors.amber[300]!,
@@ -53,19 +59,18 @@ class _DispatchViewState extends State<DispatchView> {
             Provider.of<OrderController>(context, listen: false);
 
         try {
-          dispatchController
-              .addDispatchPosition(
-                  barcode, actualDispatchId, packetsController, orderController)
-              .then((dispatchPositionID) async {
-            var dispatchPosition = await dispatchController
-                .getDispatchPosition(dispatchPositionID);
+          final dispatchPositionID =
+              await dispatchController.addDispatchPosition(barcode,
+                  actualDispatchId!, packetsController, orderController);
 
-            var packetID = dispatchPosition.packet;
+          final dispatchPosition =
+              await dispatchController.getDispatchPosition(dispatchPositionID);
 
-            packet = await packetsController.getPacketWithId(packetID);
-            setState(() {
-              scanViewList.add(packet);
-            });
+          final packetID = dispatchPosition.packet;
+
+          packet = await packetsController.getPacketByUuid(packetID);
+          setState(() {
+            scanViewList.add(packet);
           });
         } on RecordNotFoundException {
           setState(() {

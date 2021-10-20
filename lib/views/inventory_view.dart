@@ -7,6 +7,7 @@ import '../business_logic/packets_controller.dart';
 import '../database/database.dart';
 import '../ui_widgets/alert_warnings.dart';
 import '../ui_widgets/scanlistview.dart';
+import '../ui_widgets/waitingscreen.dart';
 
 /// Widget representing the Inventory Screen
 class InventoryView extends StatefulWidget {
@@ -15,7 +16,7 @@ class InventoryView extends StatefulWidget {
 }
 
 class _InventoryViewState extends State<InventoryView> {
-  int actualInventoryID = 0;
+  String? actualInventoryID;
   List<Packet> scanViewList = [];
 
   @override
@@ -24,12 +25,17 @@ class _InventoryViewState extends State<InventoryView> {
     var inventoryController =
         Provider.of<InventoryController>(context, listen: false);
     inventoryController.addInventory().then((inventoryId) {
-      actualInventoryID = inventoryId;
+      setState(() {
+        actualInventoryID = inventoryId;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (actualInventoryID == null) {
+      return WaitingScreen();
+    }
     return ScanListView(
       color: Colors.purple[300]!,
       title: 'Inventur',
@@ -40,14 +46,14 @@ class _InventoryViewState extends State<InventoryView> {
         var packetsController =
             Provider.of<PacketsController>(context, listen: false);
         try {
-          var inventoryPositionID = await inventoryController
-              .addInventoryPosition(barcode, actualInventoryID);
+          var inventoryPositionUuid = await inventoryController
+              .addInventoryPosition(barcode, actualInventoryID!);
           var inventoryPosition = await inventoryController
-              .getInventoryPosition(inventoryPositionID);
+              .getInventoryPosition(inventoryPositionUuid);
 
           var packetID = inventoryPosition.packet;
 
-          packet = await packetsController.getPacketWithId(packetID);
+          packet = await packetsController.getPacketByUuid(packetID);
           setState(() {
             scanViewList.insert(0, packet);
           });

@@ -12,25 +12,25 @@ class DispatchController {
   final database = DatabaseFactory.getDatabaseInstance();
 
   /// add dispatch
-  Future<int> addDispatch(int orderPositionID) async {
+  Future<String> addDispatch(String orderPositionID) async {
     return database.dispatchesDao.createDispatch(
         DispatchesCompanion(orderPositionID: Value(orderPositionID)));
   }
 
   /// Get dispatch by ID
-  Future<Dispatch> getDispatchByID(int id) async {
-    return database.dispatchesDao.getDispatchByID(id);
+  Future<Dispatch> getDispatchByUuid(String uuid) async {
+    return database.dispatchesDao.getDispatchByUuid(uuid);
   }
 
   /// add dispatch position together with an associated packet
-  Future<int> addDispatchPosition(
+  Future<String> addDispatchPosition(
       String barcode,
-      int dispatchID,
+      String dispatchID,
       PacketsController packetsController,
       OrderController orderController) async {
-    final dispatch = await getDispatchByID(dispatchID);
+    final dispatch = await getDispatchByUuid(dispatchID);
     final orderPosition =
-        await orderController.getOrderPositionById(dispatch.orderPositionID);
+        await orderController.getOrderPositionByUuid(dispatch.orderPositionID);
     final packet = await packetsController.getPacketByBarcode(barcode);
     if (packet.product == orderPosition.product) {
       //check quantity
@@ -41,13 +41,14 @@ class DispatchController {
       }
       return database.dispatchPositionsDao
           .createDispatchPosition(DispatchPositionsCompanion(
-              packet: Value(packet.id), dispatch: Value(dispatchID)))
-          .then((newDispatchPositionId) {
+              packet: Value(packet.uuid), dispatch: Value(dispatchID)))
+          .then((newDispatchPositionUuid) {
         //update orderPosition (decrement restQuantity)
         orderController.updateOrderPosition(OrderPositionsCompanion(
             id: Value(orderPosition.id),
             restQuantity: Value(orderPosition.restQuantity - packet.quantity)));
-        return newDispatchPositionId; //pass the value through
+
+        return newDispatchPositionUuid; //pass the value through
       });
     } else {
       return Future.error(DispatchWrongProduct());
@@ -55,16 +56,17 @@ class DispatchController {
   }
 
   /// Get dispatch position
-  Future<DispatchPosition> getDispatchPosition(int dispatchPositionID) async {
+  Future<DispatchPosition> getDispatchPosition(
+      String dispatchPositionUuid) async {
     return database.dispatchPositionsDao
-        .getDispatchPositionByID(dispatchPositionID);
+        .getDispatchPositionByUuid(dispatchPositionUuid);
   }
 
   /// On Scan Barcode
   Future<ScanBottomSheetResult> onScanBarcode(
       String barcode, OrderController orderController) async {
-    return orderController.getOrderPositionIdByBarcode(barcode).then(
+    return orderController.getOrderPositionUuidByBarcode(barcode).then(
         (value) => ScanBottomSheetResult(true, value),
-        onError: (e) => Future.error(ScanBottomSheetResult(false, 0)));
+        onError: (e) => Future.error(ScanBottomSheetResult(false, "")));
   }
 }

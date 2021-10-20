@@ -17,7 +17,7 @@ class DeliveryImagesView extends StatefulWidget {
   }) : super(key: key);
 
   /// parent delivery
-  final int packetId;
+  final String packetId;
 
   @override
   _DeliveryImagesViewState createState() => _DeliveryImagesViewState();

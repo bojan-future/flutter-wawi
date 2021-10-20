@@ -16,7 +16,7 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
   DeliveryPositionsDao(Database db) : super(db);
 
   /// inserts given delivery position into database
-  Future<int> createDeliveryPosition(
+  Future<String> createDeliveryPosition(
       DeliveryPositionsCompanion deliveryPosition) {
     if (!deliveryPosition.uuid.present) {
       deliveryPosition = DeliveryPositionsCompanion(
@@ -28,9 +28,9 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
     return into(deliveryPositions)
         .insert(deliveryPosition, mode: InsertMode.replace)
         .then((value) {
-      getDeliveryPositionByID(value).then(onUpdateData);
+      _getDeliveryPositionByID(value).then(onUpdateData);
 
-      return value;
+      return deliveryPosition.uuid.value;
     });
   }
 
@@ -55,7 +55,7 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
   }
 
   /// retrieves delivery position with given ID
-  Future<DeliveryPosition> getDeliveryPositionByID(
+  Future<DeliveryPosition> _getDeliveryPositionByID(
       int deliveryPositionID) async {
     final deliveryPositionList = await (select(deliveryPositions)
           ..where((o) => o.id.equals(deliveryPositionID)))
@@ -68,9 +68,22 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
     }
   }
 
-  Future<bool> checkDeliveryPositionByPacket(int packetID) async {
+  /// retrieves delivery position with given ID
+  Future<DeliveryPosition> getDeliveryPositionByUuid(String uuid) async {
     final deliveryPositionList = await (select(deliveryPositions)
-          ..where((o) => o.packet.equals(packetID)))
+          ..where((o) => o.uuid.equals(uuid)))
+        .get();
+
+    if (deliveryPositionList.isEmpty) {
+      throw RecordNotFoundException();
+    } else {
+      return deliveryPositionList.first;
+    }
+  }
+
+  Future<bool> checkDeliveryPositionByPacket(String packetUuid) async {
+    final deliveryPositionList = await (select(deliveryPositions)
+          ..where((o) => o.packet.equals(packetUuid)))
         .get();
 
     if (deliveryPositionList.isEmpty) {
@@ -85,10 +98,10 @@ class DeliveryPositionsDao extends DatabaseAccessor<Database>
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
     json['delivery'] = await db.deliveriesDao
-        .getDelivery(model.delivery)
+        .getDeliveryByUuid(model.delivery)
         .then((delivery) => delivery.uuid);
 
-    await db.packetsDao.getPacketWithId(model.packet).then((packet) {
+    await db.packetsDao.getPacketByUuid(model.packet).then((packet) {
       json['packet'] = packet.uuid;
       json['packetBarcode'] = packet.barcode;
     }).catchError((e) {

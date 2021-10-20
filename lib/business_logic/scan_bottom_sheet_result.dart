@@ -7,5 +7,5 @@ class ScanBottomSheetResult {
   final bool success;
 
   /// ID of the scanned record
-  final int parentID;
+  final String parentID;
 }

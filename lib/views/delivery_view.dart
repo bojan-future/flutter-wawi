@@ -7,6 +7,7 @@ import '../business_logic/packets_controller.dart';
 import '../database/database.dart';
 import '../ui_widgets/alert_warnings.dart';
 import '../ui_widgets/scanlistview.dart';
+import '../ui_widgets/waitingscreen.dart';
 
 /// Widget representing the Delivery Screen
 class DeliveryView extends StatefulWidget {
@@ -15,7 +16,7 @@ class DeliveryView extends StatefulWidget {
 }
 
 class _DeliveryViewState extends State<DeliveryView> {
-  int actualDeliveryId = 0;
+  String? actualDeliveryId;
   List<Packet> scanViewList = [];
 
   @override
@@ -24,12 +25,17 @@ class _DeliveryViewState extends State<DeliveryView> {
     var deliveryController =
         Provider.of<DeliveryController>(context, listen: false);
     deliveryController.addDelivery().then((deliveryId) {
-      actualDeliveryId = deliveryId;
+      setState(() {
+        actualDeliveryId = deliveryId;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (actualDeliveryId == null) {
+      return WaitingScreen();
+    }
     return ScanListView(
       title: 'Anlieferung',
       onScan: (barcode) async {
@@ -41,7 +47,7 @@ class _DeliveryViewState extends State<DeliveryView> {
 
         try {
           var deliveryPositionID = await deliveryController.addDeliveryPosition(
-              barcode, actualDeliveryId);
+              barcode, actualDeliveryId!);
 
           if (deliveryPositionID == -1) {
             setState(() {
@@ -53,9 +59,9 @@ class _DeliveryViewState extends State<DeliveryView> {
             var deliveryPosition = await deliveryController
                 .getDeliveryPosition(deliveryPositionID);
 
-            var packetID = deliveryPosition.packet;
+            final packetID = deliveryPosition.packet;
 
-            packet = await packetsController.getPacketWithId(packetID);
+            packet = await packetsController.getPacketByUuid(packetID);
             setState(() {
               scanViewList.insert(0, packet);
             });

@@ -17,7 +17,7 @@ class DispatchPositionsDao extends DatabaseAccessor<Database>
   DispatchPositionsDao(Database db) : super(db);
 
   /// inserts given dispatch into database
-  Future<int> createDispatchPosition(
+  Future<String> createDispatchPosition(
       DispatchPositionsCompanion dispatchPosition) {
     if (!dispatchPosition.uuid.present) {
       dispatchPosition = DispatchPositionsCompanion(
@@ -29,8 +29,8 @@ class DispatchPositionsDao extends DatabaseAccessor<Database>
     return into(dispatchPositions)
         .insert(dispatchPosition, mode: InsertMode.replace)
         .then((value) {
-      getDispatchPositionByID(value).then(onUpdateData);
-      return value;
+      _getDispatchPositionByID(value).then(onUpdateData);
+      return dispatchPosition.uuid.value;
     });
   }
 
@@ -54,11 +54,24 @@ class DispatchPositionsDao extends DatabaseAccessor<Database>
     });
   }
 
-  /// retrieves dispatch with giver dispatch number OR
-  Future<DispatchPosition> getDispatchPositionByID(
+  /// retrieves dispatch with given id
+  Future<DispatchPosition> _getDispatchPositionByID(
       int dispatchPositionID) async {
     final dispatchPositionList = await (select(dispatchPositions)
           ..where((o) => o.id.equals(dispatchPositionID)))
+        .get();
+
+    if (dispatchPositionList.isEmpty) {
+      throw RecordNotFoundException();
+    } else {
+      return dispatchPositionList.first;
+    }
+  }
+
+  /// retrieves dispatch with giver dispatch number OR
+  Future<DispatchPosition> getDispatchPositionByUuid(String uuid) async {
+    final dispatchPositionList = await (select(dispatchPositions)
+          ..where((o) => o.uuid.equals(uuid)))
         .get();
 
     if (dispatchPositionList.isEmpty) {
@@ -73,15 +86,15 @@ class DispatchPositionsDao extends DatabaseAccessor<Database>
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
 
-    var dispatch = await db.dispatchesDao.getDispatchByID(model.dispatch);
+    var dispatch = await db.dispatchesDao.getDispatchByUuid(model.dispatch);
 
     json['dispatch'] = dispatch.uuid;
 
     json['orderBarcode'] = await db.orderPositionsDao
-        .getOrderPositionById(dispatch.orderPositionID)
+        .getOrderPositionByUuid(dispatch.orderPositionID)
         .then((orderPos) => orderPos.barcode);
 
-    await db.packetsDao.getPacketWithId(model.packet).then((packet) {
+    await db.packetsDao.getPacketByUuid(model.packet).then((packet) {
       json['packet'] = packet.uuid;
       json['packetBarcode'] = packet.barcode;
     }).catchError((e) {

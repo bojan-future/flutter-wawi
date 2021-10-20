@@ -16,7 +16,7 @@ class DispatchesDao extends DatabaseAccessor<Database>
   DispatchesDao(Database db) : super(db);
 
   /// inserts given dispatch into database
-  Future<int> createDispatch(DispatchesCompanion dispatch) {
+  Future<String> createDispatch(DispatchesCompanion dispatch) {
     if (!dispatch.uuid.present) {
       dispatch = DispatchesCompanion(
         uuid: Value(Uuid().v4()),
@@ -26,8 +26,8 @@ class DispatchesDao extends DatabaseAccessor<Database>
     return into(dispatches)
         .insert(dispatch, mode: InsertMode.replace)
         .then((value) {
-      getDispatchByID(value).then(onUpdateData);
-      return value;
+      _getDispatchById(value).then(onUpdateData);
+      return dispatch.uuid.value;
     });
   }
 
@@ -52,9 +52,21 @@ class DispatchesDao extends DatabaseAccessor<Database>
   }
 
   /// returns the dispatch that has the requested id.
-  Future<Dispatch> getDispatchByID(int id) async {
+  Future<Dispatch> _getDispatchById(int id) async {
     final dispatchList =
         await (select(dispatches)..where((o) => o.id.equals(id))).get();
+
+    if (dispatchList.isEmpty) {
+      throw RecordNotFoundException();
+    } else {
+      return dispatchList.first;
+    }
+  }
+
+  /// returns the dispatch that has the requested id.
+  Future<Dispatch> getDispatchByUuid(String uuid) async {
+    final dispatchList =
+        await (select(dispatches)..where((o) => o.uuid.equals(uuid))).get();
 
     if (dispatchList.isEmpty) {
       throw RecordNotFoundException();
@@ -68,7 +80,7 @@ class DispatchesDao extends DatabaseAccessor<Database>
     var db = DatabaseFactory.getDatabaseInstance();
     var json = model.toJson();
     json['orderPosition'] = await db.orderPositionsDao
-        .getOrderPositionById(model.orderPositionID)
+        .getOrderPositionByUuid(model.orderPositionID)
         .then((orderPos) => orderPos.uuid, onError: (e) => 'error');
 
     json.remove('orderID'); //do not polute server with internal informations

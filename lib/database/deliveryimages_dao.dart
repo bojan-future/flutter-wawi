@@ -23,15 +23,15 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
   }
 
   /// observer for images of one specific delivery
-  Stream<List<DeliveryImage>> watchDeliveryImages(int packetId) {
+  Stream<List<DeliveryImage>> watchDeliveryImages(String packetUuid) {
     final imageList = (select(deliveryImages)
-          ..where((p) => p.packet.equals(packetId)))
+          ..where((p) => p.packet.equals(packetUuid)))
         .watch();
     return imageList;
   }
 
   /// retrieve by id
-  Future<DeliveryImage> getDeliveryImageById(int id) {
+  Future<DeliveryImage> _getDeliveryImageById(int id) {
     return (select(deliveryImages)..where((p) => p.id.equals(id))).getSingle();
   }
 
@@ -47,7 +47,7 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
     return into(deliveryImages)
         .insert(deliveryImage, mode: InsertMode.replace)
         .then((value) {
-      getDeliveryImageById(value).then(onUpdateData);
+      _getDeliveryImageById(value).then(onUpdateData);
       return value;
     });
   }
@@ -68,7 +68,7 @@ class DeliveryImagesDao extends DatabaseAccessor<Database>
     var json = model.toJson();
     json['data'] = await File(model.filePath).readAsBytes().then(base64Encode);
     json['packet'] = await db.packetsDao
-        .getPacketWithId(model.packet)
+        .getPacketByUuid(model.packet)
         .then((packet) => packet.uuid, onError: (e) => 'error')
         .catchError((e) => 'error');
 
