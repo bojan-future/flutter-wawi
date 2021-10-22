@@ -30,14 +30,15 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
         wrapping: packet.wrapping,
       );
     }
-    return into(packets)
-        .insert(packet, mode: InsertMode.replace)
-        .then((value) async {
-      final packet = await _getPacketById(value);
-      if (!skipOnUpdate) {
-        onUpdateData(packet);
-      }
-      return packet.uuid;
+    return into(packets).insert(packet, mode: InsertMode.replace).then((value) {
+      _getPacketById(value).then((packet) {
+        if (!skipOnUpdate) {
+          onUpdateData(packet);
+        }
+      }, onError: (e) {
+        print(e.toString());
+      });
+      return packet.uuid.value;
     });
   }
 
@@ -88,8 +89,13 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
     if (json['product'] == "") {
       throw InvalidDataException("Ungültige Daten vom Server empfangen.");
     }
-    var product =
-        await db.productsDao.getProductByUuidCreateIfMissing(json['product']);
+    var productName = "";
+    var productNr = "";
+
+    await db.productsDao.getProductByUuid(json['product']).then((product) {
+      productName = product.productName;
+      productNr = product.productNr;
+    });
 
     //todo: in case product has been created here,
     //      the productName and productNr will be empty
@@ -101,9 +107,9 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
       barcode: Value(json['barcode']),
       lot: Value(json['lot']),
       quantity: Value(double.tryParse(json['quantity']) ?? 0.0),
-      product: Value(product.uuid),
-      productName: Value(product.productName),
-      productNr: Value(product.productNr),
+      product: Value(json['product']),
+      productName: Value(productName),
+      productNr: Value(productNr),
       //todo: other fields
     );
   }

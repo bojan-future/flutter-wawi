@@ -3,10 +3,11 @@ import 'dart:convert';
 
 import 'package:cron/cron.dart';
 import 'package:http/http.dart' as http;
-import 'package:kuda_lager/database/orderpositions_dao.dart';
+
 import 'package:moor_flutter/moor_flutter.dart';
 
 import '../database/database.dart';
+import '../database/orderpositions_dao.dart';
 import '../database/packets_dao.dart';
 import '../database/production_dao.dart';
 import '../database/products_dao.dart';
@@ -21,7 +22,8 @@ class SynchroController {
   final _appSource = 'kuda-lager-app';
   final _endpoint = 'http://ffsync-test.futurefactory-software.com';
   //final _endpoint = 'http://srv05.kuda.local';
-  final StreamController<double> synchroProgress = StreamController<double>();
+  ///Synchronisation percent progress stream
+  final synchroProgress = StreamController<double>();
 
   ///default constructor
   SynchroController()
@@ -124,6 +126,8 @@ class SynchroController {
         } on DatabaseException catch (e) {
           print(e.toString());
           //ignore this update
+        } catch (e) {
+          print(e.toString());
         }
         _database.systemVariablesDao.set('lastid', sync.id.toString());
         counter++;
