@@ -13,7 +13,7 @@ void main() {
     await tester.tap(find.byIcon(Mdi.barcodeScan));
     await tester.pumpAndSettle();
 
-    expect(find.text('der gescannte Auftrag konnte nicht gefunden werden!'),
+    expect(find.text('Der gescannte Auftrag konnte nicht gefunden werden!'),
         findsOneWidget);
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
@@ -23,7 +23,7 @@ void main() {
     await tester.tap(find.byIcon(Mdi.barcodeScan));
     await tester.pumpAndSettle();
 
-    expect(find.text('der gescannte Auftrag konnte nicht gefunden werden!'),
+    expect(find.text('Der gescannte Auftrag konnte nicht gefunden werden!'),
         findsOneWidget);
     await tester.tap(find.text('OK'));
 

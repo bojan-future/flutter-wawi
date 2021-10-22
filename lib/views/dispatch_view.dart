@@ -81,7 +81,7 @@ class _DispatchViewState extends State<DispatchView> {
         } on DispatchWrongProduct {
           setState(() {
             buildAlert(context, "Achtung!",
-                    "Der gescannte Produkt gehört nicht zu dieser Position!")
+                    "Das gescannte Produkt gehört nicht zu dieser Position!")
                 .show();
           });
         } on DispatchQuantityExceeded catch (e) {
@@ -93,7 +93,7 @@ class _DispatchViewState extends State<DispatchView> {
               //leave indentation as is, otherwise second and third lines
               //will be indented in the alert window
               message =
-                  """Der gescannte Paket hat eine höhere Menge als erwartet!
+                  """Das gescannte Paket hat eine höhere Menge als erwartet!
 Offene Menge: ${e.restQuantity}\n
 Gescannte Menge: ${e.scannedQuantity}""";
             }

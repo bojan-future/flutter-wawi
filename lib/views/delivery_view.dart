@@ -69,7 +69,7 @@ class _DeliveryViewState extends State<DeliveryView> {
         } on RecordNotFoundException {
           setState(() {
             buildAlert(context, "Achtung!",
-                    "Der gescannte Paket wurde nicht erkannt!")
+                    "Das gescannte Paket wurde nicht erkannt!")
                 .show();
           });
         } on InvalidBarcodeException {
@@ -81,7 +81,7 @@ class _DeliveryViewState extends State<DeliveryView> {
         } on DeliveryPositionAlreadyExists {
           setState(() {
             buildAlert(context, "Achtung!",
-                    "Der gescannte Paket wurde bereits als geliefert erfasst!")
+                    "Das gescannte Paket wurde bereits als geliefert erfasst!")
                 .show();
           });
         }

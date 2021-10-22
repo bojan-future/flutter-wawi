@@ -66,7 +66,7 @@ class _InventoryViewState extends State<InventoryView> {
         } on RecordNotFoundException {
           setState(() {
             buildAlert(context, "Achtung!",
-                    "Der gescannte Paket wurde nicht erkannt!")
+                    "Das gescannte Paket wurde nicht erkannt!")
                 .show();
           });
         }

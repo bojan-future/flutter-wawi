@@ -230,7 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       (packet) => ScanBottomSheetResult(true, packet.uuid),
                       onError: (e) {
                     buildAlert(context, "Achtung!",
-                            "Der gescannte Paket konnte nicht gefunden werden!")
+                            "Das gescannte Paket konnte nicht gefunden werden!")
                         .show();
                     ScanBottomSheetResult(barcode.isNotEmpty, "");
                   });
