@@ -67,15 +67,13 @@ class OrderPositionsDao extends DatabaseAccessor<Database>
     if (json['product'] == "") {
       throw InvalidDataException("Ungültige Daten vom Server empfangen.");
     }
-    var product =
-        await db.productsDao.getProductByUuidCreateIfMissing(json['product']);
 
     return OrderPositionsCompanion(
         uuid: Value(uuid),
         barcode: Value(json['barcode']),
         originalQuantity: Value(double.parse(json['originalQuantity'])),
         restQuantity: Value(double.parse(json['restQuantity'])),
-        product: Value(product.uuid));
+        product: Value(json['product']));
   }
 
   /// deletes orderposition with given uuid

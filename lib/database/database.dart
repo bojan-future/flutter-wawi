@@ -514,7 +514,7 @@ class Database extends _$Database {
           // if (kDebugMode) {
           //   final m = createMigrator(); // changed to this
           //   for (final table in allTables) {
-          //     if (true || table.actualTableName == 'packets') {
+          //     if (table.actualTableName == 'system_variables') {
           //       await m.deleteTable(table.actualTableName);
           //       await m.createTable(table);
           //     }

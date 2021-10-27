@@ -95,12 +95,13 @@ class DeliveryController {
       purchasePositionList.forEach((purchasePosition) {
         if (sumRestQuantity > 0) {
           final sumDifference =
-              min(sumRestQuantity, purchasePosition.restQuantity);
+              min(packet.quantity, purchasePosition.restQuantity);
           sumRestQuantity -= sumDifference;
           purchasePositionsController.updatePurchasePosition(
               PurchasePositionsCompanion(
                   id: Value(purchasePosition.id),
-                  restQuantity: Value(sumDifference)));
+                  restQuantity:
+                      Value(purchasePosition.restQuantity - sumDifference)));
         }
       });
 

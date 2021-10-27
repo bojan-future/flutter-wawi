@@ -52,24 +52,6 @@ class ProductsDao extends DatabaseAccessor<Database> with _$ProductsDaoMixin {
     });
   }
 
-  /// retrieves product with given uuid, creates empty one if missing
-  Future<Product> getProductByUuidCreateIfMissing(String uuid) async {
-    return getProductByUuid(uuid).then((product) => product, onError: (e) {
-      createProduct(ProductsCompanion(
-              uuid: Value(uuid),
-              gtin1: Value(0),
-              gtin2: Value(0),
-              gtin3: Value(0),
-              gtin4: Value(0),
-              gtin5: Value(0),
-              productNr: Value(''),
-              productName: Value('Unbekannter Artikel')))
-          .then((productId) {
-        return db.productsDao.getProductByUuid(productId);
-      });
-    });
-  }
-
   /// retrieves product with given GTIN
   Future<Product> getProductByGTIN(int gtin) async {
     final productList = await (select(products)

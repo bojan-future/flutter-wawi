@@ -59,18 +59,15 @@ class PurchasePositionsDao extends DatabaseAccessor<Database>
   ///parses synchronization json object and returns PurchasesCompanion for insert
   static Future<PurchasePositionsCompanion> companionFromSyncJson(
       Map<String, dynamic> json, String uuid) async {
-    var db = DatabaseFactory.getDatabaseInstance();
     if (json['product'] == "") {
       throw InvalidDataException("Ungültige Daten vom Server empfangen.");
     }
-    var product =
-        await db.productsDao.getProductByUuidCreateIfMissing(json['product']);
 
     return PurchasePositionsCompanion(
         uuid: Value(uuid),
         originalQuantity: Value(double.parse(json['originalQuantity'])),
         restQuantity: Value(double.parse(json['restQuantity'])),
-        product: Value(product.uuid));
+        product: Value(json['product']));
   }
 
   /// deletes purchaseposition with given uuid
