@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:kuda_lager/database/orderpositions_dao.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -11,11 +10,13 @@ import 'dispatches_dao.dart';
 import 'dispatchpositions_dao.dart';
 import 'inventories_dao.dart';
 import 'inventorypositions_dao.dart';
+import 'orderpositions_dao.dart';
 import 'packets_dao.dart';
 import 'production_dao.dart';
 import 'production_material_dao.dart';
 import 'production_result_dao.dart';
 import 'products_dao.dart';
+import 'purchasepositions_dao.dart';
 import 'synchroupdates_dao.dart';
 import 'systemvariables_dao.dart';
 import 'users_dao.dart';
@@ -167,7 +168,33 @@ class Products extends Table {
   IntColumn get gtin5 => integer()();
 }
 
-//not used for now - will be used later for checking dispatches
+//(offene einkaufspositionen)
+@DataClassName('PurchasePosition')
+@FutureTableNumber(191)
+
+/// one position in an order
+class PurchasePositions extends Table {
+  /// primary key
+  IntColumn get id => integer().autoIncrement()();
+
+  /// globaly unique id used for synchronizing
+  @FutureColumnNumber(30)
+  TextColumn get uuid => text().customConstraint('UNIQUE')();
+
+  /// original quantity
+  @FutureColumnNumber(10)
+  RealColumn get originalQuantity => real()();
+
+  /// rest quantity
+  @FutureColumnNumber(7)
+  RealColumn get restQuantity => real()();
+
+  /// foreign key -> product
+  @FutureColumnNumber(5)
+  TextColumn get product =>
+      text().customConstraint('REFERENCES products(uuid)')();
+}
+
 //(offene verkaufspositionen)
 @DataClassName('OrderPosition')
 @FutureTableNumber(149)
@@ -435,6 +462,7 @@ class DatabaseFactory {
   Users,
   Packets,
   Products,
+  PurchasePositions,
   OrderPositions,
   ProductionOrders,
   ProductionMaterials,
@@ -452,6 +480,7 @@ class DatabaseFactory {
   UsersDao,
   PacketsDao,
   ProductsDao,
+  PurchasePositionsDao,
   OrderPositionsDao,
   ProductionDao,
   ProductionMaterialsDao,

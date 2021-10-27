@@ -11,7 +11,6 @@ class WaitingScreen extends StatelessWidget {
         backgroundColor:
             Colors.blue, //same color as main screen to prevent flicker
         title: Text("Loading..."),
-        backwardsCompatibility: false,
         titleTextStyle: TextStyle(
             color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
         foregroundColor: Colors.black,

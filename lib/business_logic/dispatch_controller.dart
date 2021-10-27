@@ -2,7 +2,7 @@ import 'package:moor_flutter/moor_flutter.dart';
 
 import '../database/database.dart';
 import 'business.exception.dart';
-import 'order_controller.dart';
+import 'orderpositions_controller.dart';
 import 'packets_controller.dart';
 import 'scan_bottom_sheet_result.dart';
 
@@ -27,7 +27,7 @@ class DispatchController {
       String barcode,
       String dispatchID,
       PacketsController packetsController,
-      OrderController orderController) async {
+      OrderPositionsController orderController) async {
     final dispatch = await getDispatchByUuid(dispatchID);
     final orderPosition =
         await orderController.getOrderPositionByUuid(dispatch.orderPositionID);
@@ -64,7 +64,7 @@ class DispatchController {
 
   /// On Scan Barcode
   Future<ScanBottomSheetResult> onScanBarcode(
-      String barcode, OrderController orderController) async {
+      String barcode, OrderPositionsController orderController) async {
     return orderController.getOrderPositionUuidByBarcode(barcode).then(
         (value) => ScanBottomSheetResult(true, value),
         onError: (e) => Future.error(ScanBottomSheetResult(false, "")));

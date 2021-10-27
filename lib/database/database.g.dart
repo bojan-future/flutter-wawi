@@ -1812,6 +1812,336 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
   }
 }
 
+class PurchasePosition extends DataClass
+    implements Insertable<PurchasePosition> {
+  /// primary key
+  final int id;
+
+  /// globaly unique id used for synchronizing
+  final String uuid;
+
+  /// original quantity
+  final double originalQuantity;
+
+  /// rest quantity
+  final double restQuantity;
+
+  /// foreign key -> product
+  final String product;
+  PurchasePosition(
+      {required this.id,
+      required this.uuid,
+      required this.originalQuantity,
+      required this.restQuantity,
+      required this.product});
+  factory PurchasePosition.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return PurchasePosition(
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      uuid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}uuid'])!,
+      originalQuantity: const RealType().mapFromDatabaseResponse(
+          data['${effectivePrefix}original_quantity'])!,
+      restQuantity: const RealType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}rest_quantity'])!,
+      product: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}product'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
+    map['original_quantity'] = Variable<double>(originalQuantity);
+    map['rest_quantity'] = Variable<double>(restQuantity);
+    map['product'] = Variable<String>(product);
+    return map;
+  }
+
+  PurchasePositionsCompanion toCompanion(bool nullToAbsent) {
+    return PurchasePositionsCompanion(
+      id: Value(id),
+      uuid: Value(uuid),
+      originalQuantity: Value(originalQuantity),
+      restQuantity: Value(restQuantity),
+      product: Value(product),
+    );
+  }
+
+  factory PurchasePosition.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return PurchasePosition(
+      id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
+      originalQuantity: serializer.fromJson<double>(json['originalQuantity']),
+      restQuantity: serializer.fromJson<double>(json['restQuantity']),
+      product: serializer.fromJson<String>(json['product']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
+      'originalQuantity': serializer.toJson<double>(originalQuantity),
+      'restQuantity': serializer.toJson<double>(restQuantity),
+      'product': serializer.toJson<String>(product),
+    };
+  }
+
+  PurchasePosition copyWith(
+          {int? id,
+          String? uuid,
+          double? originalQuantity,
+          double? restQuantity,
+          String? product}) =>
+      PurchasePosition(
+        id: id ?? this.id,
+        uuid: uuid ?? this.uuid,
+        originalQuantity: originalQuantity ?? this.originalQuantity,
+        restQuantity: restQuantity ?? this.restQuantity,
+        product: product ?? this.product,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('PurchasePosition(')
+          ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
+          ..write('originalQuantity: $originalQuantity, ')
+          ..write('restQuantity: $restQuantity, ')
+          ..write('product: $product')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(
+          uuid.hashCode,
+          $mrjc(originalQuantity.hashCode,
+              $mrjc(restQuantity.hashCode, product.hashCode)))));
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PurchasePosition &&
+          other.id == this.id &&
+          other.uuid == this.uuid &&
+          other.originalQuantity == this.originalQuantity &&
+          other.restQuantity == this.restQuantity &&
+          other.product == this.product);
+}
+
+class PurchasePositionsCompanion extends UpdateCompanion<PurchasePosition> {
+  final Value<int> id;
+  final Value<String> uuid;
+  final Value<double> originalQuantity;
+  final Value<double> restQuantity;
+  final Value<String> product;
+  const PurchasePositionsCompanion({
+    this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
+    this.originalQuantity = const Value.absent(),
+    this.restQuantity = const Value.absent(),
+    this.product = const Value.absent(),
+  });
+  PurchasePositionsCompanion.insert({
+    this.id = const Value.absent(),
+    required String uuid,
+    required double originalQuantity,
+    required double restQuantity,
+    required String product,
+  })  : uuid = Value(uuid),
+        originalQuantity = Value(originalQuantity),
+        restQuantity = Value(restQuantity),
+        product = Value(product);
+  static Insertable<PurchasePosition> custom({
+    Expression<int>? id,
+    Expression<String>? uuid,
+    Expression<double>? originalQuantity,
+    Expression<double>? restQuantity,
+    Expression<String>? product,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
+      if (originalQuantity != null) 'original_quantity': originalQuantity,
+      if (restQuantity != null) 'rest_quantity': restQuantity,
+      if (product != null) 'product': product,
+    });
+  }
+
+  PurchasePositionsCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? uuid,
+      Value<double>? originalQuantity,
+      Value<double>? restQuantity,
+      Value<String>? product}) {
+    return PurchasePositionsCompanion(
+      id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
+      originalQuantity: originalQuantity ?? this.originalQuantity,
+      restQuantity: restQuantity ?? this.restQuantity,
+      product: product ?? this.product,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
+    }
+    if (originalQuantity.present) {
+      map['original_quantity'] = Variable<double>(originalQuantity.value);
+    }
+    if (restQuantity.present) {
+      map['rest_quantity'] = Variable<double>(restQuantity.value);
+    }
+    if (product.present) {
+      map['product'] = Variable<String>(product.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PurchasePositionsCompanion(')
+          ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
+          ..write('originalQuantity: $originalQuantity, ')
+          ..write('restQuantity: $restQuantity, ')
+          ..write('product: $product')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $PurchasePositionsTable extends PurchasePositions
+    with TableInfo<$PurchasePositionsTable, PurchasePosition> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $PurchasePositionsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedIntColumn id = _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedTextColumn uuid = _constructUuid();
+  GeneratedTextColumn _constructUuid() {
+    return GeneratedTextColumn('uuid', $tableName, false,
+        $customConstraints: 'UNIQUE');
+  }
+
+  final VerificationMeta _originalQuantityMeta =
+      const VerificationMeta('originalQuantity');
+  @override
+  late final GeneratedRealColumn originalQuantity =
+      _constructOriginalQuantity();
+  GeneratedRealColumn _constructOriginalQuantity() {
+    return GeneratedRealColumn(
+      'original_quantity',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _restQuantityMeta =
+      const VerificationMeta('restQuantity');
+  @override
+  late final GeneratedRealColumn restQuantity = _constructRestQuantity();
+  GeneratedRealColumn _constructRestQuantity() {
+    return GeneratedRealColumn(
+      'rest_quantity',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _productMeta = const VerificationMeta('product');
+  @override
+  late final GeneratedTextColumn product = _constructProduct();
+  GeneratedTextColumn _constructProduct() {
+    return GeneratedTextColumn('product', $tableName, false,
+        $customConstraints: 'REFERENCES products(uuid)');
+  }
+
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, uuid, originalQuantity, restQuantity, product];
+  @override
+  $PurchasePositionsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'purchase_positions';
+  @override
+  final String actualTableName = 'purchase_positions';
+  @override
+  VerificationContext validateIntegrity(Insertable<PurchasePosition> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
+    }
+    if (data.containsKey('original_quantity')) {
+      context.handle(
+          _originalQuantityMeta,
+          originalQuantity.isAcceptableOrUnknown(
+              data['original_quantity']!, _originalQuantityMeta));
+    } else if (isInserting) {
+      context.missing(_originalQuantityMeta);
+    }
+    if (data.containsKey('rest_quantity')) {
+      context.handle(
+          _restQuantityMeta,
+          restQuantity.isAcceptableOrUnknown(
+              data['rest_quantity']!, _restQuantityMeta));
+    } else if (isInserting) {
+      context.missing(_restQuantityMeta);
+    }
+    if (data.containsKey('product')) {
+      context.handle(_productMeta,
+          product.isAcceptableOrUnknown(data['product']!, _productMeta));
+    } else if (isInserting) {
+      context.missing(_productMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PurchasePosition map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return PurchasePosition.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $PurchasePositionsTable createAlias(String alias) {
+    return $PurchasePositionsTable(_db, alias);
+  }
+}
+
 class OrderPosition extends DataClass implements Insertable<OrderPosition> {
   /// primary key
   final int id;
@@ -4883,6 +5213,8 @@ abstract class _$Database extends GeneratedDatabase {
   late final $UsersTable users = $UsersTable(this);
   late final $PacketsTable packets = $PacketsTable(this);
   late final $ProductsTable products = $ProductsTable(this);
+  late final $PurchasePositionsTable purchasePositions =
+      $PurchasePositionsTable(this);
   late final $OrderPositionsTable orderPositions = $OrderPositionsTable(this);
   late final $ProductionOrdersTable productionOrders =
       $ProductionOrdersTable(this);
@@ -4907,6 +5239,8 @@ abstract class _$Database extends GeneratedDatabase {
   late final UsersDao usersDao = UsersDao(this as Database);
   late final PacketsDao packetsDao = PacketsDao(this as Database);
   late final ProductsDao productsDao = ProductsDao(this as Database);
+  late final PurchasePositionsDao purchasePositionsDao =
+      PurchasePositionsDao(this as Database);
   late final OrderPositionsDao orderPositionsDao =
       OrderPositionsDao(this as Database);
   late final ProductionDao productionDao = ProductionDao(this as Database);
@@ -4934,6 +5268,7 @@ abstract class _$Database extends GeneratedDatabase {
         users,
         packets,
         products,
+        purchasePositions,
         orderPositions,
         productionOrders,
         productionMaterials,

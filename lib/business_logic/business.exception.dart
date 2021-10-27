@@ -22,3 +22,19 @@ class DispatchQuantityExceeded extends BusinessException {
   DispatchQuantityExceeded(
       {required this.restQuantity, required this.scannedQuantity});
 }
+
+/// Exception for wrong product in dispatch
+class DeliveryWrongProduct extends BusinessException {}
+
+/// Exception for exceeded in dispatch
+class DeliveryQuantityExceeded extends BusinessException {
+  /// rest Quantity in order position
+  final double restQuantity;
+
+  /// quantity scanned in this action, which would exceed rest quantity
+  final double scannedQuantity;
+
+  /// constructor
+  DeliveryQuantityExceeded(
+      {required this.restQuantity, required this.scannedQuantity});
+}

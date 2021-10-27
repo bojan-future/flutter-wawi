@@ -1,7 +1,7 @@
 import '../database/database.dart';
 
 /// Business Logic for Orders
-class OrderController {
+class OrderPositionsController {
   /// retrieve database
   final database = DatabaseFactory.getDatabaseInstance();
 

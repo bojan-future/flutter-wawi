@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:cron/cron.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:moor_flutter/moor_flutter.dart';
 
 import '../database/database.dart';
@@ -11,6 +10,7 @@ import '../database/orderpositions_dao.dart';
 import '../database/packets_dao.dart';
 import '../database/production_dao.dart';
 import '../database/products_dao.dart';
+import '../database/purchasepositions_dao.dart';
 import '../database/synchronizable.dart';
 import '../database/users_dao.dart';
 
@@ -162,7 +162,11 @@ class SynchroController {
               await OrderPositionsDao.companionFromSyncJson(
                   sync.data, sync.uuid));
           break;
-        //todo: other tables
+        case SyncType.purchase_position:
+          _database.purchasePositionsDao.createPurchasePosition(
+              await PurchasePositionsDao.companionFromSyncJson(
+                  sync.data, sync.uuid));
+          break;
         default:
       }
     } else {
@@ -182,7 +186,10 @@ class SynchroController {
         case SyncType.order_position:
           _database.orderPositionsDao.deleteOrderPositionByUuid(sync.uuid);
           break;
-        //todo: other tables
+        case SyncType.purchase_position:
+          _database.purchasePositionsDao
+              .deletePurchasePositionByUuid(sync.uuid);
+          break;
         default:
       }
     }

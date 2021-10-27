@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kuda_lager/business_logic/business.exception.dart';
-import 'package:kuda_lager/business_logic/order_controller.dart';
 import 'package:provider/provider.dart';
 
+import '../business_logic/business.exception.dart';
 import '../business_logic/dispatch_controller.dart';
+import '../business_logic/orderpositions_controller.dart';
 import '../business_logic/packets_controller.dart';
 import '../database/database.dart';
 import '../ui_widgets/alert_warnings.dart';
@@ -56,7 +56,7 @@ class _DispatchViewState extends State<DispatchView> {
         var packetsController =
             Provider.of<PacketsController>(context, listen: false);
         var orderController =
-            Provider.of<OrderController>(context, listen: false);
+            Provider.of<OrderPositionsController>(context, listen: false);
 
         try {
           final dispatchPositionID =

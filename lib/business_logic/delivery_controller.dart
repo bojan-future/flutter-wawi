@@ -1,13 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:intl/intl.dart';
 import '../database/database.dart';
 import 'auth_controller.dart';
 import 'business.exception.dart';
 import 'packets_controller.dart';
+import 'purchasepositions_controller.dart';
 
 /// Business Logic for Deliveries
 class DeliveryController {
@@ -39,8 +42,10 @@ class DeliveryController {
       String barcode, String deliveryUuid) async {
     //check if already existing
 
+    final packetsController = PacketsController();
+
     final packetTestId =
-        await PacketsController().getPacketByBarcode(barcode).then((packet) {
+        await packetsController.getPacketByBarcode(barcode).then((packet) {
       return packet.uuid;
     }, onError: (e) {
       return Future.value("");
@@ -53,18 +58,54 @@ class DeliveryController {
     if (packetTestId.isNotEmpty) {
       var exists = await checkDeliveryPositionByPacket(packetTestId);
       if (exists) {
-        throw DeliveryPositionAlreadyExists();
+        return Future.error(DeliveryPositionAlreadyExists());
       }
     }
 
-    final packetID = await PacketsController().addPacket(barcode);
+    final packetUuid = await packetsController.addPacket(barcode);
+
+    final packet = await packetsController.getPacketByUuid(packetUuid);
+
+    final purchasePositionsController = PurchasePositionsController();
+    final purchasePositionList = await purchasePositionsController
+        .getPurchasePositionsByProduct(packet.product);
+
+    if (purchasePositionList.isEmpty) {
+      return Future.error(DeliveryWrongProduct());
+    }
+
+    //get sum of rest quantity from all positions
+    var sumRestQuantity = purchasePositionList
+        .map((e) => e.restQuantity)
+        .reduce((value, element) => value + element);
+
+    if (sumRestQuantity < packet.quantity) {
+      return Future.error(DeliveryQuantityExceeded(
+          restQuantity: sumRestQuantity, scannedQuantity: packet.quantity));
+    }
 
     return database.deliveryPositionsDao
         .createDeliveryPosition(DeliveryPositionsCompanion(
       uuid: Value(Uuid().v4()),
-      packet: Value(packetID),
+      packet: Value(packetUuid),
       delivery: Value(deliveryUuid),
-    ));
+    ))
+        .then((newDeliveryPositionUuid) {
+      //update purchasePosition (decrement restQuantity)
+      purchasePositionList.forEach((purchasePosition) {
+        if (sumRestQuantity > 0) {
+          final sumDifference =
+              min(sumRestQuantity, purchasePosition.restQuantity);
+          sumRestQuantity -= sumDifference;
+          purchasePositionsController.updatePurchasePosition(
+              PurchasePositionsCompanion(
+                  id: Value(purchasePosition.id),
+                  restQuantity: Value(sumDifference)));
+        }
+      });
+
+      return newDeliveryPositionUuid;
+    });
   }
 
   /// get delivery position

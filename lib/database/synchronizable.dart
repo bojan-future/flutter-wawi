@@ -18,7 +18,7 @@ extension AddSynchroImpl on DatabaseAccessor<Database> {
 class SyncType {
   //incoming
   static const int product = 90;
-  static const int order = 152;
+  static const int purchase_position = 191;
   static const int order_position = 149;
   static const int production = 170;
   static const int user = 200;

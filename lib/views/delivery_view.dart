@@ -84,6 +84,27 @@ class _DeliveryViewState extends State<DeliveryView> {
                     "Das gescannte Paket wurde bereits als geliefert erfasst!")
                 .show();
           });
+        } on DeliveryWrongProduct {
+          setState(() {
+            buildAlert(context, "Achtung!",
+                    "Das gescannte Produkt wurde nicht bestellt!")
+                .show();
+          });
+        } on DeliveryQuantityExceeded catch (e) {
+          setState(() {
+            String message;
+            if (e.restQuantity == 0) {
+              message = "Diese Position wurde bereits vollständig erfasst.";
+            } else {
+              //leave indentation as is, otherwise second and third lines
+              //will be indented in the alert window
+              message =
+                  """Das gescannte Paket hat eine höhere Menge als erwartet!
+Offene Menge: ${e.restQuantity}\n
+Gescannte Menge: ${e.scannedQuantity}""";
+            }
+            buildAlert(context, "Achtung!", message).show();
+          });
         }
       },
       itemCount: scanViewList.length,

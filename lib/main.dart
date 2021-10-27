@@ -9,7 +9,7 @@ import 'business_logic/delivery_controller.dart';
 import 'business_logic/dispatch_controller.dart';
 import 'business_logic/file_controller.dart';
 import 'business_logic/inventory_controller.dart';
-import 'business_logic/order_controller.dart';
+import 'business_logic/orderpositions_controller.dart';
 import 'business_logic/packets_controller.dart';
 import 'business_logic/production_controller.dart';
 import 'business_logic/scan_bottom_sheet_result.dart';
@@ -52,8 +52,8 @@ void main() {
         Provider<DispatchController>(
           create: (context) => DispatchController(),
         ),
-        Provider<OrderController>(
-          create: (context) => OrderController(),
+        Provider<OrderPositionsController>(
+          create: (context) => OrderPositionsController(),
         ),
         Provider<ProductionController>(
           create: (context) => ProductionController(),
@@ -198,8 +198,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   var dispatchController =
                       Provider.of<DispatchController>(context, listen: false);
 
-                  var orderController =
-                      Provider.of<OrderController>(context, listen: false);
+                  var orderController = Provider.of<OrderPositionsController>(
+                      context,
+                      listen: false);
 
                   return dispatchController
                       .onScanBarcode(barcode, orderController)
