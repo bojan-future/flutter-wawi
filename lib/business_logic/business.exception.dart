@@ -10,6 +10,9 @@ class DeliveryPositionAlreadyExists extends BusinessException {}
 /// Exception for wrong product in dispatch
 class DispatchWrongProduct extends BusinessException {}
 
+/// Exception for trying to scan an already used packet
+class DispatchPacketAlreadyUsed extends BusinessException {}
+
 /// Exception for exceeded in dispatch
 class DispatchQuantityExceeded extends BusinessException {
   /// rest Quantity in order position

@@ -78,6 +78,12 @@ class _DispatchViewState extends State<DispatchView> {
                     context, "Achtung!", "Der gescannte Barcode ist ungültig!")
                 .show();
           });
+        } on DispatchPacketAlreadyUsed {
+          setState(() {
+            buildAlert(context, "Achtung!",
+                    "Das gescannte Paket wurde bereits als ausgeliefert erfasst!")
+                .show();
+          });
         } on DispatchWrongProduct {
           setState(() {
             buildAlert(context, "Achtung!",

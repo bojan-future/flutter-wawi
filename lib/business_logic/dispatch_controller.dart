@@ -33,6 +33,11 @@ class DispatchController {
         await orderController.getOrderPositionByUuid(dispatch.orderPositionID);
     final packet = await packetsController.getPacketByBarcode(barcode);
     if (packet.product == orderPosition.product) {
+      //check if packet has already been used in another position
+      if (await isPacketUsed(packet.uuid)) {
+        return Future.error(DispatchPacketAlreadyUsed());
+      }
+
       //check quantity
       if (orderPosition.restQuantity < packet.quantity) {
         return Future.error(DispatchQuantityExceeded(
@@ -68,5 +73,15 @@ class DispatchController {
     return orderController.getOrderPositionUuidByBarcode(barcode).then(
         (value) => ScanBottomSheetResult(true, value),
         onError: (e) => Future.error(ScanBottomSheetResult(false, "")));
+  }
+
+  Future<bool> isPacketUsed(String packetUuid) async {
+    try {
+      return await database.dispatchPositionsDao
+          .getDispatchPositionByPacket(packetUuid)
+          .then((value) => true);
+    } on RecordNotFoundException {
+      return false;
+    }
   }
 }

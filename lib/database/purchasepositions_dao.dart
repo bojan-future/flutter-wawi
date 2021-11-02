@@ -15,7 +15,7 @@ class PurchasePositionsDao extends DatabaseAccessor<Database>
   Future<int> createPurchasePosition(
       PurchasePositionsCompanion purchasePosition) {
     return into(purchasePositions)
-        .insert(purchasePosition, mode: InsertMode.replace);
+        .insert(purchasePosition, mode: InsertMode.insertOrIgnore);
   }
 
   /// replaces purchase position in the database

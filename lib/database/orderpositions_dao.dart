@@ -13,7 +13,8 @@ class OrderPositionsDao extends DatabaseAccessor<Database>
 
   /// inserts given order into database
   Future<int> createOrderPosition(OrderPositionsCompanion orderPosition) {
-    return into(orderPositions).insert(orderPosition, mode: InsertMode.replace);
+    return into(orderPositions)
+        .insert(orderPosition, mode: InsertMode.insertOrIgnore);
   }
 
   /// replaces order position in the database

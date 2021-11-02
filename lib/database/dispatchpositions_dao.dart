@@ -81,6 +81,19 @@ class DispatchPositionsDao extends DatabaseAccessor<Database>
     }
   }
 
+  Future<DispatchPosition> getDispatchPositionByPacket(
+      String packetUuid) async {
+    final dispatchPositionList = await (select(dispatchPositions)
+          ..where((o) => o.packet.equals(packetUuid)))
+        .get();
+
+    if (dispatchPositionList.isEmpty) {
+      throw RecordNotFoundException();
+    } else {
+      return dispatchPositionList.first;
+    }
+  }
+
   ///hook executed when record has been changed
   Future<void> onUpdateData(DispatchPosition model) async {
     var db = DatabaseFactory.getDatabaseInstance();
