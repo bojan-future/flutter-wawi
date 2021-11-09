@@ -215,6 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 },
               ),
+              /*
               SizedBox(height: 10),
               TextButtonWidget(
                 icon: Mdi.packageVariant,
@@ -237,6 +238,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 },
               ),
+              */
               SizedBox(height: 10),
               Expanded(
                 child: Row(

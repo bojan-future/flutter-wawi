@@ -20,8 +20,9 @@ class SynchroController {
   final Cron _cron;
   bool _syncInProgress = false;
   final _appSource = 'kuda-lager-app';
-  final _endpoint = 'http://ffsync-test.futurefactory-software.com';
-  //final _endpoint = 'http://srv05.kuda.local';
+  //final _endpoint = 'http://ffsync-test.futurefactory-software.com';
+  final _endpoint = 'http://srv05.kuda.local';
+
   ///Synchronisation percent progress stream
   final synchroProgress = StreamController<double>();
 
@@ -54,8 +55,8 @@ class SynchroController {
 
   Future<SyncResponse> _fetchSync(int lastid) async {
     final response = await http.get(Uri.parse(
-        //  "$_endpoint/syncs?types=[200,90,152,191,149,170,529]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
-        "$_endpoint/syncs?types=[200,90,152,191,149,170]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
+        "$_endpoint/syncs?types=[200,90,152,191,149,170,529]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
+    //"$_endpoint/syncs?types=[200,90,152,191,149,170]&lic=AAAA-AAAA-AAAA-AAAA&last_id=$lastid&source=$_appSource"));
 
     if (response.statusCode == 200) {
       var body = response.body.replaceAll(r"\r", "").replaceAll(r"\n", "");
