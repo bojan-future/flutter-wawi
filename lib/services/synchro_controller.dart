@@ -21,7 +21,7 @@ class SynchroController {
   bool _syncInProgress = false;
   final _appSource = 'kuda-lager-app';
   //final _endpoint = 'http://ffsync-test.futurefactory-software.com';
-  final _endpoint = 'http://srv05.kuda.local';
+  final _endpoint = 'http://srv05.kuda.local:8080';
 
   ///Synchronisation percent progress stream
   final synchroProgress = StreamController<double>();
