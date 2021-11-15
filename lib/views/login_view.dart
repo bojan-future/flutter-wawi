@@ -10,6 +10,7 @@ import '../business_logic/auth_controller.dart';
 import '../main.dart';
 import '../services/scanner_controller.dart';
 import '../ui_widgets/alert_warnings.dart';
+import '../conf/conf.dart';
 
 /// Widget representing Login Screen
 class LoginView extends StatefulWidget {
@@ -118,23 +119,25 @@ class _LoginViewState extends State<LoginView> {
             SizedBox(
               height: 10,
             ),
-            GestureDetector(
-                onTapDown: (tapDownDetails) {
-                  scanner.startScan();
-                },
-                onTapUp: (tapUpDetails) {
-                  scanner.stopScan();
-                },
-                child: Container(
-                  height: 60,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(8.0)),
-                  child: Center(
-                    child: Icon(Mdi.barcodeScan, size: 35, color: Colors.white),
-                  ),
-                )),
+            if (conf_use_barcode_for_login)
+              GestureDetector(
+                  onTapDown: (tapDownDetails) {
+                    scanner.startScan();
+                  },
+                  onTapUp: (tapUpDetails) {
+                    scanner.stopScan();
+                  },
+                  child: Container(
+                    height: 60,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(8.0)),
+                    child: Center(
+                      child:
+                          Icon(Mdi.barcodeScan, size: 35, color: Colors.white),
+                    ),
+                  )),
           ],
         ),
       ),

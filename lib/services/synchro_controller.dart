@@ -19,9 +19,8 @@ class SynchroController {
   final Database _database;
   final Cron _cron;
   bool _syncInProgress = false;
-  final _appSource = 'kuda-lager-app';
-  //final _endpoint = 'http://ffsync-test.futurefactory-software.com';
-  final _endpoint = 'http://srv05.kuda.local:8080';
+  final _appSource = 'future-wawi-app';
+  final _endpoint = 'http://ffsync-test.futurefactory-software.com';
 
   ///Synchronisation percent progress stream
   final synchroProgress = StreamController<double>();
