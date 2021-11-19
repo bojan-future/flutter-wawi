@@ -8,6 +8,8 @@ import 'package:kuda_lager/test_helpers/scannercontroller_mock.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
+import 'package:kuda_lager/conf/conf.dart';
+
 ///  /!\ For testing: use "flutter test --no-test-assets" /!\
 /// Flutter cant access the image assets in other packages during widget testing
 
@@ -19,7 +21,9 @@ void main() {
     expect(find.text('Login'), findsOneWidget);
     expect(find.text('Mitarbeiternummer'), findsOneWidget);
     expect(find.byType(TextField), findsOneWidget);
-    expect(find.byIcon(Mdi.barcodeScan), findsOneWidget);
+    if (conf_use_barcode_for_login) {
+      expect(find.byIcon(Mdi.barcodeScan), findsOneWidget);
+    }
     expect(find.byIcon(Icons.done), findsOneWidget);
   });
 
@@ -32,7 +36,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Kuda Lager'), findsOneWidget);
-  });
+  }, skip: !conf_use_barcode_for_login);
 
   /// test for unsuccessful login with barcode
   testWidgets('LoginView Barcode Unsuccessful', (tester) async {
@@ -43,7 +47,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Kuda Lager'), findsNothing);
-  });
+  }, skip: !conf_use_barcode_for_login);
 
   /// test for successful login with usernumber
   testWidgets('LoginView Usernumber Successful', (tester) async {
