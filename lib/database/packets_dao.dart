@@ -116,23 +116,7 @@ class PacketsDao extends DatabaseAccessor<Database> with _$PacketsDaoMixin {
 
   ///hook executed when record has been changed
   Future<void> onUpdateData(Packet model) async {
-    try {
-      var json = model.toJson();
-      if (model.wrapping != null) {
-        json['wrapping'] = await getPacketByUuid(model.wrapping!)
-            .then((wrapping) => wrapping.uuid, onError: (e) => 'null')
-            .catchError((e) => 'null');
-      }
-
-      json['product'] = await db.productsDao
-          .getProductByUuid(model.product)
-          .then((product) => product.uuid, onError: (e) => 'null')
-          .catchError((e) => 'null');
-
-      addSynchroUpdate(model.uuid, SyncType.packet, jsonEncode(json));
-    } catch (e) {
-      print(e.toString());
-    }
+    addSynchroUpdate(model.uuid, SyncType.packet, model.toJsonString());
   }
 
   ///hook executed when record has been deleted
