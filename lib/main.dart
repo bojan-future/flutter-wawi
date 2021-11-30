@@ -101,7 +101,7 @@ class MyApp extends StatelessWidget {
     var synchroController =
         Provider.of<SynchroController>(context, listen: false);
     return MaterialApp(
-      title: 'Kuda Lager',
+      title: 'Wawi',
       theme: ThemeData(
         // Theme of the application.
         primarySwatch: Colors.blue,
@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Kuda Lager"),
+        title: Text("Wawi"),
         backwardsCompatibility: false,
         titleTextStyle: TextStyle(
             color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),

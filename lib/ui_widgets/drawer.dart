@@ -22,7 +22,7 @@ class DrawerWidget extends StatelessWidget {
               color: Colors.blue,
             ),
             child: Text(
-              'Kuda Lager',
+              'Wawi',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,

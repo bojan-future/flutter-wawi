@@ -38,7 +38,7 @@ class ScannerControllerImplDataWedge implements ScannerController {
   void registerCallback(void Function(String) scanCallback) {
     _scanCallback = scanCallback;
     _scanChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
-    _createProfile("KudaLager");
+    _createProfile("Wawi");
   }
 
   /// unset callback in order not to receive any scandata
@@ -61,9 +61,9 @@ class ScannerControllerImplDataWedge implements ScannerController {
   }
 
   static const MethodChannel _methodChannel =
-      MethodChannel('at.futurefactory.kuda_lager/command');
+      MethodChannel('at.futurefactory.flutter_wawi/command');
   static const EventChannel _scanChannel =
-      EventChannel('at.futurefactory.kuda_lager/scan');
+      EventChannel('at.futurefactory.flutter_wawi/scan');
 
   Future<void> _sendDataWedgeCommand(String command, String parameter) async {
     try {
@@ -79,7 +79,7 @@ class ScannerControllerImplDataWedge implements ScannerController {
 
   Future<void> _createProfile(String profileName) async {
     try {
-      await _methodChannel.invokeMethod('createDataWedgeProfile', profileName);
+      //await _methodChannel.invokeMethod('createDataWedgeProfile', profileName);
     } on PlatformException {
       //  Error invoking Android method
     }

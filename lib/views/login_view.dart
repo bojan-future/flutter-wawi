@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kuda_lager/services/synchro_controller.dart';
 import 'package:mdi/mdi.dart';
 import 'package:provider/provider.dart';
 
